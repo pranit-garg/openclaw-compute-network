@@ -1,0 +1,216 @@
+---
+title: Submit a Job
+description: End-to-end guide for submitting a compute job to the OpenClaw network — from quoting to polling the result.
+---
+
+# Submit a Job
+
+This guide walks through the complete flow of submitting a job, from getting a price quote to receiving the result with a cryptographic receipt.
+
+## Prerequisites
+
+- A running coordinator (`TESTNET_MODE=true` for no payments)
+- At least one worker connected
+
+## The full flow
+
+```
+1. Quote  →  2. Commit  →  3. Poll  →  4. Done
+```
+
+## Step 1: Get a price quote
+
+Before committing a job, get a quote to see the price and which endpoint to use.
+
+```bash
+curl "http://localhost:4010/v1/quote?job_type=LLM_INFER&policy=AUTO"
+```
+
+```json
+{
+  "price": "$0.010",
+  "endpoint": "/v1/jobs/commit/fast",
+  "policy_resolved": "FAST",
+  "network": "eip155:10143",
+  "expires_at": null
+}
+```
+
+The `policy=AUTO` resolves based on job type:
+- `LLM_INFER` resolves to `FAST` (endpoint: `/v1/jobs/commit/fast`)
+- `TASK` resolves to `CHEAP` (endpoint: `/v1/jobs/commit/cheap`)
+
+## Step 2: Submit the job
+
+Use the endpoint from the quote response.
+
+### LLM inference job
+
+```bash
+curl -X POST http://localhost:4010/v1/jobs/commit/fast \
+  -H "Content-Type: application/json" \
+  -d '{
+    "job_type": "LLM_INFER",
+    "user_id": "user_abc123",
+    "privacy_class": "PUBLIC",
+    "payload": {
+      "job_type": "LLM_INFER",
+      "prompt": "Explain quantum computing in one paragraph.",
+      "max_tokens": 256
+    }
+  }'
+```
+
+### Task job
+
+```bash
+curl -X POST http://localhost:4010/v1/jobs/commit/cheap \
+  -H "Content-Type: application/json" \
+  -d '{
+    "job_type": "TASK",
+    "user_id": "user_abc123",
+    "privacy_class": "PUBLIC",
+    "payload": {
+      "job_type": "TASK",
+      "task_type": "classify",
+      "input": "This product is amazing and works perfectly."
+    }
+  }'
+```
+
+Response:
+
+```json
+{ "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890" }
+```
+
+### With x402 payment (production)
+
+When x402 is enabled, the first request returns `402`:
+
+```json
+{
+  "error": "X-PAYMENT header is required",
+  "accepts": [{
+    "scheme": "exact",
+    "price": "$0.010",
+    "network": "eip155:10143",
+    "payTo": "0x...",
+    "asset": "0x534b..."
+  }]
+}
+```
+
+Sign the payment and retry with the `X-PAYMENT` header. The SDK handles this automatically.
+
+## Step 3: Poll for the result
+
+Poll the job status endpoint with the returned `job_id`:
+
+```bash
+curl http://localhost:4010/v1/jobs/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+```
+
+### While pending
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "pending",
+  "result": null,
+  "receipt": null,
+  "created_at": "2026-02-09T12:00:00.000Z",
+  "completed_at": null
+}
+```
+
+### When completed
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "completed",
+  "result": {
+    "sentiment": "positive",
+    "confidence": 0.5
+  },
+  "receipt": {
+    "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "provider_pubkey": "a1b2c3d4e5f6...",
+    "output_hash": "sha256:abcdef...",
+    "completed_at": "2026-02-09T12:00:02.000Z",
+    "payment_ref": null,
+    "signature": "base64-ed25519-sig..."
+  },
+  "created_at": "2026-02-09T12:00:00.000Z",
+  "completed_at": "2026-02-09T12:00:02.000Z"
+}
+```
+
+### On failure
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "failed",
+  "result": { "error": "no_eligible_worker" },
+  "receipt": null,
+  "created_at": "2026-02-09T12:00:00.000Z",
+  "completed_at": null
+}
+```
+
+## Using the SDK
+
+The SDK wraps all three steps into a single call:
+
+```typescript
+import { ComputeRouter } from "@openclaw/compute-router";
+
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+});
+
+// LLM inference
+const llmResult = await router.runLLM({
+  prompt: "Explain quantum computing in one paragraph.",
+  max_tokens: 256,
+  user_id: "user_abc123",
+  chainPreference: "monad",
+});
+
+// Task
+const taskResult = await router.runTask({
+  task_type: "classify",
+  input: "This product is amazing.",
+  user_id: "user_abc123",
+});
+```
+
+The SDK:
+1. Gets a quote automatically
+2. Submits to the correct tier endpoint
+3. Handles x402 payment if an x402Client is configured
+4. Polls every 500ms until completed
+5. Returns a `ComputeResult` with output, route, price, latency, and receipt
+
+## Job types reference
+
+### LLM_INFER
+
+| Payload field | Type | Required | Description |
+|--------------|------|----------|-------------|
+| `job_type` | `"LLM_INFER"` | Yes | Must be `"LLM_INFER"` |
+| `prompt` | `string` | Yes | The prompt text |
+| `max_tokens` | `number` | No | Maximum response tokens |
+
+### TASK
+
+| Payload field | Type | Required | Description |
+|--------------|------|----------|-------------|
+| `job_type` | `"TASK"` | Yes | Must be `"TASK"` |
+| `task_type` | `string` | Yes | `"summarize"`, `"classify"`, or `"extract_json"` |
+| `input` | `string` | Yes | Input text to process |

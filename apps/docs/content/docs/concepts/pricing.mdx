@@ -1,0 +1,119 @@
+---
+title: Pricing
+description: How OpenClaw prices compute jobs — pricing tiers, policy resolution, and the pricing map.
+---
+
+# Pricing
+
+Every job in OpenClaw has a price denominated in USD, settled in stablecoins (USDC) via x402 micropayments. Prices are determined by the combination of **policy tier** and **job type**.
+
+## Pricing tiers
+
+```typescript
+const PRICING_MAP: Record<string, string> = {
+  FAST_LLM_INFER: "$0.010",
+  FAST_TASK:      "$0.003",
+  CHEAP_LLM_INFER: "$0.005",
+  CHEAP_TASK:     "$0.001",
+};
+```
+
+| | LLM_INFER | TASK |
+|---|-----------|------|
+| **FAST** | $0.010 | $0.003 |
+| **CHEAP** | $0.005 | $0.001 |
+
+## Policy
+
+The `Policy` enum controls which pricing tier a job uses:
+
+```typescript
+enum Policy {
+  FAST  = "FAST",
+  CHEAP = "CHEAP",
+  AUTO  = "AUTO",
+}
+```
+
+### AUTO resolution
+
+`AUTO` is the default policy. It resolves based on job type:
+
+- `LLM_INFER` jobs resolve to **FAST** (optimizes for speed)
+- `TASK` jobs resolve to **CHEAP** (optimizes for cost)
+
+```typescript
+function resolvePolicy(policy: Policy, jobType: JobType): Policy.FAST | Policy.CHEAP {
+  if (policy !== Policy.AUTO) return policy;
+  return jobType === JobType.LLM_INFER ? Policy.FAST : Policy.CHEAP;
+}
+```
+
+## How pricing works in practice
+
+### 1. Get a quote
+
+Before committing a job, get a quote to see the price and which endpoint to use:
+
+```bash
+curl "http://localhost:4010/v1/quote?job_type=LLM_INFER&policy=AUTO"
+```
+
+```json
+{
+  "price": "$0.010",
+  "endpoint": "/v1/jobs/commit/fast",
+  "policy_resolved": "FAST",
+  "network": "eip155:10143",
+  "expires_at": null
+}
+```
+
+The `endpoint` field tells you which commit URL to use. This matches the resolved policy tier.
+
+### 2. Pay via x402
+
+When x402 payment gating is enabled, the commit endpoint returns `402 Payment Required` on the first request. The response includes payment details:
+
+```json
+{
+  "error": "X-PAYMENT header is required",
+  "accepts": [
+    {
+      "scheme": "exact",
+      "price": "$0.010",
+      "network": "eip155:10143",
+      "payTo": "0x...",
+      "asset": "0x534b..."
+    }
+  ]
+}
+```
+
+The SDK handles this automatically — it signs a stablecoin payment and retries with the `X-PAYMENT` header.
+
+### 3. Testnet mode
+
+In testnet mode (`TESTNET_MODE=true`), x402 payment gating is disabled. Jobs can be submitted without any payment. Useful for development and testing.
+
+## Price calculation
+
+The `getPrice()` function looks up the price from the pricing map:
+
+```typescript
+function getPrice(policy: Policy.FAST | Policy.CHEAP, jobType: JobType): string {
+  const key = `${policy}_${jobType}`;
+  return PRICING_MAP[key] ?? "$0.001";
+}
+```
+
+The key is constructed as `{POLICY}_{JOB_TYPE}`, e.g., `FAST_LLM_INFER` or `CHEAP_TASK`.
+
+## x402 payment configuration
+
+The coordinator builds x402 payment configs for each endpoint:
+
+- `POST /v1/jobs/commit/fast` — priced at FAST tier
+- `POST /v1/jobs/commit/cheap` — priced at CHEAP tier
+
+Payment is settled in USDC on the configured chain (Monad or Solana). See [x402 Payments](/docs/concepts/x402-payments) for the full protocol details.

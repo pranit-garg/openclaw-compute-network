@@ -1,0 +1,122 @@
+---
+title: Job Lifecycle
+description: How jobs flow through the OpenClaw network — from submission to completion, with every status transition explained.
+---
+
+# Job Lifecycle
+
+Every job in OpenClaw moves through a defined set of statuses. Understanding this lifecycle is key to building reliable integrations.
+
+## Status transitions
+
+```
+  submitted          matched           executing          done
+     │                 │                  │                 │
+     ▼                 ▼                  ▼                 ▼
+  ┌────────┐     ┌──────────┐     ┌──────────┐     ┌───────────┐
+  │PENDING │ ──▶ │ ASSIGNED │ ──▶ │ RUNNING  │ ──▶ │ COMPLETED │
+  └────────┘     └──────────┘     └──────────┘     └───────────┘
+       │                                                  ▲
+       │              timeout / error                     │
+       └──────────────────────────────────────────▶ ┌─────┴───┐
+                                                    │ FAILED  │
+                                                    └─────────┘
+```
+
+## Statuses
+
+These are defined in the `JobStatus` enum in `@openclaw/protocol`:
+
+```typescript
+enum JobStatus {
+  PENDING   = "pending",
+  ASSIGNED  = "assigned",
+  RUNNING   = "running",
+  COMPLETED = "completed",
+  FAILED    = "failed",
+}
+```
+
+### pending
+
+The job has been accepted by the coordinator and stored in the database. The coordinator is looking for an available worker.
+
+- Entry: `POST /v1/jobs/commit/fast` or `/cheap` returns `201` with a `job_id`
+- Duration: typically under 2 seconds if workers are online
+- If no worker is available, the coordinator retries every 2 seconds for up to 30 seconds
+
+### assigned
+
+A worker has been matched to the job. The coordinator sent a `job_assign` message over WebSocket.
+
+- The coordinator uses atomic `claimWorker()` — a synchronous select-and-mark-busy operation that prevents race conditions when multiple jobs arrive simultaneously
+
+### running
+
+The worker has begun executing the job.
+
+- For `LLM_INFER` jobs: the worker calls Ollama (local LLM) with the prompt
+- For `TASK` jobs: the worker runs built-in logic (summarize, classify, extract_json)
+
+### completed
+
+The worker sent a `job_complete` message with the output and a signed receipt. The coordinator stores both atomically.
+
+- The response includes the full result and a cryptographic receipt
+- The receipt contains: `job_id`, `provider_pubkey`, `output_hash` (SHA-256), `completed_at`, and optionally a `payment_ref`
+- The receipt is signed with ed25519 by the worker's keypair
+
+### failed
+
+The job could not be completed. Common reasons:
+
+| Failure reason | When it happens |
+|---------------|-----------------|
+| `no_eligible_worker` | No worker with matching capabilities was found within the retry window |
+| `no_trusted_worker` | A PRIVATE job was submitted but no trust-paired worker is online (returns `422` immediately) |
+| Worker error | The worker encountered an error during execution |
+| Timeout | The job was not completed within the timeout window |
+
+## Timeouts
+
+The SDK uses different timeouts based on job type:
+
+| Job type | Poll timeout |
+|----------|-------------|
+| `LLM_INFER` | 60 seconds |
+| `TASK` | 30 seconds |
+
+The coordinator's background retry loop (for finding workers) runs for up to 30 seconds with 2-second intervals.
+
+## Privacy enforcement during assignment
+
+During the assignment phase, the coordinator enforces privacy rules:
+
+- **PUBLIC** jobs: any online worker with matching capabilities can be assigned
+- **PRIVATE** jobs: only workers that the submitting user has trust-paired with are eligible
+
+If a PRIVATE job is submitted and no trusted worker is online, the coordinator returns `422` immediately — it does not wait or retry.
+
+## Polling for results
+
+After submitting a job, clients poll `GET /v1/jobs/\{id\}` to check status. The SDK polls every 500ms automatically.
+
+```typescript
+// SDK handles polling internally
+const result = await router.runLLM({
+  prompt: "Explain quantum computing",
+  user_id: "user_abc",
+  chainPreference: "monad",
+});
+// result is returned only when status is "completed"
+```
+
+For direct REST usage, poll until `status` is `completed` or `failed`:
+
+```bash
+# Poll every second
+while true; do
+  curl -s http://localhost:4010/v1/jobs/$JOB_ID | jq '.status'
+  sleep 1
+done
+```

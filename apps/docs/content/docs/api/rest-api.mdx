@@ -1,0 +1,330 @@
+---
+title: REST API
+description: Complete REST API reference for the OpenClaw coordinator — health, quotes, jobs, and trust pairing endpoints.
+---
+
+# REST API Reference
+
+The coordinator exposes a REST API for job submission, status polling, and trust management. Two instances run in production — Monad testnet on port 4010 and Solana devnet on port 4020. Both expose the same API surface.
+
+## Base URLs
+
+| Chain | URL |
+|-------|-----|
+| Monad testnet | `http://localhost:4010` |
+| Solana devnet | `http://localhost:4020` |
+
+---
+
+## Health
+
+### GET /v1/health
+
+Returns coordinator status, online worker count, and chain identifier.
+
+**Response** `200`
+
+```json
+{
+  "status": "ok",
+  "workers_online": 3,
+  "network": "eip155:10143",
+  "timestamp": "2026-02-09T12:00:00.000Z"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | `"ok"` | Always `"ok"` if the coordinator is running |
+| `workers_online` | `integer` | Number of workers connected via WebSocket |
+| `network` | `string` | Chain identifier (e.g., `eip155:10143` for Monad) |
+| `timestamp` | `string` | ISO 8601 timestamp |
+
+---
+
+## Quotes
+
+### GET /v1/quote
+
+Get a price quote for a job. This endpoint is free (no x402 payment required).
+
+**Query parameters**
+
+| Param | Required | Type | Description |
+|-------|----------|------|-------------|
+| `job_type` | Yes | `LLM_INFER` or `TASK` | The type of job to quote |
+| `policy` | No | `FAST`, `CHEAP`, or `AUTO` | Pricing tier. Default: `AUTO` |
+
+**Response** `200`
+
+```json
+{
+  "price": "$0.010",
+  "endpoint": "/v1/jobs/commit/fast",
+  "policy_resolved": "FAST",
+  "network": "eip155:10143",
+  "expires_at": null
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `price` | `string` | Price in USD (e.g., `"$0.010"`) |
+| `endpoint` | `string` | The commit endpoint to use |
+| `policy_resolved` | `"FAST"` or `"CHEAP"` | Resolved policy (never `AUTO`) |
+| `network` | `string` | Chain identifier |
+| `expires_at` | `null` | Reserved for future dynamic pricing |
+
+**Response** `400` — Invalid or missing `job_type`
+
+```json
+{ "error": "Invalid job_type. Use LLM_INFER or TASK" }
+```
+
+---
+
+## Jobs
+
+### POST /v1/jobs/commit/fast
+
+Submit a job to the **FAST** pricing tier. When x402 payment gating is enabled, the first request returns `402` with payment details.
+
+**Headers**
+
+| Header | Required | Description |
+|--------|----------|-------------|
+| `X-PAYMENT` | Conditional | x402 signed payment. Required when payment gating is enabled. |
+
+**Request body**
+
+```json
+{
+  "job_type": "LLM_INFER",
+  "user_id": "user_abc123",
+  "privacy_class": "PUBLIC",
+  "payload": {
+    "job_type": "LLM_INFER",
+    "prompt": "Explain quantum computing in one paragraph.",
+    "max_tokens": 256
+  }
+}
+```
+
+| Field | Required | Type | Description |
+|-------|----------|------|-------------|
+| `job_type` | Yes | `"LLM_INFER"` or `"TASK"` | Job type |
+| `user_id` | Yes | `string` | Identifier for the requesting user |
+| `payload` | Yes | `object` | Job payload (see below) |
+| `privacy_class` | No | `"PUBLIC"` or `"PRIVATE"` | Default: `"PUBLIC"` |
+
+**LLM payload**
+
+```json
+{
+  "job_type": "LLM_INFER",
+  "prompt": "Your prompt here",
+  "max_tokens": 256
+}
+```
+
+**Task payload**
+
+```json
+{
+  "job_type": "TASK",
+  "task_type": "summarize",
+  "input": "Text to process"
+}
+```
+
+Task types: `summarize`, `classify`, `extract_json`
+
+**Response** `201` — Job accepted
+
+```json
+{ "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890" }
+```
+
+**Response** `400` — Missing or invalid fields
+
+```json
+{ "error": "Missing required fields: job_type, payload, user_id" }
+```
+
+**Response** `402` — Payment required (x402 enabled only)
+
+```json
+{
+  "error": "X-PAYMENT header is required",
+  "accepts": [
+    {
+      "scheme": "exact",
+      "price": "$0.010",
+      "network": "eip155:10143",
+      "payTo": "0x...",
+      "asset": "0x534b..."
+    }
+  ]
+}
+```
+
+**Response** `422` — No trusted worker for PRIVATE job
+
+```json
+{
+  "error": "no_trusted_worker",
+  "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+}
+```
+
+### POST /v1/jobs/commit/cheap
+
+Submit a job to the **CHEAP** pricing tier. Identical behavior to the FAST endpoint, priced lower.
+
+Same request/response format as `/v1/jobs/commit/fast`.
+
+### GET /v1/jobs/\{id\}
+
+Poll a job by ID. Returns current status, result (if completed), and receipt.
+
+**Path parameters**
+
+| Param | Type | Description |
+|-------|------|-------------|
+| `id` | `string (UUID)` | The job ID returned from commit |
+
+**Response** `200` — Pending job
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "pending",
+  "result": null,
+  "receipt": null,
+  "created_at": "2026-02-09T12:00:00.000Z",
+  "completed_at": null
+}
+```
+
+**Response** `200` — Completed job
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "completed",
+  "result": {
+    "output": "Quantum computing leverages quantum mechanical phenomena..."
+  },
+  "receipt": {
+    "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "provider_pubkey": "0xabc123...",
+    "output_hash": "sha256:abcdef1234567890",
+    "completed_at": "2026-02-09T12:00:05.000Z",
+    "payment_ref": null,
+    "signature": "0xdeadbeef..."
+  },
+  "created_at": "2026-02-09T12:00:00.000Z",
+  "completed_at": "2026-02-09T12:00:05.000Z"
+}
+```
+
+**Response** `200` — Failed job
+
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "failed",
+  "result": { "error": "no_eligible_worker" },
+  "receipt": null,
+  "created_at": "2026-02-09T12:00:00.000Z",
+  "completed_at": null
+}
+```
+
+**Response** `404` — Job not found
+
+```json
+{ "error": "Job not found" }
+```
+
+| Status field | Possible values |
+|-------------|-----------------|
+| `status` | `pending`, `assigned`, `running`, `completed`, `failed` |
+| `result` | `null` while pending/assigned. Object on completion. `{ error: "..." }` on failure. |
+| `receipt` | `null` until completed. Contains worker signature and output hash. |
+
+---
+
+## Trust Pairing
+
+### POST /v1/trust/create
+
+Create a 6-character hex pairing code. The code expires after 1 hour.
+
+**Request body**
+
+```json
+{ "user_id": "user_abc123" }
+```
+
+**Response** `201`
+
+```json
+{
+  "pairing_code": "A3F2B1",
+  "expires_at": "2026-02-09T13:00:00.000Z"
+}
+```
+
+### POST /v1/trust/claim
+
+Claim a pairing code as a worker to become a trusted provider for the user.
+
+**Request body**
+
+```json
+{
+  "pairing_code": "A3F2B1",
+  "provider_pubkey": "a1b2c3d4..."
+}
+```
+
+**Response** `200`
+
+```json
+{
+  "user_id": "user_abc123",
+  "paired_at": "2026-02-09T12:30:00.000Z"
+}
+```
+
+**Response** `400` — Invalid, claimed, or expired code
+
+```json
+{ "error": "invalid_code" }
+```
+
+Possible error values: `invalid_code`, `already_claimed`, `expired`
+
+### GET /v1/trust/list
+
+List all trusted workers for a user.
+
+**Query parameters**
+
+| Param | Required | Description |
+|-------|----------|-------------|
+| `user_id` | Yes | The user ID to list trusted providers for |
+
+**Response** `200`
+
+```json
+{
+  "providers": [
+    {
+      "provider_pubkey": "a1b2c3d4...",
+      "paired_at": "2026-02-09T12:30:00.000Z"
+    }
+  ]
+}
+```

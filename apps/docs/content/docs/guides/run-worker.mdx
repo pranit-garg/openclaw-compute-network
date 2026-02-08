@@ -1,0 +1,142 @@
+---
+title: Run a Worker
+description: How to run a desktop worker node on the OpenClaw network — from setup to trust pairing.
+---
+
+# Run a Worker
+
+Workers execute jobs assigned by the coordinator. This guide walks through setting up and running a desktop worker node.
+
+## Prerequisites
+
+- **Node.js** 20+
+- **pnpm** 9+
+- **Ollama** installed and running (for LLM inference jobs) — [ollama.com](https://ollama.com)
+- A running coordinator (see [Quickstart](/docs/getting-started/quickstart))
+
+## 1. Configure environment
+
+Set the coordinator URL and Ollama endpoint:
+
+```bash
+COORDINATOR_URL=http://localhost:4010
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+For the Solana coordinator, use `http://localhost:4020` instead.
+
+## 2. Start the worker
+
+```bash
+pnpm --filter worker-desktop start
+```
+
+On first run, the worker:
+
+1. **Generates an ed25519 keypair** — stored at `./data/worker-key.json`
+2. **Connects** to the coordinator via WebSocket
+3. **Registers** with provider type `DESKTOP` and capabilities `[LLM_INFER, TASK]`
+4. **Starts heartbeating** every 10 seconds
+
+You should see:
+
+```
+[Desktop Worker] Public key: a1b2c3d4e5f6...
+[Desktop Worker] Connecting to ws://localhost:4010
+[Desktop Worker] Registered as worker_abc123
+```
+
+## 3. How jobs are processed
+
+Once registered, the worker listens for `job_assign` messages from the coordinator:
+
+### LLM_INFER jobs
+
+The worker calls the local Ollama instance with the prompt and returns the generated text.
+
+### TASK jobs
+
+The worker runs built-in logic based on `task_type`:
+
+- **summarize** — truncates to 200 characters, returns word count
+- **classify** — keyword-based sentiment analysis (positive/negative/neutral)
+- **extract_json** — extracts and parses JSON objects from free text
+
+### Receipt generation
+
+After every job, the worker:
+
+1. Hashes the output with SHA-256
+2. Builds a receipt containing `job_id`, `provider_pubkey`, `output_hash`, `completed_at`
+3. Signs the receipt with ed25519 using the worker's secret key
+4. Sends `job_complete` with the output and receipt bundled together
+
+## 4. Trust pairing (optional)
+
+To receive PRIVATE jobs from a specific user, claim a trust pairing code:
+
+```bash
+TRUST_PAIRING_CODE=A3F2B1 pnpm --filter worker-desktop start
+```
+
+The worker will automatically call `POST /v1/trust/claim` on startup:
+
+```
+[Desktop Worker] Trust paired with user: user_abc123
+```
+
+See the [Trust Pairing guide](/docs/guides/trust-pairing) for the full flow.
+
+## 5. Running multiple workers
+
+Use different key paths to run multiple workers on the same machine:
+
+```bash
+# Terminal 1 — default key
+COORDINATOR_URL=http://localhost:4010 pnpm --filter worker-desktop start
+
+# Terminal 2 — custom key path
+COORDINATOR_URL=http://localhost:4010 \
+WORKER_KEY_PATH=./data/worker-key-2.json \
+pnpm --filter worker-desktop start
+```
+
+Each worker gets its own keypair and registers independently.
+
+## 6. Connecting to different chains
+
+The worker connects to whichever coordinator URL you specify:
+
+```bash
+# Monad
+COORDINATOR_URL=http://localhost:4010 pnpm --filter worker-desktop start
+
+# Solana
+COORDINATOR_URL=http://localhost:4020 pnpm --filter worker-desktop start
+```
+
+To serve both chains, run two worker instances pointing at different coordinators.
+
+## Key file
+
+The worker's ed25519 keypair is persisted at `./data/worker-key.json` (or the path set by `WORKER_KEY_PATH`). The file contains:
+
+```json
+{
+  "publicKey": [/* byte array */],
+  "secretKey": [/* byte array */]
+}
+```
+
+The public key (hex-encoded) serves as the worker's identity across the network — it appears in receipts, trust pairings, and job assignments.
+
+**Keep this file safe.** If you lose the key file, you lose the worker's identity and all its trust pairings.
+
+## Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `COORDINATOR_URL` | `http://localhost:4010` | Coordinator HTTP/WS URL |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API URL for LLM inference |
+| `WORKER_KEY_PATH` | `./data/worker-key.json` | Path to the worker's keypair file |
+| `TRUST_PAIRING_CODE` | (none) | 6-char hex code to claim on startup |

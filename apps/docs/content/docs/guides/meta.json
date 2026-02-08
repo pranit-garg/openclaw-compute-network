@@ -1,0 +1,5 @@
+{
+  "title": "Guides",
+  "pages": ["run-worker", "run-seeker", "trust-pairing", "submit-job"],
+  "defaultOpen": true
+}

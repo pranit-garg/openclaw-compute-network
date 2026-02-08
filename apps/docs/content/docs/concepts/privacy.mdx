@@ -1,0 +1,105 @@
+---
+title: Privacy Model
+description: How OpenClaw enforces privacy through trust pairing and prompt/result stripping for untrusted workers.
+---
+
+# Privacy Model
+
+OpenClaw treats privacy as a routing-layer concern, not an application-level flag. The coordinator enforces privacy rules — private jobs are only routed to workers you have explicitly trust-paired with.
+
+## Privacy classes
+
+Every job has a `privacy_class` field, defined in the `PrivacyClass` enum:
+
+```typescript
+enum PrivacyClass {
+  PUBLIC  = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
+```
+
+### PUBLIC (default)
+
+- The job can be routed to **any** online worker with matching capabilities
+- The full prompt and result are visible to the assigned worker
+- This is the default when `privacy_class` is not specified
+
+### PRIVATE
+
+- The job is routed **only** to workers that the submitting user has trust-paired with
+- If no trusted worker is online, the coordinator returns `422 Unprocessable Entity` immediately — it does not wait or retry
+- The full prompt and result are visible only to trusted workers
+
+## Trust pairing
+
+Trust pairing is a one-time setup that creates a relationship between a user and a specific worker. Once paired, that worker can receive the user's PRIVATE jobs.
+
+The flow:
+
+1. **User creates a pairing code** — `POST /v1/trust/create` with `user_id`
+2. **Coordinator returns a 6-character hex code** — valid for 1 hour
+3. **Worker claims the code** — `POST /v1/trust/claim` with the code and their `provider_pubkey`
+4. **Pairing is established** — the worker is now trusted by that user
+
+See the [Trust Pairing guide](/docs/guides/trust-pairing) for step-by-step instructions.
+
+## Enforcement at the coordinator
+
+Privacy enforcement lives in the coordinator, not in the SDK or worker code. This is a deliberate design choice — single source of truth, no opt-out.
+
+When a job is submitted:
+
+```
+Job arrives → coordinator checks privacy_class
+  │
+  ├─ PUBLIC  → claimWorker() from all online workers with matching capabilities
+  │
+  └─ PRIVATE → claimWorker() filters to only trust-paired workers for this user_id
+               │
+               ├─ Trusted worker found → assign job
+               └─ No trusted worker   → return 422 { error: "no_trusted_worker" }
+```
+
+The `claimWorker()` function runs atomically (synchronous select + mark-busy) to prevent race conditions. For PRIVATE jobs, it adds an additional filter:
+
+- Check the `trust_pairings` table for rows matching the job's `user_id`
+- Only consider workers whose `provider_pubkey` appears in those pairings
+- If no match exists, fail immediately
+
+## What untrusted workers see
+
+For **PUBLIC** jobs, the assigned worker sees the full payload — prompt, input, parameters. This is by design: public jobs prioritize speed and availability over confidentiality.
+
+For **PRIVATE** jobs, only trust-paired workers receive the assignment at all. Untrusted workers never see the job_assign message, the prompt, or the result.
+
+## Privacy and pricing
+
+Privacy class does not affect pricing. Both PUBLIC and PRIVATE jobs use the same pricing tiers:
+
+| Tier | LLM_INFER | TASK |
+|------|-----------|------|
+| FAST | $0.010 | $0.003 |
+| CHEAP | $0.005 | $0.001 |
+
+The difference is purely in routing: PRIVATE jobs have a smaller pool of eligible workers.
+
+## Listing trusted providers
+
+Check which workers a user has paired with:
+
+```bash
+curl "http://localhost:4010/v1/trust/list?user_id=user_abc123"
+```
+
+Response:
+
+```json
+{
+  "providers": [
+    {
+      "provider_pubkey": "a1b2c3d4...",
+      "paired_at": "2026-02-09T12:30:00.000Z"
+    }
+  ]
+}
+```

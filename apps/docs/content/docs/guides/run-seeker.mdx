@@ -1,0 +1,200 @@
+---
+title: Run a Seeker
+description: How to use the SDK as a seeker to submit jobs to the OpenClaw network.
+---
+
+# Run a Seeker
+
+A seeker is any client that submits jobs to the network. This can be a backend service, a script, or a mobile app. This guide shows how to use the `ComputeRouter` SDK to submit jobs programmatically.
+
+## Installation
+
+```bash
+pnpm add @openclaw/compute-router @openclaw/protocol
+```
+
+## Basic setup
+
+```typescript
+import { ComputeRouter } from "@openclaw/compute-router";
+import { Policy, PrivacyClass } from "@openclaw/protocol";
+
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+});
+```
+
+## Submit an LLM inference job
+
+```typescript
+const result = await router.runLLM({
+  prompt: "Explain how HTTP 402 works in one paragraph.",
+  max_tokens: 256,
+  user_id: "my-app-user-001",
+  chainPreference: "monad",
+});
+
+console.log(result.output);      // LLM response text
+console.log(result.route);       // "decentralized:monad"
+console.log(result.price);       // "$0.010"
+console.log(result.latency_ms);  // 3421
+console.log(result.receipt);     // { job_id, provider_pubkey, output_hash, ... }
+```
+
+The SDK handles the full flow automatically:
+1. Gets a price quote from the coordinator
+2. Submits the job to the appropriate tier endpoint
+3. Handles x402 payment if configured
+4. Polls for the result every 500ms
+5. Returns when complete (or throws on timeout/failure)
+
+## Submit a task job
+
+```typescript
+// Sentiment classification
+const classify = await router.runTask({
+  task_type: "classify",
+  input: "This product is amazing and works perfectly.",
+  user_id: "my-app-user-001",
+  chainPreference: "monad",
+});
+console.log(classify.output);
+// { sentiment: "positive", confidence: 0.5 }
+
+// Text summarization
+const summary = await router.runTask({
+  task_type: "summarize",
+  input: "A long article about decentralized compute networks...",
+  user_id: "my-app-user-001",
+});
+console.log(summary.output);
+// { summary: "A long article about...", word_count: 7 }
+
+// JSON extraction
+const extracted = await router.runTask({
+  task_type: "extract_json",
+  input: 'The config is {"port": 4010, "network": "monad"} embedded in text.',
+  user_id: "my-app-user-001",
+});
+console.log(extracted.output);
+// { extracted: [{ port: 4010, network: "monad" }], count: 1 }
+```
+
+## Private jobs
+
+To submit private jobs that only route to your trusted workers:
+
+```typescript
+const result = await router.runTask({
+  task_type: "classify",
+  input: "Confidential customer feedback data...",
+  user_id: "my-app-user-001",
+  privacy: PrivacyClass.PRIVATE,
+  chainPreference: "monad",
+});
+```
+
+This requires a prior trust pairing between `my-app-user-001` and at least one online worker. If no trusted worker is available, the SDK throws an error with `Privacy enforcement: no_trusted_worker`.
+
+## Policy selection
+
+Control cost vs. speed:
+
+```typescript
+// Explicit FAST tier — higher price, prioritized
+await router.runLLM({
+  prompt: "...",
+  policy: Policy.FAST,
+  user_id: "user-001",
+});
+
+// Explicit CHEAP tier — lower price
+await router.runTask({
+  task_type: "classify",
+  input: "...",
+  policy: Policy.CHEAP,
+  user_id: "user-001",
+});
+
+// AUTO (default) — LLM_INFER → FAST, TASK → CHEAP
+await router.runLLM({ prompt: "...", user_id: "user-001" });
+// Resolves to FAST ($0.010)
+
+await router.runTask({ task_type: "classify", input: "...", user_id: "user-001" });
+// Resolves to CHEAP ($0.001)
+```
+
+## Chain preference
+
+Choose which blockchain coordinator to use:
+
+```typescript
+// Route through Monad (EVM)
+await router.runLLM({
+  prompt: "...",
+  user_id: "user-001",
+  chainPreference: "monad",
+});
+
+// Route through Solana
+await router.runTask({
+  task_type: "summarize",
+  input: "...",
+  user_id: "user-001",
+  chainPreference: "solana",
+});
+```
+
+Default is `"monad"`.
+
+## Hosted fallback
+
+If the decentralized network is unavailable (no workers online, coordinator down), the SDK automatically falls back to hosted BYOK providers:
+
+```bash
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+PREFERRED_HOSTED_PROVIDER=openai
+```
+
+The `route` field in the result tells you which path was used:
+
+```typescript
+const result = await router.runLLM({ prompt: "...", user_id: "user-001" });
+
+if (result.route.startsWith("hosted:")) {
+  console.log("Fell back to hosted provider:", result.route);
+  // result.price is null for hosted
+  // result.receipt is null for hosted
+}
+```
+
+## Using REST directly
+
+You can also submit jobs without the SDK using curl or any HTTP client:
+
+```bash
+# 1. Get a quote
+curl http://localhost:4010/v1/quote?job_type=TASK&policy=AUTO
+
+# 2. Submit the job
+curl -X POST http://localhost:4010/v1/jobs/commit/cheap \
+  -H "Content-Type: application/json" \
+  -d '{
+    "job_type": "TASK",
+    "user_id": "curl-user",
+    "payload": {
+      "job_type": "TASK",
+      "task_type": "classify",
+      "input": "Great product!"
+    }
+  }'
+
+# 3. Poll for result
+curl http://localhost:4010/v1/jobs/YOUR_JOB_ID
+```
+
+See the [REST API reference](/docs/api/rest-api) for all endpoints.

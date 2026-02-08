@@ -1,0 +1,5 @@
+{
+  "title": "Chain Integration",
+  "pages": ["monad", "solana"],
+  "defaultOpen": true
+}

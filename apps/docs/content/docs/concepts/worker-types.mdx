@@ -1,0 +1,136 @@
+---
+title: Worker Types
+description: Desktop workers vs seeker workers — capabilities, registration, and how the coordinator routes jobs to each.
+---
+
+# Worker Types
+
+OpenClaw has two worker types that serve different roles in the network. The coordinator routes jobs based on each worker's declared capabilities.
+
+## Overview
+
+| Property | Desktop Worker | Seeker Worker |
+|----------|---------------|---------------|
+| Provider type | `DESKTOP` | `SEEKER` |
+| Capabilities | `LLM_INFER`, `TASK` | `TASK` only |
+| LLM inference | Yes (via Ollama) | No |
+| Task execution | summarize, classify, extract_json | summarize, classify, extract_json |
+| Intended device | Servers, desktops | Mobile phones, lightweight devices |
+| Key storage | `./data/worker-key.json` | `./data/seeker-key.json` |
+
+## Desktop Worker
+
+The desktop worker is the full-capability node. It handles both LLM inference (through a local Ollama instance) and lightweight TASK jobs.
+
+### Registration
+
+On startup, the desktop worker:
+
+1. Loads or generates an ed25519 keypair
+2. Connects to the coordinator via WebSocket
+3. Sends a `register` message declaring its capabilities
+
+```typescript
+const msg: RegisterMsg = {
+  type: "register",
+  provider_pubkey: keys.pubkeyHex,
+  provider_type: "DESKTOP",
+  capabilities: [JobType.LLM_INFER, JobType.TASK],
+};
+```
+
+4. Waits for a `register_ack` with a `worker_id`
+5. Starts sending heartbeats every 10 seconds
+6. Optionally claims a trust pairing code if `TRUST_PAIRING_CODE` is set
+
+### Job execution
+
+When the coordinator assigns a job:
+
+- **LLM_INFER**: calls the local Ollama API with the prompt and max_tokens
+- **TASK**: runs built-in logic for the specified task_type
+
+After execution, the worker builds a receipt (SHA-256 hash of output, ed25519 signature) and sends `job_complete` with the output and receipt bundled together.
+
+## Seeker Worker
+
+The seeker is a lightweight worker designed for mobile devices. It handles only TASK jobs — no LLM inference.
+
+### Registration
+
+```typescript
+const regMsg: RegisterMsg = {
+  type: "register",
+  provider_pubkey: keys.pubkeyHex,
+  provider_type: "SEEKER",
+  capabilities: [JobType.TASK],  // TASK only
+};
+```
+
+### Supported tasks
+
+All seekers can execute these task types:
+
+#### summarize
+
+Truncates input to 200 characters and returns a word count:
+
+```json
+{ "summary": "Truncated text...", "word_count": 42 }
+```
+
+#### classify
+
+Performs basic sentiment analysis using keyword matching:
+
+```json
+{ "sentiment": "positive", "confidence": 0.5 }
+```
+
+#### extract_json
+
+Extracts and parses JSON objects from free text:
+
+```json
+{ "extracted": [{ "key": "value" }], "count": 1 }
+```
+
+## Provider Type Enum
+
+The `ProviderType` enum defines the two worker types:
+
+```typescript
+enum ProviderType {
+  DESKTOP = "DESKTOP",
+  SEEKER  = "SEEKER",
+}
+```
+
+This is sent in the `register` message and stored by the coordinator to understand each worker's role in the network.
+
+## How the coordinator routes jobs
+
+When a job arrives, the coordinator's `claimWorker()` function finds an available worker that:
+
+1. Has the required capability (e.g., `LLM_INFER` or `TASK`)
+2. Is currently online (WebSocket connected, recent heartbeat)
+3. Is not busy with another job
+4. For PRIVATE jobs: is trust-paired with the submitting user
+
+The coordinator does not prefer desktop over seeker for TASK jobs — any worker with the capability can be assigned.
+
+## Running multiple workers
+
+You can run multiple workers on the same machine by using different key file paths:
+
+```bash
+# Worker 1 (default path)
+COORDINATOR_URL=http://localhost:4010 pnpm --filter worker-desktop start
+
+# Worker 2 (custom key path)
+COORDINATOR_URL=http://localhost:4010 \
+WORKER_KEY_PATH=./data/worker-key-2.json \
+pnpm --filter worker-desktop start
+```
+
+Each worker gets its own ed25519 keypair and registers independently with the coordinator.

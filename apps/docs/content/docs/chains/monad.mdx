@@ -1,0 +1,134 @@
+---
+title: Monad
+description: Monad testnet coordinator configuration — EVM x402 payments, network details, and setup.
+---
+
+# Monad Chain Integration
+
+The Monad coordinator runs on port 4010 and handles EVM-native x402 payments using `ExactEvmScheme`.
+
+## Network details
+
+| Property | Value |
+|----------|-------|
+| Chain identifier | `eip155:10143` |
+| Port | `4010` |
+| Database | `./data/monad.db` |
+| USDC contract | `0x534b2f3A21130d7a60830c2Df862319e593943A3` |
+| Facilitator | `https://x402-facilitator.molandak.org` |
+
+## Environment variables
+
+```bash
+COORDINATOR_URL_MONAD=http://localhost:4010
+MONAD_PAY_TO=0xYOUR_MONAD_ADDRESS
+MONAD_FACILITATOR=https://x402-facilitator.molandak.org
+MONAD_USDC=0x534b2f3A21130d7a60830c2Df862319e593943A3
+```
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MONAD_PAY_TO` | `0x0000...` | Address that receives USDC payments |
+| `MONAD_FACILITATOR` | `https://x402-facilitator.molandak.org` | x402 facilitator URL for payment verification |
+| `MONAD_USDC` | `0x534b2f3A21130d7a60830c2Df862319e593943A3` | USDC token contract on Monad testnet |
+| `TESTNET_MODE` | (not set) | Set to `true` to disable x402 payment gating |
+
+## Starting the coordinator
+
+### Testnet mode (no payments)
+
+```bash
+TESTNET_MODE=true pnpm --filter coordinator-monad start
+```
+
+### Production mode (x402 enabled)
+
+```bash
+MONAD_PAY_TO=0xYourAddress pnpm --filter coordinator-monad start
+```
+
+Output:
+
+```
+[Coordinator] Listening on port 4010 (eip155:10143)
+[Coordinator] HTTP: http://localhost:4010
+[Coordinator] WS:   ws://localhost:4010
+[Monad Coordinator] x402 payment gating: ENABLED
+```
+
+## x402 setup
+
+The Monad coordinator uses these x402 packages:
+
+```typescript
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { ExactEvmScheme } from "@x402/evm/exact/server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
+```
+
+The payment middleware is configured with:
+
+```typescript
+const config = configFromEnv({
+  port: 4010,
+  dbPath: "./data/monad.db",
+  network: "eip155:10143",
+  payTo: process.env.MONAD_PAY_TO,
+  facilitatorUrl: "https://x402-facilitator.molandak.org",
+  asset: "0x534b2f3A21130d7a60830c2Df862319e593943A3",
+});
+
+const resourceServer = new x402ResourceServer(
+  new HTTPFacilitatorClient({ url: config.facilitatorUrl })
+).register("eip155:10143", new ExactEvmScheme());
+
+const middleware = paymentMiddleware(buildPaymentConfig(config), resourceServer);
+```
+
+## Payment endpoints
+
+When x402 is enabled, these endpoints require payment:
+
+| Endpoint | Price |
+|----------|-------|
+| `POST /v1/jobs/commit/fast` | `$0.010` (FAST LLM_INFER) |
+| `POST /v1/jobs/commit/cheap` | `$0.001` (CHEAP TASK) |
+
+Free endpoints (no payment required):
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v1/health` | Health check |
+| `GET /v1/quote` | Price quote |
+| `GET /v1/jobs/\{id\}` | Job status polling |
+| `POST /v1/trust/create` | Create pairing code |
+| `POST /v1/trust/claim` | Claim pairing code |
+| `GET /v1/trust/list` | List trusted providers |
+
+## Connecting workers
+
+Workers connect to the Monad coordinator with:
+
+```bash
+COORDINATOR_URL=http://localhost:4010 pnpm --filter worker-desktop start
+```
+
+The WebSocket connection is upgraded on the same port — `ws://localhost:4010`.
+
+## SDK configuration
+
+```typescript
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+});
+
+// Route to Monad
+const result = await router.runLLM({
+  prompt: "...",
+  user_id: "user-001",
+  chainPreference: "monad",
+});
+```

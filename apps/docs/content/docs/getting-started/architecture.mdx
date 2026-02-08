@@ -1,0 +1,175 @@
+---
+title: Architecture
+description: Deep-dive into the OpenClaw Compute Network architecture — coordinators, workers, seekers, and the data flow between them.
+---
+
+# Architecture
+
+OpenClaw is a three-role system: **seekers** request compute, **coordinators** match and route jobs, and **workers** execute them. Everything communicates over standard HTTP and WebSocket.
+
+## System overview
+
+```
+┌──────────┐                          ┌──────────────────┐                         ┌───────────┐
+│          │   1. GET /v1/quote       │                  │                         │           │
+│  Seeker  │ ───────────────────────▶ │   Coordinator    │  ◀── WebSocket ───────▶ │  Worker   │
+│  (SDK)   │   2. POST /v1/jobs/     │   (Express +     │      register           │ (Desktop) │
+│          │      commit/{tier}      │    WebSocket)    │      heartbeat          │           │
+│          │   3. GET /v1/jobs/{id}  │                  │      job_assign ──────▶ │           │
+│          │ ◀────── poll ────────── │                  │ ◀──── job_complete ──── │           │
+└──────────┘                          └────────┬─────────┘                         └───────────┘
+                                               │
+                                        ┌──────┴──────┐
+                                        │   SQLite    │
+                                        │  ─ jobs     │
+                                        │  ─ trust    │
+                                        │  ─ receipts │
+                                        └─────────────┘
+```
+
+## Roles
+
+### Seeker
+
+The **seeker** is any client that submits jobs. This can be:
+
+- A backend service using the `ComputeRouter` SDK
+- A mobile app making REST calls
+- A CLI tool like the `cloudbot-demo`
+
+Seekers interact exclusively over HTTP. They never open WebSocket connections.
+
+### Coordinator
+
+The **coordinator** is the central routing node. It runs an Express HTTP server and a WebSocket server on the same port (using Node.js `server.on('upgrade')`).
+
+Responsibilities:
+- Accepts job submissions via REST
+- Gates paid endpoints with x402 middleware (when enabled)
+- Maintains a live WebSocket connection pool of workers (the `WorkerHub`)
+- Matches jobs to workers using atomic `claimWorker()` — a synchronous select-and-mark-busy that prevents time-of-check/time-of-use races
+- Stores jobs, trust pairings, and receipts in SQLite
+- Enforces privacy routing — PRIVATE jobs go only to trust-paired workers
+
+Two coordinator instances run in parallel:
+- **Monad** (port 4010) — EVM chain, `eip155:10143`, uses `ExactEvmScheme`
+- **Solana** (port 4020) — `solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1`, uses `ExactSvmScheme`
+
+Each has its own SQLite database (`monad.db` / `solana.db`).
+
+### Worker
+
+**Workers** connect to a coordinator via WebSocket and execute assigned jobs. Two types exist:
+
+| Type | Capabilities | Use case |
+|------|-------------|----------|
+| **Desktop** | `LLM_INFER`, `TASK` | Full compute — runs Ollama for LLM inference + built-in task execution |
+| **Seeker** | `TASK` only | Lightweight — text summarization, classification, JSON extraction |
+
+Workers generate an ed25519 keypair on first run, register with the coordinator, send heartbeats every 10 seconds, and sign cryptographic receipts for every completed job.
+
+## Data flow: job lifecycle
+
+### 1. Quote
+
+```
+Seeker → GET /v1/quote?job_type=LLM_INFER&policy=AUTO
+       ← { price: "$0.010", endpoint: "/v1/jobs/commit/fast", policy_resolved: "FAST" }
+```
+
+The quote endpoint resolves `AUTO` policy (LLM_INFER defaults to `FAST`, TASK defaults to `CHEAP`) and returns the price and commit endpoint.
+
+### 2. Commit with payment
+
+```
+Seeker → POST /v1/jobs/commit/fast  (with X-PAYMENT header if x402 enabled)
+       ← { job_id: "uuid" }
+```
+
+If x402 is enabled, the first request returns `402 Payment Required` with payment details. The SDK handles this transparently — signs a stablecoin payment and retries.
+
+### 3. Worker assignment
+
+The coordinator finds an available worker using `claimWorker()`:
+- For `PUBLIC` jobs: any online worker with matching capabilities
+- For `PRIVATE` jobs: only workers that the user has trust-paired with
+
+If no worker is available, the coordinator retries every 2 seconds for up to 30 seconds. Private jobs with no trusted worker fail immediately with `422`.
+
+```
+Coordinator → WebSocket → Worker: job_assign { job_id, job_type, payload, policy, privacy_class }
+```
+
+### 4. Execution and receipt
+
+The worker executes the job (Ollama for LLM, built-in logic for TASK), then:
+
+1. Hashes the output with SHA-256
+2. Builds a receipt with job_id, provider_pubkey, output_hash, timestamp
+3. Signs the receipt with ed25519
+4. Sends `job_complete` with output + bundled receipt over WebSocket
+
+The coordinator stores the job result and receipt atomically.
+
+### 5. Poll for result
+
+```
+Seeker → GET /v1/jobs/{id}
+       ← { id, status: "completed", result: {...}, receipt: {...} }
+```
+
+The SDK polls every 500ms. Task jobs time out after 30 seconds, LLM jobs after 60 seconds.
+
+## Database schema
+
+The coordinator uses SQLite with WAL mode and foreign keys:
+
+```sql
+-- Jobs table
+CREATE TABLE jobs (
+  id            TEXT PRIMARY KEY,
+  type          TEXT NOT NULL,
+  policy        TEXT NOT NULL,
+  privacy_class TEXT NOT NULL DEFAULT 'PUBLIC',
+  user_id       TEXT NOT NULL,
+  status        TEXT NOT NULL DEFAULT 'pending',
+  payload       TEXT NOT NULL,
+  result        TEXT,
+  worker_pubkey TEXT,
+  created_at    TEXT NOT NULL,
+  completed_at  TEXT
+);
+
+-- Trust pairings
+CREATE TABLE trust_pairings (
+  id              TEXT PRIMARY KEY,
+  user_id         TEXT NOT NULL,
+  provider_pubkey TEXT,
+  pairing_code    TEXT NOT NULL UNIQUE,
+  claimed         INTEGER NOT NULL DEFAULT 0,
+  expires_at      TEXT NOT NULL,
+  created_at      TEXT NOT NULL
+);
+
+-- Receipts
+CREATE TABLE receipts (
+  id              TEXT PRIMARY KEY,
+  job_id          TEXT NOT NULL REFERENCES jobs(id),
+  provider_pubkey TEXT NOT NULL,
+  receipt_json    TEXT NOT NULL,
+  signature       TEXT NOT NULL,
+  verified        INTEGER NOT NULL DEFAULT 0,
+  created_at      TEXT NOT NULL
+);
+```
+
+## Single-port design
+
+Both HTTP and WebSocket run on the same port per coordinator. The Express HTTP server is created with `http.createServer(app)`, and the `WorkerHub` upgrades WebSocket connections on that same server:
+
+```typescript
+const httpServer = http.createServer(app);
+const hub = new WorkerHub(httpServer, db);
+```
+
+This simplifies deployment — one port, one process, one URL for both REST and WebSocket.

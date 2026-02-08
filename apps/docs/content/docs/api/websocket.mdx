@@ -1,0 +1,274 @@
+---
+title: WebSocket Protocol
+description: Complete WebSocket message reference — all message types between workers and the coordinator.
+---
+
+# WebSocket Protocol
+
+Workers communicate with the coordinator over WebSocket. The WebSocket connection runs on the same port as the HTTP server (4010 for Monad, 4020 for Solana).
+
+## Connection
+
+Workers connect to the coordinator's WebSocket endpoint by upgrading the HTTP connection:
+
+```
+ws://localhost:4010   (Monad)
+ws://localhost:4020   (Solana)
+```
+
+The coordinator uses Node.js `server.on('upgrade')` to handle WebSocket upgrades on the same HTTP server.
+
+## Message format
+
+All messages are JSON-encoded strings. Each message has a `type` field that identifies the message kind.
+
+---
+
+## Worker to Coordinator
+
+### register
+
+Sent immediately after connection. Declares the worker's identity, type, and capabilities.
+
+```json
+{
+  "type": "register",
+  "provider_pubkey": "a1b2c3d4e5f6...",
+  "provider_type": "DESKTOP",
+  "capabilities": ["LLM_INFER", "TASK"],
+  "pricing_hint": "$0.010"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | `"register"` | Yes | Message type |
+| `provider_pubkey` | `string` | Yes | Worker's ed25519 public key (hex) |
+| `provider_type` | `"DESKTOP"` or `"SEEKER"` | Yes | Worker type |
+| `capabilities` | `JobType[]` | Yes | Array of supported job types |
+| `pricing_hint` | `string` | No | Optional pricing hint for the coordinator |
+
+### heartbeat
+
+Sent every 10 seconds to keep the connection alive and report metrics.
+
+```json
+{
+  "type": "heartbeat",
+  "provider_pubkey": "a1b2c3d4e5f6...",
+  "metrics": {
+    "cpu_pct": 45.2,
+    "mem_pct": 62.1,
+    "active_jobs": 1
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | `"heartbeat"` | Yes | Message type |
+| `provider_pubkey` | `string` | Yes | Worker's public key |
+| `metrics` | `object` | No | Optional system metrics |
+| `metrics.cpu_pct` | `number` | No | CPU usage percentage |
+| `metrics.mem_pct` | `number` | No | Memory usage percentage |
+| `metrics.active_jobs` | `number` | No | Currently running jobs |
+
+### job_complete
+
+Sent when a worker finishes executing a job. Includes the output and a bundled receipt for atomic storage on the coordinator.
+
+```json
+{
+  "type": "job_complete",
+  "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "output": {
+    "sentiment": "positive",
+    "confidence": 0.5
+  },
+  "output_hash": "sha256:abcdef1234567890...",
+  "receipt": {
+    "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "provider_pubkey": "a1b2c3d4e5f6...",
+    "output_hash": "sha256:abcdef1234567890...",
+    "completed_at": "2026-02-09T12:00:05.000Z",
+    "payment_ref": null
+  },
+  "receipt_signature": "base64-encoded-ed25519-signature"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | `"job_complete"` | Yes | Message type |
+| `job_id` | `string` | Yes | The assigned job ID |
+| `output` | `unknown` | Yes | Job result (shape depends on job type) |
+| `output_hash` | `string` | Yes | SHA-256 hash of JSON-serialized output |
+| `receipt` | `object` | No | Bundled receipt for atomic storage |
+| `receipt_signature` | `string` | No | Base64 ed25519 signature over canonical JSON of receipt |
+
+### job_reject
+
+Sent when a worker cannot execute an assigned job.
+
+```json
+{
+  "type": "job_reject",
+  "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "reason": "Ollama not available"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | `"job_reject"` | Yes | Message type |
+| `job_id` | `string` | Yes | The rejected job ID |
+| `reason` | `string` | Yes | Human-readable rejection reason |
+
+### receipt_submit
+
+Alternative to bundling the receipt in `job_complete`. Submits a receipt separately.
+
+```json
+{
+  "type": "receipt_submit",
+  "receipt": {
+    "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "provider_pubkey": "a1b2c3d4e5f6...",
+    "output_hash": "sha256:abcdef1234567890...",
+    "completed_at": "2026-02-09T12:00:05.000Z",
+    "payment_ref": null
+  },
+  "signature": "base64-encoded-ed25519-signature"
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | `"receipt_submit"` | Yes | Message type |
+| `receipt` | `object` | Yes | The receipt object |
+| `receipt.job_id` | `string` | Yes | Job ID this receipt covers |
+| `receipt.provider_pubkey` | `string` | Yes | Worker's public key |
+| `receipt.output_hash` | `string` | Yes | SHA-256 hash of the output |
+| `receipt.completed_at` | `string` | Yes | ISO 8601 completion timestamp |
+| `receipt.payment_ref` | `string \| null` | Yes | On-chain payment reference (null if none) |
+| `signature` | `string` | Yes | Base64 ed25519 signature |
+
+---
+
+## Coordinator to Worker
+
+### register_ack
+
+Sent in response to a `register` message.
+
+```json
+{
+  "type": "register_ack",
+  "status": "ok",
+  "worker_id": "worker_abc123"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | `"register_ack"` | Message type |
+| `status` | `"ok"` or `"error"` | Registration result |
+| `worker_id` | `string` | Assigned worker ID (on success) |
+| `error` | `string` | Error message (on failure) |
+
+### heartbeat_ack
+
+Sent in response to a `heartbeat` message.
+
+```json
+{
+  "type": "heartbeat_ack",
+  "status": "ok"
+}
+```
+
+### job_assign
+
+Sent when the coordinator assigns a job to this worker.
+
+```json
+{
+  "type": "job_assign",
+  "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "job_type": "TASK",
+  "payload": {
+    "task_type": "classify",
+    "input": "This product is amazing."
+  },
+  "policy": "CHEAP",
+  "privacy_class": "PUBLIC",
+  "user_id": "user_abc123"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | `"job_assign"` | Message type |
+| `job_id` | `string` | Unique job identifier |
+| `job_type` | `"LLM_INFER"` or `"TASK"` | Job type |
+| `payload` | `object` | Job payload (varies by job type) |
+| `payload.prompt` | `string` | LLM prompt (LLM_INFER only) |
+| `payload.max_tokens` | `number` | Max tokens (LLM_INFER only) |
+| `payload.task_type` | `string` | Task type (TASK only) |
+| `payload.input` | `string` | Task input (TASK only) |
+| `policy` | `string` | Pricing tier used |
+| `privacy_class` | `"PUBLIC"` or `"PRIVATE"` | Privacy classification |
+| `user_id` | `string` | ID of the user who submitted the job |
+
+### error
+
+Sent when the coordinator encounters an error related to this worker.
+
+```json
+{
+  "type": "error",
+  "code": "invalid_message",
+  "message": "Failed to parse WebSocket message"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | `"error"` | Message type |
+| `code` | `string` | Machine-readable error code |
+| `message` | `string` | Human-readable error description |
+
+---
+
+## Union types
+
+For TypeScript consumers, the protocol package exports union types:
+
+```typescript
+type WorkerToCoordinator =
+  | RegisterMsg
+  | HeartbeatMsg
+  | JobCompleteMsg
+  | JobRejectMsg
+  | ReceiptSubmitMsg;
+
+type CoordinatorToWorker =
+  | RegisterAckMsg
+  | HeartbeatAckMsg
+  | JobAssignMsg
+  | ErrorMsg;
+
+type WSMessage = WorkerToCoordinator | CoordinatorToWorker;
+```
+
+Import from `@openclaw/protocol`:
+
+```typescript
+import type {
+  RegisterMsg,
+  HeartbeatMsg,
+  JobCompleteMsg,
+  JobAssignMsg,
+  WSMessage,
+} from "@openclaw/protocol";
+```

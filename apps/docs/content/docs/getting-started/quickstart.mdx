@@ -1,0 +1,159 @@
+---
+title: Quickstart
+description: Get the OpenClaw Compute Network running locally in 5 minutes.
+---
+
+# Quickstart
+
+Get a coordinator, worker, and demo client running locally. This guide uses testnet mode (no real payments).
+
+## Prerequisites
+
+- **Node.js** 20+
+- **pnpm** 9+
+- **Ollama** (optional, for LLM inference — install from [ollama.com](https://ollama.com))
+
+## 1. Clone and install
+
+```bash
+git clone https://github.com/openclaw/compute-network.git
+cd compute-network
+pnpm install
+```
+
+## 2. Set up environment
+
+Copy the example env file:
+
+```bash
+cp .env.example .env
+```
+
+Key defaults for local development:
+
+```bash
+# Coordinator (Monad testnet)
+COORDINATOR_URL_MONAD=http://localhost:4010
+
+# Worker
+COORDINATOR_URL=http://localhost:4010
+OLLAMA_BASE_URL=http://localhost:11434
+
+# Demo
+DEMO_CHAIN=monad
+```
+
+## 3. Build the monorepo
+
+```bash
+pnpm build
+```
+
+This compiles all packages and apps with TypeScript project references.
+
+## 4. Start the coordinator
+
+Run the Monad testnet coordinator with payment gating disabled:
+
+```bash
+TESTNET_MODE=true pnpm --filter coordinator-monad start
+```
+
+You should see:
+
+```
+[Coordinator] Listening on port 4010 (eip155:10143)
+[Monad Coordinator] x402 payment gating: DISABLED (testnet mode)
+```
+
+## 5. Start a worker
+
+In a second terminal, start the desktop worker:
+
+```bash
+pnpm --filter worker-desktop start
+```
+
+The worker generates an ed25519 keypair on first run (stored at `./data/worker-key.json`), connects via WebSocket, and registers with the coordinator:
+
+```
+[Desktop Worker] Public key: a1b2c3d4e5f6...
+[Desktop Worker] Connecting to ws://localhost:4010
+[Desktop Worker] Registered as worker_abc123
+```
+
+## 6. Submit a job
+
+### Option A: Using curl
+
+Get a quote, then submit:
+
+```bash
+# Get price quote
+curl http://localhost:4010/v1/quote?job_type=TASK&policy=AUTO
+
+# Submit a TASK job
+curl -X POST http://localhost:4010/v1/jobs/commit/cheap \
+  -H "Content-Type: application/json" \
+  -d '{
+    "job_type": "TASK",
+    "user_id": "quickstart-user",
+    "privacy_class": "PUBLIC",
+    "payload": {
+      "job_type": "TASK",
+      "task_type": "classify",
+      "input": "This product is amazing and works perfectly."
+    }
+  }'
+
+# Poll for result (replace JOB_ID)
+curl http://localhost:4010/v1/jobs/JOB_ID
+```
+
+### Option B: Using the SDK
+
+```typescript
+import { ComputeRouter } from "@openclaw/compute-router";
+import { Policy } from "@openclaw/protocol";
+
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+});
+
+const result = await router.runTask({
+  task_type: "classify",
+  input: "This product is amazing and works perfectly.",
+  user_id: "quickstart-user",
+  chainPreference: "monad",
+});
+
+console.log(result.output);   // { sentiment: "positive", confidence: 0.5 }
+console.log(result.route);    // "decentralized:monad"
+console.log(result.price);    // "$0.001"
+```
+
+## 7. Verify the receipt
+
+The poll response includes a cryptographic receipt signed by the worker:
+
+```json
+{
+  "receipt": {
+    "job_id": "abc-123",
+    "provider_pubkey": "a1b2c3d4...",
+    "output_hash": "sha256:deadbeef...",
+    "completed_at": "2026-02-09T12:00:05.000Z",
+    "payment_ref": null
+  }
+}
+```
+
+## Next steps
+
+- [Architecture deep-dive](/docs/getting-started/architecture) — understand how all the pieces fit together
+- [Run a Seeker](/docs/guides/run-seeker) — use the SDK to submit jobs programmatically
+- [Trust Pairing](/docs/guides/trust-pairing) — set up private job routing
+- [Monad chain config](/docs/chains/monad) — configure x402 payments on Monad

@@ -1,0 +1,5 @@
+{
+  "title": "Core Concepts",
+  "pages": ["job-lifecycle", "worker-types", "privacy", "pricing", "x402-payments"],
+  "defaultOpen": true
+}

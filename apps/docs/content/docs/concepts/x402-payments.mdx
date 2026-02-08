@@ -1,0 +1,157 @@
+---
+title: x402 Payments
+description: How OpenClaw uses Coinbase's x402 protocol for HTTP-native stablecoin micropayments on every job.
+---
+
+# x402 Payments
+
+OpenClaw uses [x402](https://www.x402.org/) — Coinbase's open HTTP-native payment protocol — to settle stablecoin micropayments on every compute job. No custom token, no staking, no bridging. Workers get paid in USDC the moment a job completes.
+
+## How x402 works
+
+x402 turns HTTP 402 ("Payment Required") from a vestigial status code into a real payment flow:
+
+1. Client sends a request to a paid endpoint
+2. Server returns `402 Payment Required` with payment details in the response
+3. Client signs a stablecoin payment off-chain
+4. Client retries the request with the signed payment in the `X-PAYMENT` header
+5. Server verifies the payment through a facilitator and processes the request
+
+```
+Client                          Server                      Facilitator
+  │                               │                              │
+  │  POST /v1/jobs/commit/fast   │                              │
+  │ ────────────────────────────▶│                              │
+  │                               │                              │
+  │  402 { accepts: [...] }      │                              │
+  │◀──────────────────────────── │                              │
+  │                               │                              │
+  │  sign payment off-chain       │                              │
+  │                               │                              │
+  │  POST + X-PAYMENT header     │                              │
+  │ ────────────────────────────▶│  verify payment              │
+  │                               │ ───────────────────────────▶│
+  │                               │◀─────────── ok ──────────── │
+  │  201 { job_id }              │                              │
+  │◀──────────────────────────── │                              │
+```
+
+## Chain-specific schemes
+
+OpenClaw runs two coordinators, each with its own x402 payment scheme:
+
+### Monad (EVM)
+
+```typescript
+import { ExactEvmScheme } from "@x402/evm/exact/server";
+
+const resourceServer = new x402ResourceServer(
+  new HTTPFacilitatorClient({ url: "https://x402-facilitator.molandak.org" })
+).register("eip155:10143", new ExactEvmScheme());
+```
+
+- **Network**: `eip155:10143` (Monad testnet)
+- **Asset**: USDC on Monad (`0x534b2f3A21130d7a60830c2Df862319e593943A3`)
+- **Facilitator**: `https://x402-facilitator.molandak.org`
+- **Scheme**: `ExactEvmScheme` — exact-amount EVM payment
+
+### Solana (SVM)
+
+```typescript
+import { ExactSvmScheme } from "@x402/svm/exact/server";
+
+const resourceServer = new x402ResourceServer(
+  new HTTPFacilitatorClient({ url: "https://www.x402.org/facilitator" })
+).register("solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1", new ExactSvmScheme());
+```
+
+- **Network**: `solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1` (Solana devnet)
+- **Facilitator**: `https://www.x402.org/facilitator`
+- **Scheme**: `ExactSvmScheme` — exact-amount SPL payment
+
+## Payment middleware
+
+The coordinator uses `@x402/express` middleware to gate the commit endpoints:
+
+```typescript
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+
+const middleware = paymentMiddleware(buildPaymentConfig(config), resourceServer);
+app.use(middleware);
+```
+
+The `buildPaymentConfig()` function creates x402 resource definitions for each endpoint:
+
+```typescript
+{
+  "POST /v1/jobs/commit/fast": {
+    accepts: [{ scheme: "exact", price: "$0.010", network, payTo, asset }],
+    description: "Fast compute job",
+    mimeType: "application/json",
+  },
+  "POST /v1/jobs/commit/cheap": {
+    accepts: [{ scheme: "exact", price: "$0.001", network, payTo, asset }],
+    description: "Cheap compute job",
+    mimeType: "application/json",
+  },
+}
+```
+
+## Testnet mode
+
+Set `TESTNET_MODE=true` to disable x402 payment gating entirely. The commit endpoints accept requests directly without any payment. Useful for local development and testing.
+
+```bash
+TESTNET_MODE=true pnpm --filter coordinator-monad start
+```
+
+## SDK payment handling
+
+The `ComputeRouter` SDK handles x402 payments transparently when configured with an x402 client:
+
+```typescript
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+  x402Clients: {
+    monad: monadX402Client,   // handles 402 → sign → retry
+    solana: solanaX402Client,
+  },
+});
+```
+
+The `X402ClientLike` interface:
+
+```typescript
+interface X402ClientLike {
+  getPaymentRequiredResponse(
+    getHeader: (name: string) => string | null | undefined,
+    body?: unknown,
+  ): unknown;
+  createPaymentPayload(paymentRequired: unknown): Promise<unknown>;
+  encodePaymentSignatureHeader(paymentPayload: unknown): Record<string, string>;
+}
+```
+
+When the SDK receives a `402` response, it:
+
+1. Extracts payment requirements from the response
+2. Creates a signed payment payload
+3. Encodes it as an `X-PAYMENT` header
+4. Retries the request
+
+If no `x402Client` is configured and the coordinator returns `402`, the SDK throws an error suggesting you either enable testnet mode or provide an x402 client.
+
+## x402 packages
+
+OpenClaw uses x402 v2.x packages:
+
+| Package | Purpose |
+|---------|---------|
+| `@x402/express` | `paymentMiddleware` and `x402ResourceServer` |
+| `@x402/core/server` | `HTTPFacilitatorClient` |
+| `@x402/evm/exact/server` | `ExactEvmScheme` for Monad |
+| `@x402/svm/exact/server` | `ExactSvmScheme` for Solana |
+| `@x402/fetch` | `wrapFetchWithPayment` (client-side) |

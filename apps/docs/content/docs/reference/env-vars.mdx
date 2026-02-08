@@ -1,0 +1,101 @@
+---
+title: Environment Variables
+description: Complete reference of all environment variables used across the OpenClaw Compute Network.
+---
+
+# Environment Variables Reference
+
+All environment variables used across the OpenClaw monorepo, organized by component.
+
+## Coordinator (Monad)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `COORDINATOR_URL_MONAD` | `http://localhost:4010` | Monad coordinator URL (used by SDK/clients) |
+| `MONAD_PAY_TO` | `0x0000...` | EVM address that receives USDC payments |
+| `MONAD_FACILITATOR` | `https://x402-facilitator.molandak.org` | x402 facilitator for payment verification |
+| `MONAD_USDC` | `0x534b2f3A21130d7a60830c2Df862319e593943A3` | USDC token contract on Monad testnet |
+| `TESTNET_MODE` | (not set) | Set to `true` to disable x402 payment gating |
+
+## Coordinator (Solana)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `COORDINATOR_URL_SOLANA` | `http://localhost:4020` | Solana coordinator URL (used by SDK/clients) |
+| `SOLANA_PAY_TO` | `11111111111111111111111111111111` | Solana address that receives payments |
+| `SOLANA_FACILITATOR` | `https://www.x402.org/facilitator` | x402 facilitator for payment verification |
+| `TESTNET_MODE` | (not set) | Set to `true` to disable x402 payment gating |
+
+## Coordinator (Core / Shared)
+
+These are used internally by `configFromEnv()` and can be overridden by chain-specific coordinators:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `4010` | HTTP/WS port |
+| `DB_PATH` | `./data/coordinator.db` | SQLite database file path |
+| `NETWORK` | `eip155:10143` | Chain identifier string |
+| `PAY_TO` | (empty) | Payment recipient address |
+| `FACILITATOR_URL` | (empty) | x402 facilitator URL |
+| `ASSET` | (not set) | Token contract address (EVM only) |
+
+## Worker
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `COORDINATOR_URL` | `http://localhost:4010` | Coordinator URL to connect to (HTTP and WS) |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API URL for LLM inference |
+| `WORKER_KEY_PATH` | `./data/worker-key.json` | Path to the worker's ed25519 keypair file |
+| `TRUST_PAIRING_CODE` | (not set) | 6-character hex code to claim on startup |
+
+## Hosted BYOK
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OPENAI_API_KEY` | (not set) | OpenAI API key for hosted fallback |
+| `ANTHROPIC_API_KEY` | (not set) | Anthropic API key for hosted fallback |
+| `PREFERRED_HOSTED_PROVIDER` | `openai` | Which hosted provider to try first (`openai` or `anthropic`) |
+
+## Demo CLI
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DEMO_CHAIN` | `monad` | Which chain to use for the demo CLI (`monad` or `solana`) |
+
+## Example .env file
+
+```bash
+# ── Coordinator (Monad) ──
+COORDINATOR_URL_MONAD=http://localhost:4010
+MONAD_PAY_TO=0xYOUR_MONAD_ADDRESS
+MONAD_FACILITATOR=https://x402-facilitator.molandak.org
+MONAD_USDC=0x534b2f3A21130d7a60830c2Df862319e593943A3
+
+# ── Coordinator (Solana) ──
+COORDINATOR_URL_SOLANA=http://localhost:4020
+SOLANA_PAY_TO=YOUR_SOLANA_ADDRESS
+SOLANA_FACILITATOR=https://www.x402.org/facilitator
+
+# ── Worker ──
+COORDINATOR_URL=http://localhost:4010
+OLLAMA_BASE_URL=http://localhost:11434
+TRUST_PAIRING_CODE=
+
+# ── Hosted BYOK ──
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+PREFERRED_HOSTED_PROVIDER=openai
+
+# ── Demo CLI ──
+DEMO_CHAIN=monad
+```
+
+## Notes
+
+- **TESTNET_MODE**: When set to `true` on either coordinator, x402 payment middleware is not mounted. All commit endpoints accept requests without payment. This is the recommended setting for local development.
+
+- **WORKER_KEY_PATH**: Use different paths to run multiple workers on the same machine. Each worker needs its own keypair.
+
+- **COORDINATOR_URL**: The worker derives the WebSocket URL from this by replacing `http://` with `ws://`. Both HTTP and WS run on the same port.
+
+- **MONAD_USDC / ASSET**: Only needed for EVM chains. The Solana coordinator does not require an explicit asset address — the `ExactSvmScheme` handles SPL token resolution.

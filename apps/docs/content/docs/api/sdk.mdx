@@ -1,0 +1,195 @@
+---
+title: SDK Reference
+description: ComputeRouter SDK reference — route AI jobs to decentralized workers or hosted BYOK providers.
+---
+
+# SDK Reference
+
+The `@openclaw/compute-router` package is the main SDK for submitting jobs to the OpenClaw network. It routes jobs to decentralized workers first, then falls back to hosted BYOK providers (OpenAI, Anthropic) if the decentralized network is unavailable.
+
+## Installation
+
+```bash
+pnpm add @openclaw/compute-router @openclaw/protocol
+```
+
+## ComputeRouter
+
+### Constructor
+
+```typescript
+import { ComputeRouter } from "@openclaw/compute-router";
+
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+  preferredHosted: "openai",  // optional, default: "openai"
+  x402Clients: {              // optional, for production with payments
+    monad: monadX402Client,
+    solana: solanaX402Client,
+  },
+});
+```
+
+### ComputeRouterConfig
+
+```typescript
+interface ComputeRouterConfig {
+  coordinatorUrls: {
+    monad: string;
+    solana: string;
+  };
+  preferredHosted?: "openai" | "anthropic";
+  x402Clients?: {
+    monad?: X402ClientLike;
+    solana?: X402ClientLike;
+  };
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `coordinatorUrls` | `object` | Yes | URLs for Monad and Solana coordinators |
+| `preferredHosted` | `"openai"` or `"anthropic"` | No | Preferred hosted fallback. Default: `"openai"` |
+| `x402Clients` | `object` | No | x402 HTTP clients for automatic payment handling |
+
+## Methods
+
+### runLLM
+
+Run an LLM inference job.
+
+```typescript
+const result = await router.runLLM({
+  prompt: "Explain quantum computing in one paragraph.",
+  max_tokens: 256,
+  policy: Policy.AUTO,          // optional, default: AUTO
+  privacy: PrivacyClass.PUBLIC, // optional, default: PUBLIC
+  user_id: "user_abc123",
+  chainPreference: "monad",    // optional, default: "monad"
+});
+```
+
+**Parameters**
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `prompt` | `string` | Yes | The prompt to send to the LLM |
+| `max_tokens` | `number` | No | Maximum tokens in the response |
+| `policy` | `Policy` | No | Pricing tier. Default: `AUTO` (resolves to `FAST`) |
+| `privacy` | `PrivacyClass` | No | Privacy class. Default: `PUBLIC` |
+| `user_id` | `string` | Yes | User identifier |
+| `chainPreference` | `"monad"` or `"solana"` | No | Which coordinator to use. Default: `"monad"` |
+
+**Returns** `Promise<ComputeResult>`
+
+### runTask
+
+Run a task job (summarize, classify, or extract_json).
+
+```typescript
+const result = await router.runTask({
+  task_type: "classify",
+  input: "This product is amazing and works perfectly.",
+  policy: Policy.AUTO,          // optional, default: AUTO
+  privacy: PrivacyClass.PUBLIC, // optional, default: PUBLIC
+  user_id: "user_abc123",
+  chainPreference: "monad",    // optional, default: "monad"
+});
+```
+
+**Parameters**
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `task_type` | `"summarize"` or `"classify"` or `"extract_json"` | Yes | Task type |
+| `input` | `string` | Yes | Input text to process |
+| `policy` | `Policy` | No | Pricing tier. Default: `AUTO` (resolves to `CHEAP`) |
+| `privacy` | `PrivacyClass` | No | Privacy class. Default: `PUBLIC` |
+| `user_id` | `string` | Yes | User identifier |
+| `chainPreference` | `"monad"` or `"solana"` | No | Which coordinator to use. Default: `"monad"` |
+
+**Returns** `Promise<ComputeResult>`
+
+## ComputeResult
+
+Both `runLLM` and `runTask` return a `ComputeResult`:
+
+```typescript
+interface ComputeResult {
+  output: unknown;
+  route: string;
+  price: string | null;
+  latency_ms: number;
+  receipt: unknown | null;
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `output` | `unknown` | The job output (shape depends on job type) |
+| `route` | `string` | Which adapter handled the job |
+| `price` | `string \| null` | Price in USD (e.g., `"$0.010"`) or null for hosted |
+| `latency_ms` | `number` | End-to-end latency in milliseconds |
+| `receipt` | `unknown \| null` | Cryptographic receipt from the worker (decentralized only) |
+
+### Route values
+
+| Route | Description |
+|-------|-------------|
+| `"decentralized:monad"` | Handled by Monad coordinator |
+| `"decentralized:solana"` | Handled by Solana coordinator |
+| `"hosted:openai"` | Fallback to OpenAI BYOK |
+| `"hosted:anthropic"` | Fallback to Anthropic BYOK |
+
+## Routing logic
+
+The SDK tries adapters in this order:
+
+1. **Decentralized** (selected chain) — submits to coordinator, polls for result
+2. **Hosted fallback** — tries preferred hosted provider, then the other
+
+```
+runLLM / runTask
+  │
+  ├─ Try decentralized:{chainPreference}
+  │   ├─ Success → return result
+  │   └─ Fail → log warning, continue
+  │
+  ├─ Try hosted:{preferredHosted}
+  │   ├─ Success → return result
+  │   └─ Fail → log warning, continue
+  │
+  ├─ Try hosted:{other}
+  │   ├─ Success → return result
+  │   └─ Fail → throw Error
+  │
+  └─ "All compute adapters failed"
+```
+
+## Decentralized flow
+
+When routing through the decentralized network, the SDK:
+
+1. **Gets a quote** — `GET /v1/quote?job_type=...&policy=...`
+2. **Submits the job** — `POST /v1/jobs/commit/\{tier\}`
+3. **Handles x402** — if `402` returned and x402Client configured, signs payment and retries
+4. **Polls for result** — `GET /v1/jobs/\{id\}` every 500ms until completed or timed out
+
+Timeouts:
+- `TASK` jobs: 30 seconds
+- `LLM_INFER` jobs: 60 seconds
+
+## Hosted BYOK fallback
+
+For hosted fallback, set the corresponding environment variables:
+
+```bash
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+PREFERRED_HOSTED_PROVIDER=openai
+```
+
+The hosted adapters call the provider APIs directly — no coordinator involvement, no x402 payments. The `route` field in the result indicates which hosted provider was used.

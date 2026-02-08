@@ -1,0 +1,350 @@
+---
+title: TypeScript Types
+description: Complete TypeScript type reference for the OpenClaw protocol package — enums, interfaces, and utility functions.
+---
+
+# TypeScript Types Reference
+
+All shared types are exported from `@openclaw/protocol`. This page documents every enum, interface, and function.
+
+## Installation
+
+```bash
+pnpm add @openclaw/protocol
+```
+
+```typescript
+import {
+  JobType,
+  JobStatus,
+  Policy,
+  PrivacyClass,
+  ProviderType,
+  PRICING_MAP,
+  resolvePolicy,
+  getPrice,
+} from "@openclaw/protocol";
+```
+
+---
+
+## Enums
+
+### JobType
+
+The type of compute job.
+
+```typescript
+enum JobType {
+  LLM_INFER = "LLM_INFER",
+  TASK      = "TASK",
+}
+```
+
+### TaskType
+
+Sub-type for TASK jobs.
+
+```typescript
+type TaskType = "summarize" | "classify" | "extract_json";
+```
+
+### Policy
+
+Pricing policy tier.
+
+```typescript
+enum Policy {
+  FAST  = "FAST",
+  CHEAP = "CHEAP",
+  AUTO  = "AUTO",
+}
+```
+
+`AUTO` resolves to `FAST` for `LLM_INFER` and `CHEAP` for `TASK`.
+
+### PrivacyClass
+
+Privacy classification for job routing.
+
+```typescript
+enum PrivacyClass {
+  PUBLIC  = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
+```
+
+### ProviderType
+
+Worker type classification.
+
+```typescript
+enum ProviderType {
+  DESKTOP = "DESKTOP",
+  SEEKER  = "SEEKER",
+}
+```
+
+### JobStatus
+
+Current status of a job.
+
+```typescript
+enum JobStatus {
+  PENDING   = "pending",
+  ASSIGNED  = "assigned",
+  RUNNING   = "running",
+  COMPLETED = "completed",
+  FAILED    = "failed",
+}
+```
+
+---
+
+## Interfaces
+
+### Job
+
+The full job record as stored in the database.
+
+```typescript
+interface Job {
+  id: string;
+  type: JobType;
+  policy: Policy;
+  privacy_class: PrivacyClass;
+  user_id: string;
+  status: JobStatus;
+  payload: JobPayload;
+  result: unknown | null;
+  worker_pubkey: string | null;
+  created_at: string;
+  completed_at: string | null;
+}
+```
+
+### JobPayload
+
+Discriminated union of payload types.
+
+```typescript
+type JobPayload = LLMPayload | TaskPayload;
+```
+
+### LLMPayload
+
+Payload for LLM inference jobs.
+
+```typescript
+interface LLMPayload {
+  job_type: JobType.LLM_INFER;
+  prompt: string;
+  max_tokens?: number;
+}
+```
+
+### TaskPayload
+
+Payload for task jobs.
+
+```typescript
+interface TaskPayload {
+  job_type: JobType.TASK;
+  task_type: TaskType;
+  input: string;
+}
+```
+
+### Quote
+
+Price quote returned by `GET /v1/quote`.
+
+```typescript
+interface Quote {
+  price: string;
+  endpoint: string;
+  policy_resolved: Policy.FAST | Policy.CHEAP;
+  network: string;
+  expires_at: null;  // reserved for future dynamic pricing
+}
+```
+
+### Receipt
+
+Cryptographic receipt signed by a worker.
+
+```typescript
+interface Receipt {
+  job_id: string;
+  provider_pubkey: string;
+  output_hash: string;
+  completed_at: string;
+  payment_ref: string | null;
+}
+```
+
+### TrustPairing
+
+Trust pairing record.
+
+```typescript
+interface TrustPairing {
+  id: string;
+  user_id: string;
+  provider_pubkey: string;
+  pairing_code: string;
+  claimed: boolean;
+  expires_at: string;
+  created_at: string;
+}
+```
+
+---
+
+## Pricing
+
+### PRICING_MAP
+
+Static pricing map (USD strings for x402 exact pricing).
+
+```typescript
+const PRICING_MAP: Record<string, string> = {
+  FAST_LLM_INFER:  "$0.010",
+  FAST_TASK:       "$0.003",
+  CHEAP_LLM_INFER: "$0.005",
+  CHEAP_TASK:      "$0.001",
+};
+```
+
+### resolvePolicy
+
+Resolves `AUTO` policy based on job type.
+
+```typescript
+function resolvePolicy(
+  policy: Policy,
+  jobType: JobType
+): Policy.FAST | Policy.CHEAP;
+```
+
+- `AUTO` + `LLM_INFER` resolves to `FAST`
+- `AUTO` + `TASK` resolves to `CHEAP`
+- `FAST` and `CHEAP` pass through unchanged
+
+### getPrice
+
+Looks up the price for a policy + job type combination.
+
+```typescript
+function getPrice(
+  policy: Policy.FAST | Policy.CHEAP,
+  jobType: JobType
+): string;
+```
+
+Returns a USD string like `"$0.010"`. Falls back to `"$0.001"` for unknown combinations.
+
+---
+
+## WebSocket Message Types
+
+These are also exported from `@openclaw/protocol`. See the [WebSocket Protocol](/docs/api/websocket) page for full documentation.
+
+### Worker to Coordinator
+
+```typescript
+interface RegisterMsg {
+  type: "register";
+  provider_pubkey: string;
+  provider_type: "DESKTOP" | "SEEKER";
+  capabilities: JobType[];
+  pricing_hint?: string;
+}
+
+interface HeartbeatMsg {
+  type: "heartbeat";
+  provider_pubkey: string;
+  metrics?: {
+    cpu_pct?: number;
+    mem_pct?: number;
+    active_jobs?: number;
+  };
+}
+
+interface JobCompleteMsg {
+  type: "job_complete";
+  job_id: string;
+  output: unknown;
+  output_hash: string;
+  receipt?: { /* Receipt fields */ };
+  receipt_signature?: string;
+}
+
+interface JobRejectMsg {
+  type: "job_reject";
+  job_id: string;
+  reason: string;
+}
+
+interface ReceiptSubmitMsg {
+  type: "receipt_submit";
+  receipt: { /* Receipt fields */ };
+  signature: string;
+}
+```
+
+### Coordinator to Worker
+
+```typescript
+interface RegisterAckMsg {
+  type: "register_ack";
+  status: "ok" | "error";
+  worker_id?: string;
+  error?: string;
+}
+
+interface HeartbeatAckMsg {
+  type: "heartbeat_ack";
+  status: "ok";
+}
+
+interface JobAssignMsg {
+  type: "job_assign";
+  job_id: string;
+  job_type: JobType;
+  payload: {
+    prompt?: string;
+    max_tokens?: number;
+    task_type?: TaskType;
+    input?: string;
+  };
+  policy: Policy;
+  privacy_class: PrivacyClass;
+  user_id: string;
+}
+
+interface ErrorMsg {
+  type: "error";
+  code: string;
+  message: string;
+}
+```
+
+### Union Types
+
+```typescript
+type WorkerToCoordinator =
+  | RegisterMsg
+  | HeartbeatMsg
+  | JobCompleteMsg
+  | JobRejectMsg
+  | ReceiptSubmitMsg;
+
+type CoordinatorToWorker =
+  | RegisterAckMsg
+  | HeartbeatAckMsg
+  | JobAssignMsg
+  | ErrorMsg;
+
+type WSMessage = WorkerToCoordinator | CoordinatorToWorker;
+```

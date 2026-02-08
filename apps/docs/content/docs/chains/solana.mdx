@@ -1,0 +1,146 @@
+---
+title: Solana
+description: Solana devnet coordinator configuration — SVM x402 payments, network details, and setup.
+---
+
+# Solana Chain Integration
+
+The Solana coordinator runs on port 4020 and handles SVM-native x402 payments using `ExactSvmScheme`.
+
+## Network details
+
+| Property | Value |
+|----------|-------|
+| Chain identifier | `solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1` |
+| Port | `4020` |
+| Database | `./data/solana.db` |
+| Facilitator | `https://www.x402.org/facilitator` |
+
+## Environment variables
+
+```bash
+COORDINATOR_URL_SOLANA=http://localhost:4020
+SOLANA_PAY_TO=YOUR_SOLANA_ADDRESS
+SOLANA_FACILITATOR=https://www.x402.org/facilitator
+```
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SOLANA_PAY_TO` | `11111111111111111111111111111111` | Solana address that receives payments |
+| `SOLANA_FACILITATOR` | `https://www.x402.org/facilitator` | x402 facilitator URL for payment verification |
+| `TESTNET_MODE` | (not set) | Set to `true` to disable x402 payment gating |
+
+## Starting the coordinator
+
+### Testnet mode (no payments)
+
+```bash
+TESTNET_MODE=true pnpm --filter coordinator-solana start
+```
+
+### Production mode (x402 enabled)
+
+```bash
+SOLANA_PAY_TO=YourSolanaAddress pnpm --filter coordinator-solana start
+```
+
+Output:
+
+```
+[Coordinator] Listening on port 4020 (solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1)
+[Coordinator] HTTP: http://localhost:4020
+[Coordinator] WS:   ws://localhost:4020
+[Solana Coordinator] x402 payment gating: ENABLED
+```
+
+## x402 setup
+
+The Solana coordinator uses these x402 packages:
+
+```typescript
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { ExactSvmScheme } from "@x402/svm/exact/server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
+```
+
+The payment middleware is configured with:
+
+```typescript
+const config = configFromEnv({
+  port: 4020,
+  dbPath: "./data/solana.db",
+  network: "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+  payTo: process.env.SOLANA_PAY_TO,
+  facilitatorUrl: "https://www.x402.org/facilitator",
+});
+
+const resourceServer = new x402ResourceServer(
+  new HTTPFacilitatorClient({ url: config.facilitatorUrl })
+).register("solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1", new ExactSvmScheme());
+
+const middleware = paymentMiddleware(buildPaymentConfig(config), resourceServer);
+```
+
+Note: unlike Monad, the Solana coordinator does not pass an `asset` field — SPL token resolution is handled by the `ExactSvmScheme`.
+
+## Payment endpoints
+
+When x402 is enabled, these endpoints require payment:
+
+| Endpoint | Price |
+|----------|-------|
+| `POST /v1/jobs/commit/fast` | `$0.010` (FAST LLM_INFER) |
+| `POST /v1/jobs/commit/cheap` | `$0.001` (CHEAP TASK) |
+
+Free endpoints (no payment required):
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /v1/health` | Health check |
+| `GET /v1/quote` | Price quote |
+| `GET /v1/jobs/\{id\}` | Job status polling |
+| `POST /v1/trust/create` | Create pairing code |
+| `POST /v1/trust/claim` | Claim pairing code |
+| `GET /v1/trust/list` | List trusted providers |
+
+## Connecting workers
+
+Workers connect to the Solana coordinator with:
+
+```bash
+COORDINATOR_URL=http://localhost:4020 pnpm --filter worker-desktop start
+```
+
+The WebSocket connection is upgraded on the same port — `ws://localhost:4020`.
+
+## SDK configuration
+
+```typescript
+const router = new ComputeRouter({
+  coordinatorUrls: {
+    monad: "http://localhost:4010",
+    solana: "http://localhost:4020",
+  },
+});
+
+// Route to Solana
+const result = await router.runTask({
+  task_type: "classify",
+  input: "...",
+  user_id: "user-001",
+  chainPreference: "solana",
+});
+```
+
+## Differences from Monad
+
+| Aspect | Monad | Solana |
+|--------|-------|--------|
+| Port | 4010 | 4020 |
+| Chain ID | `eip155:10143` | `solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1` |
+| x402 scheme | `ExactEvmScheme` | `ExactSvmScheme` |
+| Asset config | USDC contract address required | Handled by scheme |
+| Facilitator | `x402-facilitator.molandak.org` | `www.x402.org/facilitator` |
+| Database | `monad.db` | `solana.db` |
+
+Both coordinators expose the identical REST API and WebSocket protocol. Workers and the SDK use the same code — only the coordinator URL changes.
