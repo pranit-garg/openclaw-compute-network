@@ -1,0 +1,35 @@
+{
+  "name": "openclaw-compute-network",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "dev:monad": "tsx apps/coordinator-monad/src/index.ts",
+    "dev:solana": "tsx apps/coordinator-solana/src/index.ts",
+    "worker:desktop": "tsx apps/worker-desktop/src/index.ts",
+    "worker:seeker": "tsx apps/seeker-simulator/src/index.ts",
+    "demo:monad": "DEMO_CHAIN=monad tsx apps/cloudbot-demo/src/index.ts",
+    "demo:solana": "DEMO_CHAIN=solana tsx apps/cloudbot-demo/src/index.ts",
+    "test": "vitest run",
+    "e2e": "tsx scripts/e2e.ts",
+    "clean": "rm -rf packages/*/dist apps/*/dist"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^5.0.0",
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "express": "^4.21.0",
+    "tweetnacl": "^1.0.3",
+    "uuid": "^11.0.0",
+    "ws": "^8.18.0",
+    "zod": "^3.24.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

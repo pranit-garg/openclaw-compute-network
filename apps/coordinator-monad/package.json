@@ -1,0 +1,16 @@
+{
+  "name": "@openclaw/coordinator-monad",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@openclaw/coordinator-core": "workspace:*",
+    "@openclaw/protocol": "workspace:*"
+  },
+  "optionalDependencies": {
+    "@x402/express": "^2.0.0",
+    "@x402/evm": "^2.0.0",
+    "@x402/core": "^2.0.0"
+  }
+}
