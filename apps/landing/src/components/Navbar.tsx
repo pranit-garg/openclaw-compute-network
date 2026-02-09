@@ -12,11 +12,6 @@ const navLinks = [
     href: "https://docs-theta-mocha.vercel.app/docs",
     external: true,
   },
-  {
-    label: "GitHub",
-    href: "https://github.com/dispatch",
-    external: true,
-  },
 ];
 
 export function Navbar() {
