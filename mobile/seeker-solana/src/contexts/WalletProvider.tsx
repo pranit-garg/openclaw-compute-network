@@ -63,7 +63,7 @@ const STORAGE_COORDINATOR_URL = "openclaw_coordinator_url";
 
 // Coordinator URL — set via EXPO_PUBLIC_COORDINATOR_URL or change in Settings
 const DEFAULT_COORDINATOR_URL =
-  process.env.EXPO_PUBLIC_COORDINATOR_URL ?? "wss://edge-garlic-explore-furnished.trycloudflare.com";
+  process.env.EXPO_PUBLIC_COORDINATOR_URL ?? "ws://localhost:4020";
 
 // ── Provider ──────────────────────────────────
 
