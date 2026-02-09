@@ -16,19 +16,29 @@ import {
   Animated,
 } from "react-native";
 import type { ConnectionStatus } from "../services/WebSocketService";
+import type { SigningMode } from "../contexts/WalletProvider";
 import { colors, spacing, borderRadius, fontSize } from "../theme";
 
 interface WorkerToggleProps {
   status: ConnectionStatus;
   onToggle: () => void;
   isToggling: boolean;
+  signingMode?: SigningMode;
+  walletConnected?: boolean;
 }
 
-export function WorkerToggle({ status, onToggle, isToggling }: WorkerToggleProps) {
+export function WorkerToggle({
+  status,
+  onToggle,
+  isToggling,
+  signingMode = "device-key",
+  walletConnected = true,
+}: WorkerToggleProps) {
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const isActive = status === "connected";
   const isTransitioning =
     status === "connecting" || status === "reconnecting" || isToggling;
+  const needsWallet = signingMode === "wallet" && !walletConnected;
 
   // Pulse animation for connecting/reconnecting states
   useEffect(() => {
@@ -54,19 +64,25 @@ export function WorkerToggle({ status, onToggle, isToggling }: WorkerToggleProps
     }
   }, [isTransitioning, pulseAnim]);
 
-  const buttonColor = isActive
+  const buttonColor = needsWallet
+    ? colors.surfaceLight
+    : isActive
     ? colors.accent
     : isTransitioning
     ? colors.warning
     : colors.surfaceLight;
 
-  const borderColor = isActive
+  const bColor = needsWallet
+    ? colors.warning + "60"
+    : isActive
     ? colors.accentLight
     : isTransitioning
     ? colors.warning
     : colors.border;
 
-  const label = isActive
+  const label = needsWallet
+    ? "WALLET"
+    : isActive
     ? "ACTIVE"
     : isTransitioning
     ? status === "reconnecting"
@@ -74,7 +90,9 @@ export function WorkerToggle({ status, onToggle, isToggling }: WorkerToggleProps
       : "CONNECTING"
     : "START";
 
-  const sublabel = isActive
+  const sublabel = needsWallet
+    ? "Connect wallet first"
+    : isActive
     ? "Tap to stop"
     : isTransitioning
     ? "Please wait..."
@@ -85,13 +103,13 @@ export function WorkerToggle({ status, onToggle, isToggling }: WorkerToggleProps
       <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
         <Pressable
           onPress={onToggle}
-          disabled={isToggling}
+          disabled={isToggling || needsWallet}
           style={({ pressed }) => [
             styles.button,
             {
               backgroundColor: buttonColor,
-              borderColor: borderColor,
-              opacity: pressed ? 0.8 : 1,
+              borderColor: bColor,
+              opacity: pressed && !needsWallet ? 0.8 : needsWallet ? 0.5 : 1,
             },
           ]}
         >

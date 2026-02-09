@@ -1,10 +1,12 @@
 /**
- * Settings screen — coordinator URL, worker identity, reset.
+ * Settings screen — coordinator URL, signing mode, worker identity, reset.
  *
  * Allows the user to:
- * - Change the coordinator URL (which server to connect to)
- * - View and copy their worker ID
- * - Reset their keypair (get a new identity — irreversible)
+ * - Change the coordinator URL
+ * - Toggle between Wallet (MWA) and Device Key signing
+ * - Connect/disconnect Phantom wallet
+ * - View and copy their worker ID or wallet address
+ * - Reset their device keypair (irreversible)
  */
 import React, { useState } from "react";
 import {
@@ -15,6 +17,7 @@ import {
   Alert,
   ScrollView,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Clipboard from "expo-clipboard";
@@ -26,6 +29,8 @@ export default function SettingsScreen() {
   const worker = useWorker();
   const [urlInput, setUrlInput] = useState(worker.coordinatorUrl);
   const [copied, setCopied] = useState(false);
+  const [walletCopied, setWalletCopied] = useState(false);
+  const [connectingWallet, setConnectingWallet] = useState(false);
 
   const handleSaveUrl = () => {
     const trimmed = urlInput.trim();
@@ -41,6 +46,29 @@ export default function SettingsScreen() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCopyWalletAddress = async () => {
+    if (!worker.walletAddress) return;
+    await Clipboard.setStringAsync(worker.walletAddress);
+    setWalletCopied(true);
+    setTimeout(() => setWalletCopied(false), 2000);
+  };
+
+  const handleConnectWallet = async () => {
+    setConnectingWallet(true);
+    try {
+      await worker.connectWallet();
+    } catch (err) {
+      Alert.alert("Connection Failed", (err as Error).message);
+    } finally {
+      setConnectingWallet(false);
+    }
+  };
+
+  const handleDisconnectWallet = async () => {
+    worker.disconnect(); // Stop worker first
+    await worker.disconnectWallet();
+  };
+
   const handleResetKeypair = () => {
     Alert.alert(
       "Reset Identity",
@@ -51,7 +79,6 @@ export default function SettingsScreen() {
           text: "Reset",
           style: "destructive",
           onPress: async () => {
-            // Disconnect first
             worker.disconnect();
             await resetKeypair();
             Alert.alert(
@@ -64,6 +91,12 @@ export default function SettingsScreen() {
     );
   };
 
+  const isWalletMode = worker.signingMode === "wallet";
+  const isAndroid = Platform.OS === "android";
+  const truncatedWallet = worker.walletAddress
+    ? `${worker.walletAddress.slice(0, 6)}...${worker.walletAddress.slice(-4)}`
+    : null;
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
@@ -72,6 +105,99 @@ export default function SettingsScreen() {
       >
         {/* Header */}
         <Text style={styles.title}>Settings</Text>
+
+        {/* Signing Mode */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Signing Mode</Text>
+          <Text style={styles.sectionDescription}>
+            Choose how receipts are signed. Wallet mode uses Phantom; device key uses a local keypair.
+          </Text>
+
+          <View style={styles.toggleRow}>
+            <Pressable
+              style={[
+                styles.toggleOption,
+                isWalletMode && styles.toggleOptionActive,
+                !isAndroid && styles.toggleOptionDisabled,
+              ]}
+              onPress={() => isAndroid && worker.switchSigningMode("wallet")}
+              disabled={!isAndroid}
+            >
+              <Text style={[
+                styles.toggleLabel,
+                isWalletMode && styles.toggleLabelActive,
+              ]}>
+                Wallet
+              </Text>
+              {!isAndroid && (
+                <Text style={styles.toggleHint}>Android only</Text>
+              )}
+            </Pressable>
+
+            <Pressable
+              style={[
+                styles.toggleOption,
+                !isWalletMode && styles.toggleOptionActive,
+              ]}
+              onPress={() => worker.switchSigningMode("device-key")}
+            >
+              <Text style={[
+                styles.toggleLabel,
+                !isWalletMode && styles.toggleLabelActive,
+              ]}>
+                Device Key
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Wallet Connection (only shown in wallet mode) */}
+        {isWalletMode && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Wallet</Text>
+
+            {worker.walletAddress ? (
+              <>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.copyRow,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  onPress={handleCopyWalletAddress}
+                >
+                  <Text style={styles.walletLabel}>Connected</Text>
+                  <Text style={styles.workerId}>{truncatedWallet}</Text>
+                  <Text style={styles.copyLabel}>
+                    {walletCopied ? "Copied!" : "Tap to copy"}
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.outlineButton,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  onPress={handleDisconnectWallet}
+                >
+                  <Text style={styles.outlineButtonText}>Disconnect Wallet</Text>
+                </Pressable>
+              </>
+            ) : (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.walletButton,
+                  { opacity: pressed || connectingWallet ? 0.7 : 1 },
+                ]}
+                onPress={handleConnectWallet}
+                disabled={connectingWallet}
+              >
+                <Text style={styles.walletButtonText}>
+                  {connectingWallet ? "Connecting..." : "Connect Phantom"}
+                </Text>
+              </Pressable>
+            )}
+          </View>
+        )}
 
         {/* Coordinator URL */}
         <View style={styles.section}>
@@ -102,48 +228,52 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        {/* Worker Identity */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Worker Identity</Text>
-          <Text style={styles.sectionDescription}>
-            Your ed25519 public key. This is your unique identity on the network.
-          </Text>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.copyRow,
-              { opacity: pressed ? 0.7 : 1 },
-            ]}
-            onPress={handleCopyWorkerId}
-          >
-            <Text style={styles.workerId} numberOfLines={2}>
-              {worker.workerId ?? "No keypair generated yet"}
+        {/* Worker Identity (device key mode) */}
+        {!isWalletMode && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Worker Identity</Text>
+            <Text style={styles.sectionDescription}>
+              Your ed25519 public key. This is your unique identity on the network.
             </Text>
-            <Text style={styles.copyLabel}>
-              {copied ? "Copied!" : "Tap to copy"}
-            </Text>
-          </Pressable>
-        </View>
 
-        {/* Danger Zone */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.error }]}>
-            Danger Zone
-          </Text>
+            <Pressable
+              style={({ pressed }) => [
+                styles.copyRow,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+              onPress={handleCopyWorkerId}
+            >
+              <Text style={styles.workerId} numberOfLines={2}>
+                {worker.workerId ?? "No keypair generated yet"}
+              </Text>
+              <Text style={styles.copyLabel}>
+                {copied ? "Copied!" : "Tap to copy"}
+              </Text>
+            </Pressable>
+          </View>
+        )}
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.dangerButton,
-              { opacity: pressed ? 0.7 : 1 },
-            ]}
-            onPress={handleResetKeypair}
-          >
-            <Text style={styles.dangerButtonText}>Reset Keypair</Text>
-            <Text style={styles.dangerDescription}>
-              Generate a new identity. Irreversible.
+        {/* Danger Zone (device key mode only) */}
+        {!isWalletMode && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.error }]}>
+              Danger Zone
             </Text>
-          </Pressable>
-        </View>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.dangerButton,
+                { opacity: pressed ? 0.7 : 1 },
+              ]}
+              onPress={handleResetKeypair}
+            >
+              <Text style={styles.dangerButtonText}>Reset Keypair</Text>
+              <Text style={styles.dangerDescription}>
+                Generate a new identity. Irreversible.
+              </Text>
+            </Pressable>
+          </View>
+        )}
 
         {/* App Info */}
         <View style={styles.section}>
@@ -159,6 +289,12 @@ export default function SettingsScreen() {
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Network</Text>
             <Text style={styles.infoValue}>Solana (Devnet)</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Signing</Text>
+            <Text style={styles.infoValue}>
+              {isWalletMode ? "Wallet (MWA)" : "Device Key"}
+            </Text>
           </View>
         </View>
       </ScrollView>
@@ -196,6 +332,69 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.textSecondary,
     lineHeight: 20,
+  },
+  toggleRow: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  toggleOption: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md,
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  toggleOptionActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.accent + "20",
+  },
+  toggleOptionDisabled: {
+    opacity: 0.4,
+  },
+  toggleLabel: {
+    fontSize: fontSize.md,
+    fontWeight: "700",
+    color: colors.textDim,
+  },
+  toggleLabelActive: {
+    color: colors.accentLight,
+  },
+  toggleHint: {
+    fontSize: fontSize.xs,
+    color: colors.textDim,
+  },
+  walletButton: {
+    backgroundColor: colors.accent,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: "center",
+  },
+  walletButtonText: {
+    color: colors.text,
+    fontWeight: "700",
+    fontSize: fontSize.md,
+  },
+  walletLabel: {
+    fontSize: fontSize.xs,
+    fontWeight: "600",
+    color: colors.success,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  outlineButton: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: "center",
+  },
+  outlineButtonText: {
+    color: colors.textSecondary,
+    fontWeight: "600",
+    fontSize: fontSize.sm,
   },
   inputRow: {
     flexDirection: "row",

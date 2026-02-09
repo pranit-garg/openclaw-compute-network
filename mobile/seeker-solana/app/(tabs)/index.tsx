@@ -42,11 +42,22 @@ export default function DashboardScreen() {
           <Text style={styles.subtitle}>Seeker Node</Text>
         </View>
 
+        {/* Wallet connection banner */}
+        {worker.signingMode === "wallet" && !worker.walletAddress && (
+          <View style={styles.walletBanner}>
+            <Text style={styles.walletBannerText}>
+              Connect your wallet in Settings to start earning
+            </Text>
+          </View>
+        )}
+
         {/* Status */}
         <StatusCard
           status={worker.status}
           coordinatorUrl={worker.coordinatorUrl}
           workerId={worker.workerId}
+          signingMode={worker.signingMode}
+          walletAddress={worker.walletAddress}
         />
 
         {/* Earnings */}
@@ -60,6 +71,8 @@ export default function DashboardScreen() {
           status={worker.status}
           onToggle={worker.toggle}
           isToggling={worker.isToggling}
+          signingMode={worker.signingMode}
+          walletConnected={!!worker.walletAddress}
         />
 
         {/* Job History */}
@@ -96,6 +109,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     letterSpacing: 2,
     textTransform: "uppercase",
+  },
+  walletBanner: {
+    backgroundColor: colors.warning + "20",
+    borderWidth: 1,
+    borderColor: colors.warning + "40",
+    borderRadius: 12,
+    padding: spacing.md,
+    alignItems: "center",
+  },
+  walletBannerText: {
+    fontSize: fontSize.sm,
+    color: colors.warning,
+    fontWeight: "600",
+    textAlign: "center",
   },
   loadingContainer: {
     flex: 1,

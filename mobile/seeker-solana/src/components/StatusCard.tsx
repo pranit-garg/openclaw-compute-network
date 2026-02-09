@@ -12,10 +12,14 @@ import { View, Text, StyleSheet } from "react-native";
 import type { ConnectionStatus } from "../services/WebSocketService";
 import { colors, spacing, borderRadius, fontSize } from "../theme";
 
+import type { SigningMode } from "../contexts/WalletProvider";
+
 interface StatusCardProps {
   status: ConnectionStatus;
   coordinatorUrl: string;
   workerId: string | null;
+  signingMode?: SigningMode;
+  walletAddress?: string | null;
 }
 
 const STATUS_CONFIG: Record<
@@ -28,8 +32,25 @@ const STATUS_CONFIG: Record<
   connecting: { color: colors.accentLight, label: "Connecting..." },
 };
 
-export function StatusCard({ status, coordinatorUrl, workerId }: StatusCardProps) {
+export function StatusCard({
+  status,
+  coordinatorUrl,
+  workerId,
+  signingMode = "device-key",
+  walletAddress,
+}: StatusCardProps) {
   const config = STATUS_CONFIG[status];
+  const isWalletMode = signingMode === "wallet";
+
+  // Show wallet address (base58 truncated) or worker ID (hex truncated)
+  const identityLabel = isWalletMode ? "Wallet" : "Worker ID";
+  const identityValue = isWalletMode
+    ? walletAddress
+      ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+      : "Not connected"
+    : workerId
+    ? `${workerId.slice(0, 8)}...${workerId.slice(-8)}`
+    : "---";
 
   return (
     <View style={styles.card}>
@@ -40,7 +61,9 @@ export function StatusCard({ status, coordinatorUrl, workerId }: StatusCardProps
             {config.label}
           </Text>
         </View>
-        <Text style={styles.badge}>SEEKER</Text>
+        <Text style={styles.badge}>
+          {isWalletMode ? "WALLET" : "SEEKER"}
+        </Text>
       </View>
 
       <View style={styles.infoRow}>
@@ -51,9 +74,9 @@ export function StatusCard({ status, coordinatorUrl, workerId }: StatusCardProps
       </View>
 
       <View style={styles.infoRow}>
-        <Text style={styles.label}>Worker ID</Text>
+        <Text style={styles.label}>{identityLabel}</Text>
         <Text style={styles.value} numberOfLines={1}>
-          {workerId ? `${workerId.slice(0, 8)}...${workerId.slice(-8)}` : "---"}
+          {identityValue}
         </Text>
       </View>
     </View>
