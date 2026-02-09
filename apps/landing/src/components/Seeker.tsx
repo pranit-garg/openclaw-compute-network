@@ -37,22 +37,35 @@ const features = [
 function PhoneMockup() {
   return (
     <div className="relative w-[280px]">
-      {/* Phone frame — matches the real app's #0a0a0f background */}
-      <div className="rounded-[2rem] border-2 border-border bg-[#0a0a0f] p-3 shadow-lg shadow-accent/5">
-        {/* Dynamic Island / Notch */}
-        <div className="mx-auto mb-3 h-5 w-24 rounded-full bg-[#1a1a2e]" />
+      {/* Solana Seeker frame — squarer Android corners, gray matte finish */}
+      <div className="rounded-[1.25rem] border-2 border-[#3a3a4a] bg-[#2a2a35] p-2 shadow-lg shadow-accent/5">
+        {/* Top bezel — Seeker branding + punch-hole camera */}
+        <div className="relative flex items-center justify-center py-1.5">
+          {/* Solana logo mark (small diamond) */}
+          <div className="absolute left-3 flex items-center gap-1">
+            <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none">
+              <path d="M4 16.5l8 4.5 8-4.5M4 12l8 4.5L20 12M12 3L4 7.5 12 12l8-4.5L12 3z" stroke="#9945FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          {/* Punch-hole camera — centered dot */}
+          <div className="h-2 w-2 rounded-full bg-[#1a1a25] ring-1 ring-[#4a4a5a]" />
+          {/* Seed Vault indicator */}
+          <div className="absolute right-3">
+            <div className="h-1.5 w-4 rounded-full bg-gradient-to-r from-[#9945FF] to-[#14F195] opacity-50" />
+          </div>
+        </div>
 
-        {/* Screen */}
-        <div className="rounded-[1.25rem] bg-[#0a0a0f] px-3 pb-3">
-          {/* Status bar */}
+        {/* Screen — edge-to-edge display, thinner bezels */}
+        <div className="rounded-[0.75rem] bg-[#0a0a0f] px-3 pb-3 pt-1">
+          {/* Android status bar */}
           <div className="mb-3 flex items-center justify-between text-[10px] text-[#64748b]">
-            <span>9:41</span>
+            <span>12:42</span>
             <div className="flex items-center gap-1.5">
               {/* Signal bars */}
               <svg className="h-2.5 w-2.5" fill="#64748b" viewBox="0 0 24 24"><path d="M2 22h4V12H2v10zm6 0h4V7H8v15zm6 0h4V2h-4v20z" /></svg>
               {/* WiFi */}
               <svg className="h-2.5 w-2.5" fill="#64748b" viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" /></svg>
-              {/* Battery */}
+              {/* Battery — Android style */}
               <div className="flex items-center gap-0.5">
                 <div className="h-2 w-4 rounded-sm border border-[#64748b] p-px">
                   <div className="h-full w-3/4 rounded-[1px] bg-[#34d399]" />
@@ -142,8 +155,10 @@ function PhoneMockup() {
           </div>
         </div>
 
-        {/* Home indicator */}
-        <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-[#1a1a2e]" />
+        {/* Bottom bezel — Seeker branding (Android nav is on-screen) */}
+        <div className="mt-1.5 flex items-center justify-center gap-1.5 py-1">
+          <span className="text-[7px] font-bold uppercase tracking-[3px] text-[#64748b]">Seeker</span>
+        </div>
       </div>
     </div>
   );
