@@ -26,10 +26,10 @@ const STATUS_CONFIG: Record<
   ConnectionStatus,
   { color: string; label: string }
 > = {
-  connected: { color: colors.success, label: "Connected" },
-  disconnected: { color: colors.error, label: "Disconnected" },
+  connected: { color: colors.success, label: "Online" },
+  disconnected: { color: colors.error, label: "Offline" },
   reconnecting: { color: colors.warning, label: "Reconnecting..." },
-  connecting: { color: colors.accentLight, label: "Connecting..." },
+  connecting: { color: colors.accentLight, label: "Going live..." },
 };
 
 export function StatusCard({
@@ -43,11 +43,11 @@ export function StatusCard({
   const isWalletMode = signingMode === "wallet";
 
   // Show wallet address (base58 truncated) or worker ID (hex truncated)
-  const identityLabel = isWalletMode ? "Wallet" : "Worker ID";
+  const identityLabel = isWalletMode ? "Identity" : "Node ID";
   const identityValue = isWalletMode
     ? walletAddress
       ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-      : "Not connected"
+      : "No wallet linked"
     : workerId
     ? `${workerId.slice(0, 8)}...${workerId.slice(-8)}`
     : "---";
@@ -62,12 +62,12 @@ export function StatusCard({
           </Text>
         </View>
         <Text style={styles.badge}>
-          {isWalletMode ? "WALLET" : "SEEKER"}
+          {isWalletMode ? "WALLET" : "DEVICE KEY"}
         </Text>
       </View>
 
       <View style={styles.infoRow}>
-        <Text style={styles.label}>Coordinator</Text>
+        <Text style={styles.label}>Network</Text>
         <Text style={styles.value} numberOfLines={1}>
           {coordinatorUrl}
         </Text>

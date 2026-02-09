@@ -39,14 +39,14 @@ export default function DashboardScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>OpenClaw</Text>
-          <Text style={styles.subtitle}>Seeker Node</Text>
+          <Text style={styles.subtitle}>Compute Node</Text>
         </View>
 
         {/* Wallet connection banner */}
         {worker.signingMode === "wallet" && !worker.walletAddress && (
           <View style={styles.walletBanner}>
             <Text style={styles.walletBannerText}>
-              Connect your wallet in Settings to start earning
+              Link your Phantom wallet to earn SOL for compute jobs
             </Text>
           </View>
         )}

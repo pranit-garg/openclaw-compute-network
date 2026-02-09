@@ -70,9 +70,9 @@ export function JobHistory({ jobs }: JobHistoryProps) {
   if (jobs.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyTitle}>No jobs yet</Text>
+        <Text style={styles.emptyTitle}>Ready for work</Text>
         <Text style={styles.emptySubtitle}>
-          Connect to a coordinator to start processing tasks
+          Tap Go Live to join the network and start earning
         </Text>
       </View>
     );
@@ -80,7 +80,7 @@ export function JobHistory({ jobs }: JobHistoryProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Recent Jobs</Text>
+      <Text style={styles.sectionTitle}>Job History</Text>
       <FlatList
         data={jobs}
         keyExtractor={(item) => item.jobId}

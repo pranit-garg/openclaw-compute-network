@@ -83,20 +83,20 @@ export function WorkerToggle({
   const label = needsWallet
     ? "WALLET"
     : isActive
-    ? "ACTIVE"
+    ? "EARNING"
     : isTransitioning
     ? status === "reconnecting"
       ? "RECONNECTING"
       : "CONNECTING"
-    : "START";
+    : "GO LIVE";
 
   const sublabel = needsWallet
-    ? "Connect wallet first"
+    ? "Link wallet to earn"
     : isActive
-    ? "Tap to stop"
+    ? "Tap to go offline"
     : isTransitioning
     ? "Please wait..."
-    : "Tap to connect";
+    : "Start earning SOL";
 
   return (
     <View style={styles.container}>

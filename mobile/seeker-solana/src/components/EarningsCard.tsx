@@ -17,7 +17,7 @@ export function EarningsCard({ totalEarnings, jobsCompleted }: EarningsCardProps
   return (
     <View style={styles.card}>
       <View style={styles.earningsSection}>
-        <Text style={styles.label}>Total Earned</Text>
+        <Text style={styles.label}>Earnings</Text>
         <View style={styles.earningsRow}>
           <Text style={styles.amount}>
             {totalEarnings.toFixed(4)}
@@ -29,7 +29,7 @@ export function EarningsCard({ totalEarnings, jobsCompleted }: EarningsCardProps
       <View style={styles.divider} />
 
       <View style={styles.jobsSection}>
-        <Text style={styles.label}>Jobs Done</Text>
+        <Text style={styles.label}>Completed</Text>
         <Text style={styles.jobCount}>{jobsCompleted}</Text>
       </View>
     </View>

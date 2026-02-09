@@ -36,7 +36,7 @@ export default function SettingsScreen() {
     const trimmed = urlInput.trim();
     if (!trimmed) return;
     worker.setCoordinatorUrl(trimmed);
-    Alert.alert("Saved", "Coordinator URL updated. Reconnect to use the new URL.");
+    Alert.alert("Updated", "Network endpoint saved. Reconnecting...");
   };
 
   const handleCopyWorkerId = async () => {
@@ -110,7 +110,7 @@ export default function SettingsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Signing Mode</Text>
           <Text style={styles.sectionDescription}>
-            Choose how receipts are signed. Wallet mode uses Phantom; device key uses a local keypair.
+            Wallet mode signs receipts with Phantom. Device key uses a local keypair for headless operation.
           </Text>
 
           <View style={styles.toggleRow}>
@@ -201,9 +201,9 @@ export default function SettingsScreen() {
 
         {/* Coordinator URL */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Coordinator URL</Text>
+          <Text style={styles.sectionTitle}>Network Endpoint</Text>
           <Text style={styles.sectionDescription}>
-            WebSocket endpoint of the coordinator node to connect to.
+            Coordinator node that routes jobs to your device.
           </Text>
           <View style={styles.inputRow}>
             <TextInput
@@ -231,9 +231,9 @@ export default function SettingsScreen() {
         {/* Worker Identity (device key mode) */}
         {!isWalletMode && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Worker Identity</Text>
+            <Text style={styles.sectionTitle}>Node Identity</Text>
             <Text style={styles.sectionDescription}>
-              Your ed25519 public key. This is your unique identity on the network.
+              Your ed25519 public key — used to sign compute receipts and prove work.
             </Text>
 
             <Pressable
@@ -244,7 +244,7 @@ export default function SettingsScreen() {
               onPress={handleCopyWorkerId}
             >
               <Text style={styles.workerId} numberOfLines={2}>
-                {worker.workerId ?? "No keypair generated yet"}
+                {worker.workerId ?? "Generated on first connection"}
               </Text>
               <Text style={styles.copyLabel}>
                 {copied ? "Copied!" : "Tap to copy"}
@@ -267,9 +267,9 @@ export default function SettingsScreen() {
               ]}
               onPress={handleResetKeypair}
             >
-              <Text style={styles.dangerButtonText}>Reset Keypair</Text>
+              <Text style={styles.dangerButtonText}>Reset Identity</Text>
               <Text style={styles.dangerDescription}>
-                Generate a new identity. Irreversible.
+                Generates a new keypair. Earnings history will be lost.
               </Text>
             </Pressable>
           </View>

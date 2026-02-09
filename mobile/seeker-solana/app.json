@@ -37,12 +37,20 @@
               "scheme": "openclaw"
             }
           ],
-          "category": ["DEFAULT", "BROWSABLE"]
+          "category": [
+            "DEFAULT",
+            "BROWSABLE"
+          ]
         }
       ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cd3d8ec2-7e6e-4220-8261-510930062cbd"
+      }
     }
   }
 }

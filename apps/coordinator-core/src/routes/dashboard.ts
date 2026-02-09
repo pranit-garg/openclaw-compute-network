@@ -155,16 +155,16 @@ export function dashboardRouter(db: Database.Database, hub: WorkerHub): Router {
   </style>
 </head>
 <body>
-  <h1>OpenClaw Dashboard</h1>
-  <p class="subtitle">Decentralized Compute Network &mdash; auto-refreshes every 10s</p>
+  <h1>OpenClaw Network</h1>
+  <p class="subtitle">Verifiable Compute &mdash; live &mdash; auto-refreshes every 10s</p>
 
   <div class="cards">
     <div class="card">
-      <div class="label">Workers Registered</div>
+      <div class="label">Nodes Registered</div>
       <div class="value">${totalWorkers}</div>
     </div>
     <div class="card">
-      <div class="label">Workers Online</div>
+      <div class="label">Nodes Online</div>
       <div class="value accent">${workersOnline}</div>
     </div>
     <div class="card">
@@ -172,7 +172,7 @@ export function dashboardRouter(db: Database.Database, hub: WorkerHub): Router {
       <div class="value green">${totalJobsCompleted}</div>
     </div>
     <div class="card">
-      <div class="label">Receipt Verification</div>
+      <div class="label">Verified Receipts</div>
       <div class="value amber">${verificationRate}%</div>
     </div>
   </div>
@@ -195,7 +195,7 @@ export function dashboardRouter(db: Database.Database, hub: WorkerHub): Router {
   </table>
 
   <div class="footer">
-    OpenClaw Compute Network &bull; ${new Date().toISOString()}
+    OpenClaw &mdash; Verifiable Compute Network &bull; ${new Date().toISOString()}
   </div>
 </body>
 </html>`;
