@@ -5,11 +5,11 @@ import './global.css';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | OpenClaw Docs',
-    default: 'OpenClaw Compute Network',
+    template: '%s | Dispatch Docs',
+    default: 'Dispatch Compute Network',
   },
   description:
-    'Documentation for the OpenClaw Compute Network — decentralized compute with x402 stablecoin micropayments.',
+    'Documentation for the Dispatch Compute Network — decentralized compute with x402 stablecoin micropayments.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

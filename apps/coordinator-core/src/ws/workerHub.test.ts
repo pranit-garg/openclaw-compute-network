@@ -3,7 +3,7 @@ import http from "node:http";
 import { WebSocket, WebSocketServer } from "ws";
 import { createDb } from "../db.js";
 import { WorkerHub } from "./workerHub.js";
-import { JobType, Policy, PrivacyClass } from "@openclaw/protocol";
+import { JobType, Policy, PrivacyClass } from "@dispatch/protocol";
 import fs from "node:fs";
 import nacl from "tweetnacl";
 import crypto from "node:crypto";

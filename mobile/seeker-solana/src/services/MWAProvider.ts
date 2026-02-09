@@ -20,12 +20,12 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { SigningProvider } from "./SigningProvider";
 
-const AUTH_TOKEN_KEY = "openclaw_mwa_auth_token";
-const WALLET_ADDRESS_KEY = "openclaw_mwa_wallet_address";
+const AUTH_TOKEN_KEY = "dispatch_mwa_auth_token";
+const WALLET_ADDRESS_KEY = "dispatch_mwa_wallet_address";
 
 const APP_IDENTITY = {
-  name: "OpenClaw Seeker",
-  uri: "https://openclaw.xyz",
+  name: "Dispatch",
+  uri: "https://dispatch.network",
   icon: "favicon.ico",
 };
 

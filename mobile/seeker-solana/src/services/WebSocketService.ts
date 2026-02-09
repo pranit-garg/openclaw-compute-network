@@ -1,7 +1,7 @@
 /**
  * WebSocketService — Core connection manager for the mobile worker.
  *
- * Handles the full lifecycle of talking to an OpenClaw coordinator:
+ * Handles the full lifecycle of talking to an Dispatch coordinator:
  * 1. Connect via WebSocket
  * 2. Register as a SEEKER worker
  * 3. Heartbeat every 10s to stay alive

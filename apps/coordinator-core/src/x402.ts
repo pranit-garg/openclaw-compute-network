@@ -1,5 +1,5 @@
 import type { CoordinatorConfig } from "./config.js";
-import { getPrice, Policy, JobType } from "@openclaw/protocol";
+import { getPrice, Policy, JobType } from "@dispatch/protocol";
 
 /**
  * Build x402 payment resource config for paymentMiddleware.

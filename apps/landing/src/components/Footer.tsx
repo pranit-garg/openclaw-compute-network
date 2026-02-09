@@ -4,7 +4,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 md:flex-row md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold">OpenClaw</span>
+            <span className="text-lg font-bold">Dispatch</span>
             <span className="rounded-full border border-border px-2 py-0.5 text-xs text-text-dim">
               MVP
             </span>
@@ -17,7 +17,7 @@ export function Footer() {
         <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
           <div className="flex items-center gap-6">
             <a
-              href="https://github.com/openclaw"
+              href="https://github.com/dispatch"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-text-muted transition-colors hover:text-text"
@@ -25,7 +25,7 @@ export function Footer() {
               GitHub
             </a>
             <a
-              href="https://x.com/openclaw"
+              href="https://x.com/dispatch"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-text-muted transition-colors hover:text-text"

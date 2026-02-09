@@ -1,4 +1,4 @@
-import { createServer, startServer, configFromEnv, buildPaymentConfig } from "@openclaw/coordinator-core";
+import { createServer, startServer, configFromEnv, buildPaymentConfig } from "@dispatch/coordinator-core";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";

@@ -37,7 +37,7 @@ export function CTA() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <a
-            href="https://github.com/openclaw"
+            href="https://github.com/dispatch"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-bright"
@@ -48,7 +48,7 @@ export function CTA() {
             Start Building
           </a>
           <a
-            href="https://github.com/openclaw"
+            href="https://github.com/dispatch"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 font-medium text-text-muted transition-colors hover:border-border-bright hover:text-text"

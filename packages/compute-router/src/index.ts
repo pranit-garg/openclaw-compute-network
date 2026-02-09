@@ -3,7 +3,7 @@ import {
   Policy,
   PrivacyClass,
   resolvePolicy,
-} from "@openclaw/protocol";
+} from "@dispatch/protocol";
 import type { ComputeAdapter, ComputeResult, LLMRequest, TaskRequest } from "./adapters/types.js";
 import { DecentralizedAdapter, type X402ClientLike } from "./adapters/decentralized.js";
 import { OpenAIAdapter } from "./adapters/openai.js";

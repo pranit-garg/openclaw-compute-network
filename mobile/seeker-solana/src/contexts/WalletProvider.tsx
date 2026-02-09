@@ -56,10 +56,10 @@ const WalletContext = createContext<WalletContextType | null>(null);
 
 // ── Storage Keys ──────────────────────────────
 
-const STORAGE_EARNINGS = "openclaw_total_earnings";
-const STORAGE_JOBS_COMPLETED = "openclaw_jobs_completed";
-const STORAGE_JOB_HISTORY = "openclaw_job_history";
-const STORAGE_COORDINATOR_URL = "openclaw_coordinator_url";
+const STORAGE_EARNINGS = "dispatch_total_earnings";
+const STORAGE_JOBS_COMPLETED = "dispatch_jobs_completed";
+const STORAGE_JOB_HISTORY = "dispatch_job_history";
+const STORAGE_COORDINATOR_URL = "dispatch_coordinator_url";
 
 // Coordinator URL — set via EXPO_PUBLIC_COORDINATOR_URL or change in Settings
 const DEFAULT_COORDINATOR_URL =

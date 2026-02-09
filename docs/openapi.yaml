@@ -1,9 +1,9 @@
 openapi: "3.0.3"
 info:
-  title: OpenClaw Compute Network — Coordinator API
+  title: Dispatch Compute Network — Coordinator API
   version: "1.0.0"
   description: |
-    REST API for the OpenClaw Compute Network coordinator.
+    REST API for the Dispatch Compute Network coordinator.
 
     Seekers submit AI inference and data-processing jobs to coordinators, which
     match them with available workers over WebSocket.  Two coordinator instances
@@ -149,7 +149,7 @@ paths:
                   payload:
                     job_type: TASK
                     task_type: summarize
-                    input: "OpenClaw is a decentralized compute network..."
+                    input: "Dispatch is a decentralized compute network..."
       responses:
         "201":
           description: Job accepted

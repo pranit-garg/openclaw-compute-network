@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 export const alt =
-  "OpenClaw — Decentralized Compute with x402 Micropayments";
+  "Dispatch — Decentralized Compute with x402 Micropayments";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -77,8 +77,8 @@ export default function OgImage() {
               display: "flex",
             }}
           >
-            Open
-            <span style={{ color: "#6366f1" }}>Claw</span>
+            Dis
+            <span style={{ color: "#6366f1" }}>patch</span>
           </div>
 
           {/* Subtitle */}
@@ -152,7 +152,7 @@ export default function OgImage() {
             fontSize: "14px",
           }}
         >
-          openclaw.network
+          dispatch.network
         </div>
       </div>
     ),

@@ -1,11 +1,11 @@
-import { ComputeRouter } from "@openclaw/compute-router";
+import { ComputeRouter } from "@dispatch/compute-router";
 import { runScenarios } from "./scenarios.js";
 
 const chain = (process.env.DEMO_CHAIN ?? process.argv.find((a) => a.startsWith("--chain"))?.split("=")[1] ?? "monad") as "monad" | "solana";
 
 async function main() {
   console.log(`\n╔══════════════════════════════════════════╗`);
-  console.log(`║   OpenClaw CloudBot Demo — ${chain.toUpperCase().padEnd(7)}      ║`);
+  console.log(`║   Dispatch CloudBot Demo — ${chain.toUpperCase().padEnd(7)}      ║`);
   console.log(`╚══════════════════════════════════════════╝`);
 
   const router = new ComputeRouter({

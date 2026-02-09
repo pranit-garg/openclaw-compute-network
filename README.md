@@ -1,4 +1,4 @@
-# OpenClaw Compute Network
+# Dispatch Compute Network
 
 Decentralized compute network where **Seekers** (mobile/simulated) and **Desktop Workers** handle TASK and LLM jobs. Two blockchain tracks: **Monad testnet** (EVM) and **Solana devnet** for x402 payment gating.
 

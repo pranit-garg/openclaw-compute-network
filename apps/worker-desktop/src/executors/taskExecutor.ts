@@ -1,4 +1,4 @@
-import type { TaskType } from "@openclaw/protocol";
+import type { TaskType } from "@dispatch/protocol";
 
 /**
  * Execute TASK jobs locally:

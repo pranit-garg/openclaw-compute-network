@@ -1,70 +1,72 @@
-# OpenClaw Compute Network — Positioning & Copy Direction
+# Dispatch — Positioning & Copy Direction
 
 ---
 
-## 1. One-Liner Positioning Statement
+## 1. Name & Tagline
 
-**Decentralized compute that pays workers per job over HTTP 402.**
+**Name:** Dispatch
 
----
+**Tagline:** Dispatch idle compute to AI agents.
 
-## 2. Three Positioning Angles
-
-### Angle A: "The x402 Compute Network"
-
-**Headline:** Pay-per-job compute, settled in stablecoins over HTTP.
-**Subhead:** No tokens. No staking. Just work and payment.
-
-x402 turns HTTP into a payment rail. OpenClaw is the first compute network built on top of it — every job is a stablecoin micropayment, every receipt is a cryptographic proof. This eliminates the need for a native token, slashing mechanisms, or complex tokenomics. Builders get paid for work, requesters pay for results.
-
-### Angle B: "Compute That Fits in Your Pocket"
-
-**Headline:** Your phone is a compute node.
-**Subhead:** Seekers bring idle mobile devices into the network.
-
-Every other DePIN project targets datacenter GPUs and high-end servers. OpenClaw's Seeker architecture turns mobile phones into lightweight compute workers — handling text classification, summarization, and JSON extraction. This dramatically expands the supply side of decentralized compute beyond the GPU arms race.
-
-### Angle C: "Privacy as a Routing Layer"
-
-**Headline:** Trust-paired workers for sensitive data.
-**Subhead:** Private jobs only run on machines you've explicitly approved.
-
-Most compute networks treat all workers as interchangeable. OpenClaw's trust pairing system lets requesters designate which workers can see their data. Private jobs are routed exclusively to paired workers — enforced at the coordinator level, not as an afterthought SDK flag.
+**One-liner:** The dispatch layer where AI agents buy compute from idle hardware — paid in USDC over x402, verified with ERC-8004 reputation on Monad and Solana.
 
 ---
 
-## 3. Key Messaging Pillars
+## 2. Three Pillars
 
-### Pillar 1: x402-Native Payments
-Every job is a stablecoin micropayment over Coinbase's open HTTP 402 protocol. No custom token. No bridging. Workers get paid in USDC the moment a job completes.
+### Pillar 1: Agent-Native Compute
+AI agents are the customers. They submit HTTP requests with x402 payment headers. No SDK, no wallet setup, just HTTP and USDC. Any agent that can make an HTTP call can buy compute.
 
-### Pillar 2: Mobile-First Supply
-Seekers turn phones into compute nodes for lightweight AI tasks — text summarization, classification, JSON extraction. The network scales with devices people already carry.
+### Pillar 2: Idle Hardware as Supply
+Phones and desktops earn USDC by processing AI inference while idle. The network scales with devices people already own — no GPU required. The Android app picks up jobs over WebSocket while the device is idle.
 
-### Pillar 3: Privacy by Architecture
-Trust pairing routes sensitive jobs exclusively to workers you control. Privacy enforcement lives in the coordinator, not in client code — single source of truth, no opt-out.
-
-### Pillar 4: Dual-Chain from Day One
-Monad (EVM) and Solana run as parallel coordinators with separate databases. Not locked to one ecosystem, not bolted on later.
+### Pillar 3: On-Chain Trust
+Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable reputation through on-chain feedback. Ed25519 receipts prove every result. Agents discover trusted workers through the reputation registry.
 
 ---
 
-## 4. Hero Section Options
+## 3. Positioning Angles
 
-### Option 1
+### Angle A: "The Agent Compute Layer"
 
-**Headline:** Decentralized compute. Stablecoin payments. Every job.
-**Subhead:** OpenClaw connects AI workloads to a distributed network of workers — desktops, servers, and mobile devices — and settles every job with x402 micropayments on Monad and Solana.
+**Headline:** Dispatch idle compute to AI agents.
+**Subhead:** AI agents submit jobs over HTTP. Workers process them while idle. Reputation lives on-chain.
 
-### Option 2
+AI agents need compute but can't negotiate GPU leases. Dispatch gives them a simple interface: submit an HTTP request with a payment header, get a result with a cryptographic receipt. The network's supply side is idle hardware — phones and desktops — not datacenters.
 
-**Headline:** Run AI inference across any device. Pay per job in USDC.
-**Subhead:** A working compute network where mobile Seekers and desktop Workers handle LLM inference, text processing, and data extraction — paid automatically through HTTP 402.
+### Angle B: "Earn While Idle"
 
-### Option 3
+**Headline:** Your hardware earns USDC while you sleep.
+**Subhead:** Phones and desktops become dispatch nodes for AI inference.
 
-**Headline:** The compute network that pays over HTTP.
-**Subhead:** OpenClaw uses Coinbase's x402 protocol to settle stablecoin micropayments for every AI job — from LLM inference to text classification — across a trust-paired worker network on Monad and Solana.
+Every other DePIN project targets datacenter GPUs and high-end servers. Dispatch turns idle consumer devices into compute nodes — handling summarization, classification, and extraction. This dramatically expands the supply side beyond the GPU arms race. Workers build ERC-8004 reputation that makes them more visible to agents.
+
+### Angle C: "On-Chain Compute Reputation"
+
+**Headline:** Verifiable workers, trusted results.
+**Subhead:** ERC-8004 reputation on Monad. Every job builds track record.
+
+Permissionless compute networks have a trust problem — how do you know a worker will deliver quality results? Dispatch solves this with ERC-8004 agent registration on Monad. Every completed job posts verifiable feedback. Agents query the reputation registry to find trusted workers. Track record is portable, on-chain, and tamper-proof.
+
+---
+
+## 4. Hero Section
+
+**Badge:** Live on Monad + Solana testnet
+
+**Headline:** Dispatch idle compute to AI agents.
+
+**Subheadline:** Your hardware processes AI jobs while idle. Agents pay in USDC over x402. Workers build on-chain reputation via ERC-8004. Live on Monad and Solana testnet.
+
+**Terminal demo:**
+```
+$ dispatch submit --task summarize --chain monad
+→ Worker: node-7f3a (reputation: 4.8★)
+→ Payment: 0.001 USDC via x402
+→ Processing: summarization (1.2s)
+→ Receipt: ed25519 verified ✓
+→ Reputation: feedback posted to Monad
+```
 
 ---
 
@@ -72,49 +74,99 @@ Monad (EVM) and Solana run as parallel coordinators with separate databases. Not
 
 ### x402 Micropayments
 **Headline:** Pay workers in stablecoins, per job.
-Every job submission includes an x402 payment header. Workers receive USDC automatically on completion. No custom token, no staking, no withdrawal flows — just HTTP requests and stablecoin settlements via Coinbase's open protocol.
+Every job includes an x402 payment header. Workers receive USDC automatically on completion. No custom token, no staking — just HTTP and stablecoins.
 
-### Privacy & Trust Pairing
-**Headline:** Private data stays on trusted machines.
-Create a pairing code, share it with your worker. Private jobs are routed exclusively to paired workers, enforced at the coordinator level. Public jobs go to whoever's fastest. You control the boundary.
+### ERC-8004 Reputation
+**Headline:** Workers with verifiable track records.
+Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable on-chain reputation. Agents discover trusted workers through the reputation registry.
 
-### Mobile Seekers
+### Mobile Dispatch Nodes
 **Headline:** Phones become compute nodes.
-Seekers are lightweight workers built for mobile. They handle text summarization, classification, and JSON extraction — tasks that don't need a GPU. The Android app connects over WebSocket and picks up jobs automatically.
+Phones process lightweight AI tasks — summarization, classification, extraction — while idle. The Android app picks up jobs over WebSocket. Workers earn USDC for every completed job.
 
 ### Dual-Chain Architecture
 **Headline:** Monad and Solana, running in parallel.
-Two coordinators, two databases, one protocol. Monad handles EVM-native payments with ExactEvmScheme, Solana handles SPL payments with ExactSvmScheme. Same worker code, same job format, different settlement rails.
+Two coordinators, two chains, one protocol. Monad handles EVM settlements, Solana handles SPL. Same worker code, different payment rails.
 
-### On-Chain Receipts
-**Headline:** Cryptographic proof for every job.
-Workers sign ed25519 receipts over the job output hash. Receipts are stored per-job and designed for on-chain anchoring — verifiable proof that a specific worker produced a specific result at a specific time.
+### Cryptographic Receipts
+**Headline:** Proof for every job.
+Workers sign ed25519 receipts over the job output hash. Receipts are verified server-side and designed for on-chain anchoring — proof that a specific worker produced a specific result.
+
+### Desktop Workers
+**Headline:** Full LLM inference on desktop.
+Desktop nodes handle LLM inference via Ollama and all task types. Atomic job claims prevent race conditions. FAST policy prefers desktops, CHEAP prefers mobile.
 
 ---
 
-## 6. Social Bio Copy
+## 6. Competitive Differentiation
+
+| | Dispatch | GPU Rental (Akash, Render) | Centralized (OpenAI, Anthropic) |
+|---|---|---|---|
+| **Granularity** | Per-job | Per-VM/container | Per-token |
+| **Payment** | USDC via x402 | Native tokens | Credit card |
+| **Hardware** | Idle phones + desktops | Datacenter GPUs | Proprietary clusters |
+| **Identity** | ERC-8004 on Monad | None | None |
+| **Reputation** | On-chain, verifiable | None | Opaque SLAs |
+| **Verification** | Ed25519 receipts | None | Trust the provider |
+| **Multi-chain** | Monad + Solana | Single chain | N/A |
+
+---
+
+## 7. Target Audiences
+
+### AI Agent Developers
+**Need:** Cheap, reliable compute for autonomous agents.
+**Message:** Your agents submit HTTP requests with payment headers. Dispatch routes them to the cheapest available worker. Receipts verify every result. No SDK, no wallet setup.
+
+### Hardware Owners
+**Need:** Passive income from idle devices.
+**Message:** Install the app, connect your wallet. Your phone or desktop earns USDC while idle by processing AI inference jobs. ERC-8004 reputation makes you more visible to agents over time.
+
+---
+
+## 8. Hackathon-Specific Messaging
+
+### Colosseum (Solana)
+**Angle:** Agent-native compute on Solana. Dispatch turns Solana Mobile devices into AI inference nodes. Workers authenticate via Mobile Wallet Adapter, earn USDC via x402, and deliver ed25519-signed receipts. Compatible with Solana Seeker's 150K+ devices.
+
+### Monad Moltiverse
+**Angle:** ERC-8004 agent reputation on Monad. Workers register as ERC-8004 agents with verifiable on-chain reputation. Every completed job posts feedback to the reputation contract. Monad's fast finality makes per-job reputation updates practical.
+
+### Solana Mobile
+**Angle:** Turn every Seeker into a dispatch node. The Android app connects to the coordinator over WebSocket and picks up AI inference jobs while idle. Workers earn USDC for summarization, classification, and extraction tasks. Designed for the Seeker hardware.
+
+---
+
+## 9. Social Bio Copy
 
 ### Twitter/X Bio (160 chars max)
-Decentralized compute network. x402 micropayments on Monad + Solana. Mobile seekers, desktop workers, trust-paired privacy. MVP live. Code is open.
+Dispatch idle compute to AI agents. x402 payments, ERC-8004 reputation on Monad, dual-chain on Solana. Testnet MVP live. Open source.
 
-*(155 characters)*
+*(135 characters)*
 
 ### GitHub Tagline
-Decentralized compute with x402 stablecoin micropayments, mobile seekers, and trust-paired privacy routing.
+The dispatch layer where AI agents buy compute from idle hardware — paid in USDC over x402, verified with ERC-8004 reputation.
 
 ---
 
-## 7. Copy Usage Notes
+## 10. Copy Usage Notes
 
-**Tone:** Technical-confident. These are builders reading this — they know what a coordinator is, they understand WebSocket connections, they've deployed contracts. Write to that level.
+**Tone:** Technical-confident. Builders reading this know what a coordinator is, understand WebSocket connections, have deployed contracts. Write to that level.
 
-**Words to use:** workers, seekers, coordinators, receipts, trust-paired, micropayments, stablecoins, settlement, protocol, on-chain
+**Words to use:** dispatch, workers, agents, coordinators, receipts, reputation, micropayments, stablecoins, idle hardware, on-chain trust
 
 **Words to avoid:** revolutionary, game-changing, web3, next-generation, paradigm, ecosystem (as filler), AI-powered (everything here involves AI, be specific), decentralize everything
 
-**Proof points to always surface:**
-- 83 files, 8K+ lines of working code
-- 9 unit tests, 6 E2E scenarios passing on both chains
-- Dual-chain (Monad + Solana) from day one
-- Built on Coinbase's open x402 protocol (not a custom standard)
-- TypeScript monorepo, fully open source
+**What we CAN claim:**
+- Working testnet MVP with Monad + Solana dual-chain
+- Mobile + desktop workers processing real AI inference
+- Ed25519 signed receipts for every completed job
+- x402 payment architecture built in (testnet mode)
+- ERC-8004 worker identity + reputation on Monad
+- Open source, 8K+ lines TypeScript
+
+**What we say CAREFULLY:**
+- "Designed to lower inference costs" (not "lowers costs by X%")
+- "Compatible with Solana Seeker's 150K+ devices" (not "has 150K workers")
+- "x402 payment rails built in, testnet mode" (not "payments flowing")
+- "Testnet MVP" (not "production ready")

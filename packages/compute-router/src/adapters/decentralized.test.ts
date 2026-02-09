@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Policy, PrivacyClass, resolvePolicy, JobType } from "@openclaw/protocol";
+import { Policy, PrivacyClass, resolvePolicy, JobType } from "@dispatch/protocol";
 
 describe("Policy resolution", () => {
   it("AUTO + LLM_INFER → FAST", () => {

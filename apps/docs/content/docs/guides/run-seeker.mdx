@@ -1,6 +1,6 @@
 ---
 title: Run a Seeker
-description: How to use the SDK as a seeker to submit jobs to the OpenClaw network.
+description: How to use the SDK as a seeker to submit jobs to the Dispatch network.
 ---
 
 # Run a Seeker
@@ -10,14 +10,14 @@ A seeker is any client that submits jobs to the network. This can be a backend s
 ## Installation
 
 ```bash
-pnpm add @openclaw/compute-router @openclaw/protocol
+pnpm add @dispatch/compute-router @dispatch/protocol
 ```
 
 ## Basic setup
 
 ```typescript
-import { ComputeRouter } from "@openclaw/compute-router";
-import { Policy, PrivacyClass } from "@openclaw/protocol";
+import { ComputeRouter } from "@dispatch/compute-router";
+import { Policy, PrivacyClass } from "@dispatch/protocol";
 
 const router = new ComputeRouter({
   coordinatorUrls: {

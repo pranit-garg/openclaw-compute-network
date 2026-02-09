@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { JobType, type JobAssignMsg, type JobCompleteMsg } from "@openclaw/protocol";
+import { JobType, type JobAssignMsg, type JobCompleteMsg } from "@dispatch/protocol";
 import { loadOrCreateKeypair } from "./keys.js";
 import { registerWorker } from "./register.js";
 import { startHeartbeat } from "./heartbeat.js";

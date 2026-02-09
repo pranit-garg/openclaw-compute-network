@@ -7,7 +7,7 @@ import {
   PrivacyClass,
   resolvePolicy,
   type JobAssignMsg,
-} from "@openclaw/protocol";
+} from "@dispatch/protocol";
 import type { WorkerHub } from "../ws/workerHub.js";
 
 /**

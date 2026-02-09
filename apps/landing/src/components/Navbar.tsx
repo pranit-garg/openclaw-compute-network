@@ -9,7 +9,7 @@ const navLinks = [
   { label: "Code", href: "#code" },
   {
     label: "GitHub",
-    href: "https://github.com/openclaw",
+    href: "https://github.com/dispatch",
     external: true,
   },
 ];
@@ -35,7 +35,7 @@ export function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <a href="#" className="text-lg font-bold text-text">
-          OpenClaw
+          Dispatch
         </a>
 
         {/* Desktop links */}

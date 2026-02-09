@@ -1,6 +1,6 @@
 import nacl from "tweetnacl";
 import crypto from "node:crypto";
-import type { ReceiptSubmitMsg } from "@openclaw/protocol";
+import type { ReceiptSubmitMsg } from "@dispatch/protocol";
 
 /**
  * Build a receipt and sign it with ed25519.

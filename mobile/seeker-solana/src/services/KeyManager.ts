@@ -13,8 +13,8 @@ import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Buffer } from "buffer";
 
-const SECURE_KEY = "openclaw_secret_key";
-const STORAGE_PUBKEY = "openclaw_worker_id";
+const SECURE_KEY = "dispatch_secret_key";
+const STORAGE_PUBKEY = "dispatch_worker_id";
 
 export interface MobileKeyPair {
   publicKey: Uint8Array;

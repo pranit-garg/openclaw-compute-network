@@ -1,11 +1,11 @@
 ---
 title: x402 Payments
-description: How OpenClaw uses Coinbase's x402 protocol for HTTP-native stablecoin micropayments on every job.
+description: How Dispatch uses Coinbase's x402 protocol for HTTP-native stablecoin micropayments on every job.
 ---
 
 # x402 Payments
 
-OpenClaw uses [x402](https://www.x402.org/) — Coinbase's open HTTP-native payment protocol — to settle stablecoin micropayments on every compute job. No custom token, no staking, no bridging. Workers get paid in USDC the moment a job completes.
+Dispatch uses [x402](https://www.x402.org/) — Coinbase's open HTTP-native payment protocol — to settle stablecoin micropayments on every compute job. No custom token, no staking, no bridging. Workers get paid in USDC the moment a job completes.
 
 ## How x402 works
 
@@ -38,7 +38,7 @@ Client                          Server                      Facilitator
 
 ## Chain-specific schemes
 
-OpenClaw runs two coordinators, each with its own x402 payment scheme:
+Dispatch runs two coordinators, each with its own x402 payment scheme:
 
 ### Monad (EVM)
 
@@ -146,7 +146,7 @@ If no `x402Client` is configured and the coordinator returns `402`, the SDK thro
 
 ## x402 packages
 
-OpenClaw uses x402 v2.x packages:
+Dispatch uses x402 v2.x packages:
 
 | Package | Purpose |
 |---------|---------|

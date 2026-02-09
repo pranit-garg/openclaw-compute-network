@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import type { HeartbeatMsg } from "@openclaw/protocol";
+import type { HeartbeatMsg } from "@dispatch/protocol";
 
 /** Start sending heartbeat every 10s. Returns cleanup function. */
 export function startHeartbeat(ws: WebSocket, pubkey: string): () => void {

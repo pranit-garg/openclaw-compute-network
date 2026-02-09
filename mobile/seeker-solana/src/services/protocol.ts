@@ -1,6 +1,6 @@
 /**
- * Standalone protocol types for the OpenClaw WebSocket protocol.
- * Copied/adapted from @openclaw/protocol — NOT imported from monorepo.
+ * Standalone protocol types for the Dispatch WebSocket protocol.
+ * Copied/adapted from @dispatch/protocol — NOT imported from monorepo.
  *
  * This defines every message type the mobile worker sends/receives
  * when talking to a coordinator node.

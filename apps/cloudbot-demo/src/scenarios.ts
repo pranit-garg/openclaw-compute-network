@@ -1,6 +1,6 @@
-import { Policy, PrivacyClass } from "@openclaw/protocol";
-import type { ComputeRouter } from "@openclaw/compute-router";
-import type { ComputeResult } from "@openclaw/compute-router";
+import { Policy, PrivacyClass } from "@dispatch/protocol";
+import type { ComputeRouter } from "@dispatch/compute-router";
+import type { ComputeResult } from "@dispatch/compute-router";
 
 interface ScenarioResult {
   name: string;
@@ -41,7 +41,7 @@ export async function runScenarios(
   try {
     const r = await router.runTask({
       task_type: "summarize",
-      input: "OpenClaw is building a decentralized compute network that connects mobile devices (Seekers) and desktop machines (Workers) to process AI inference and data tasks. The network uses x402 payment protocol for micropayments and supports both Monad and Solana blockchains. Privacy controls allow users to route sensitive jobs only to trusted workers they've explicitly paired with.",
+      input: "Dispatch is building a decentralized compute network that connects mobile devices (Seekers) and desktop machines (Workers) to process AI inference and data tasks. The network uses x402 payment protocol for micropayments and supports both Monad and Solana blockchains. Privacy controls allow users to route sensitive jobs only to trusted workers they've explicitly paired with.",
       policy: Policy.CHEAP,
       privacy: PrivacyClass.PUBLIC,
       user_id: "demo-user-1",

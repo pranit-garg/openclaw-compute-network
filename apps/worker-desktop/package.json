@@ -1,10 +1,10 @@
 {
-  "name": "@openclaw/worker-desktop",
+  "name": "@dispatch/worker-desktop",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "dependencies": {
-    "@openclaw/protocol": "workspace:*"
+    "@dispatch/protocol": "workspace:*"
   }
 }

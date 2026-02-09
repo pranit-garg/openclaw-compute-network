@@ -1,5 +1,5 @@
 /**
- * Theme constants — dark mode colors matching the OpenClaw landing page.
+ * Theme constants — dark mode colors matching the Dispatch landing page.
  * Consistent with https://landing-pi-ashen-62.vercel.app
  */
 export const colors = {

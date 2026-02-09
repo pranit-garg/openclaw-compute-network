@@ -11,7 +11,7 @@ import {
   type RegisterMsg,
   type RegisterAckMsg,
   type TaskType,
-} from "@openclaw/protocol";
+} from "@dispatch/protocol";
 
 const COORDINATOR_URL = process.env.COORDINATOR_URL ?? "http://localhost:4010";
 const wsUrl = COORDINATOR_URL.replace(/^http/, "ws");

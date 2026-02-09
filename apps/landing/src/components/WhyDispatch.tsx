@@ -5,31 +5,31 @@ import { motion } from "framer-motion";
 const differentiators = [
   {
     title: "No custom token",
-    openclaw: "Workers get paid in USDC via x402. No token to buy, stake, or bridge.",
+    dispatch: "Workers get paid in USDC via x402. No token to buy, stake, or bridge.",
     others: "Require buying a native token to participate. Staking, slashing, withdrawal delays.",
     tag: "x402 / USDC",
   },
   {
-    title: "Mobile workers",
-    openclaw: "Seekers turn phones into compute nodes for lightweight AI tasks. The network scales with devices people already carry.",
-    others: "GPU-only networks that require datacenter hardware. High barrier to entry for supply side.",
-    tag: "Seekers",
+    title: "On-chain reputation",
+    dispatch: "Workers build ERC-8004 reputation on Monad. Every job adds verifiable feedback. Agents pick workers by track record.",
+    others: "No on-chain identity or reputation. Workers are anonymous and interchangeable.",
+    tag: "ERC-8004",
   },
   {
-    title: "Privacy by architecture",
-    openclaw: "Trust pairing routes private jobs to workers you control. Enforced at the coordinator level — not an SDK flag.",
-    others: "All workers are interchangeable. No mechanism to restrict which machines see your data.",
-    tag: "Trust-paired",
+    title: "Idle hardware as supply",
+    dispatch: "Phones and desktops earn USDC while idle. The network scales with devices people already own — no GPU required.",
+    others: "GPU-only networks that require datacenter hardware. High barrier to entry.",
+    tag: "Idle devices",
   },
   {
     title: "Dual-chain from day one",
-    openclaw: "Monad (EVM) and Solana run as parallel coordinators with separate databases and settlement rails.",
+    dispatch: "Monad (EVM) and Solana run as parallel coordinators with separate databases and settlement rails.",
     others: "Single-chain lock-in. Cross-chain support bolted on later, if at all.",
     tag: "Monad + Solana",
   },
 ];
 
-export function WhyOpenClaw() {
+export function WhyDispatch() {
   return (
     <section className="px-6 py-20 md:py-28" id="why">
       <div className="mx-auto max-w-6xl">
@@ -40,7 +40,7 @@ export function WhyOpenClaw() {
           className="mb-16 text-center"
         >
           <h2 className="text-3xl font-bold md:text-4xl">
-            Why OpenClaw?
+            Why Dispatch?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-muted">
             Different decisions from the ground up.
@@ -72,8 +72,8 @@ export function WhyOpenClaw() {
                     </svg>
                   </div>
                   <p className="text-sm leading-relaxed text-text-muted">
-                    <span className="font-medium text-text">OpenClaw: </span>
-                    {item.openclaw}
+                    <span className="font-medium text-text">Dispatch: </span>
+                    {item.dispatch}
                   </p>
                 </div>
 

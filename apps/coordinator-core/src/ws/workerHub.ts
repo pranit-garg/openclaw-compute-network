@@ -17,7 +17,16 @@ import {
   type HeartbeatAckMsg,
   type JobAssignMsg,
   type ErrorMsg,
-} from "@openclaw/protocol";
+} from "@dispatch/protocol";
+
+// ── ERC-8004 integration (optional) ─────────────
+
+export interface ERC8004Config {
+  /** Fetch reputation score for a worker pubkey. Returns 0-100 or null if unknown. */
+  getReputationScore: (pubkey: string) => Promise<number | null>;
+  /** Post feedback after job completion. Fire-and-forget. */
+  postFeedback?: (workerPubkey: string, jobId: string, success: boolean) => Promise<void>;
+}
 
 // ── Worker state ───────────────────────────────
 
@@ -30,6 +39,7 @@ interface TrackedWorker {
   status: "idle" | "busy";
   lastHeartbeat: number;
   activeJobId: string | null;
+  reputationScore?: number; // cached ERC-8004 score (0-100)
 }
 
 const HEARTBEAT_TIMEOUT_MS = 30_000;
@@ -39,9 +49,11 @@ export class WorkerHub {
   private workers = new Map<string, TrackedWorker>();
   private heartbeatCheck: ReturnType<typeof setInterval>;
   private db: Database.Database;
+  private erc8004?: ERC8004Config;
 
-  constructor(server: Server, db: Database.Database) {
+  constructor(server: Server, db: Database.Database, erc8004?: ERC8004Config) {
     this.db = db;
+    this.erc8004 = erc8004;
 
     // Upgrade HTTP → WebSocket on the same port
     this.wss = new WebSocketServer({ noServer: true });
@@ -113,6 +125,16 @@ export class WorkerHub {
     };
     this.workers.set(id, worker);
 
+    // Async: fetch ERC-8004 reputation (non-blocking, best-effort)
+    if (this.erc8004) {
+      this.erc8004.getReputationScore(msg.provider_pubkey).then((score) => {
+        if (score !== null && this.workers.has(id)) {
+          worker.reputationScore = score;
+          console.log(`[WorkerHub] ERC-8004 reputation for ${id}: ${score}`);
+        }
+      }).catch(() => { /* ERC-8004 unavailable — ignore */ });
+    }
+
     const ack: RegisterAckMsg = { type: "register_ack", status: "ok", worker_id: id };
     this.send(ws, ack);
     console.log(`[WorkerHub] Registered ${msg.provider_type} worker ${id} (pubkey: ${msg.provider_pubkey.slice(0, 8)}...)`);
@@ -152,6 +174,13 @@ export class WorkerHub {
       }
     });
     txn();
+
+    // ERC-8004: post positive feedback (fire-and-forget)
+    if (this.erc8004?.postFeedback) {
+      this.erc8004.postFeedback(worker.pubkey, msg.job_id, true).catch(() => {
+        /* ERC-8004 feedback failed — non-critical */
+      });
+    }
 
     worker.status = "idle";
     worker.activeJobId = null;
@@ -252,6 +281,10 @@ export class WorkerHub {
     }
     // Prefer fresher heartbeats
     score += Math.max(0, 5 - (Date.now() - w.lastHeartbeat) / 10_000);
+    // ERC-8004: boost by reputation score (0-100 mapped to 0-10 bonus)
+    if (w.reputationScore !== undefined) {
+      score += (w.reputationScore / 100) * 10;
+    }
     return score;
   }
 

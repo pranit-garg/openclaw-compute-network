@@ -1,6 +1,6 @@
 ---
 title: Submit a Job
-description: End-to-end guide for submitting a compute job to the OpenClaw network — from quoting to polling the result.
+description: End-to-end guide for submitting a compute job to the Dispatch network — from quoting to polling the result.
 ---
 
 # Submit a Job
@@ -165,7 +165,7 @@ curl http://localhost:4010/v1/jobs/a1b2c3d4-e5f6-7890-abcd-ef1234567890
 The SDK wraps all three steps into a single call:
 
 ```typescript
-import { ComputeRouter } from "@openclaw/compute-router";
+import { ComputeRouter } from "@dispatch/compute-router";
 
 const router = new ComputeRouter({
   coordinatorUrls: {

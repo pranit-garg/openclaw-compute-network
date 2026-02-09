@@ -1,4 +1,4 @@
-import type { JobType, Policy, PrivacyClass, TaskType } from "@openclaw/protocol";
+import type { JobType, Policy, PrivacyClass, TaskType } from "@dispatch/protocol";
 
 export interface LLMRequest {
   prompt: string;

@@ -24,6 +24,7 @@
     { "path": "apps/coordinator-solana" },
     { "path": "apps/worker-desktop" },
     { "path": "apps/seeker-simulator" },
-    { "path": "apps/cloudbot-demo" }
+    { "path": "apps/cloudbot-demo" },
+    { "path": "packages/erc8004" }
   ]
 }

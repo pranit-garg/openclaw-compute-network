@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Get the OpenClaw Compute Network running locally in 5 minutes.
+description: Get the Dispatch Compute Network running locally in 5 minutes.
 ---
 
 # Quickstart
@@ -16,7 +16,7 @@ Get a coordinator, worker, and demo client running locally. This guide uses test
 ## 1. Clone and install
 
 ```bash
-git clone https://github.com/openclaw/compute-network.git
+git clone https://github.com/dispatch/compute-network.git
 cd compute-network
 pnpm install
 ```
@@ -113,8 +113,8 @@ curl http://localhost:4010/v1/jobs/JOB_ID
 ### Option B: Using the SDK
 
 ```typescript
-import { ComputeRouter } from "@openclaw/compute-router";
-import { Policy } from "@openclaw/protocol";
+import { ComputeRouter } from "@dispatch/compute-router";
+import { Policy } from "@dispatch/protocol";
 
 const router = new ComputeRouter({
   coordinatorUrls: {

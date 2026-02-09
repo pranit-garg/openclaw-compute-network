@@ -1,4 +1,4 @@
-# OpenClaw Compute Network — Backlog
+# Dispatch Compute Network — Backlog
 <!-- Updated: 2026-02-09 — Removed completed items, added new ones -->
 
 ## Post-MVP Features
@@ -7,7 +7,7 @@
 Generate Open Graph image for social sharing on the landing page.
 
 ### custom-domain
-Set up custom domain (openclaw.xyz or similar) on Vercel for the landing page.
+Set up custom domain (dispatch.network or similar) on Vercel for the landing page.
 
 ### api-documentation
 Generate OpenAPI/Swagger documentation for the coordinator REST API endpoints.

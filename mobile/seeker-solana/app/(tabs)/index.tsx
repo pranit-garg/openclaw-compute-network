@@ -38,7 +38,7 @@ export default function DashboardScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>OpenClaw</Text>
+          <Text style={styles.title}>Dispatch</Text>
           <Text style={styles.subtitle}>Compute Node</Text>
         </View>
 

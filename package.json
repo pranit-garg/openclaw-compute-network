@@ -1,5 +1,5 @@
 {
-  "name": "openclaw-compute-network",
+  "name": "dispatch-compute-network",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,7 @@
     "test": "vitest run",
     "e2e": "tsx scripts/e2e.ts",
     "live-test": "bash scripts/live-test.sh",
-    "worker:railway": "COORDINATOR_URL=https://openclaw-solana.up.railway.app tsx apps/worker-desktop/src/index.ts",
+    "worker:railway": "COORDINATOR_URL=https://dispatch-solana.up.railway.app tsx apps/worker-desktop/src/index.ts",
     "clean": "rm -rf packages/*/dist apps/*/dist"
   },
   "devDependencies": {

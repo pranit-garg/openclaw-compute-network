@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/compute-router",
+  "name": "@dispatch/compute-router",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@openclaw/protocol": "workspace:*",
+    "@dispatch/protocol": "workspace:*",
     "openai": "^4.77.0",
     "@anthropic-ai/sdk": "^0.37.0"
   },

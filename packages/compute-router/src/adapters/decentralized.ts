@@ -3,7 +3,7 @@ import {
   Policy,
   resolvePolicy,
   type Quote,
-} from "@openclaw/protocol";
+} from "@dispatch/protocol";
 import type { ComputeAdapter, ComputeResult, LLMRequest, TaskRequest } from "./types.js";
 import { fetchJson, sleep } from "../util.js";
 

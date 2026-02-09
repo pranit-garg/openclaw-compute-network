@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/coordinator-core",
+  "name": "@dispatch/coordinator-core",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@openclaw/protocol": "workspace:*"
+    "@dispatch/protocol": "workspace:*"
   },
   "optionalDependencies": {
     "@coral-xyz/anchor": "^0.30.0",

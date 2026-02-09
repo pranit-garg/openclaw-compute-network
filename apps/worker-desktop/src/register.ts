@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { JobType, type RegisterMsg, type RegisterAckMsg } from "@openclaw/protocol";
+import { JobType, type RegisterMsg, type RegisterAckMsg } from "@dispatch/protocol";
 
 /**
  * Send RegisterMsg and wait for RegisterAckMsg.

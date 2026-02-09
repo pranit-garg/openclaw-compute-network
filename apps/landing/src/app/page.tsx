@@ -3,7 +3,7 @@ import { Hero } from "@/components/Hero";
 import { Stats } from "@/components/Stats";
 import { TrustStrip } from "@/components/TrustStrip";
 import { Features } from "@/components/Features";
-import { WhyOpenClaw } from "@/components/WhyOpenClaw";
+import { WhyDispatch } from "@/components/WhyDispatch";
 import { Architecture } from "@/components/Architecture";
 import { CodePreview } from "@/components/CodePreview";
 import { Chains } from "@/components/Chains";
@@ -18,7 +18,7 @@ export default function Home() {
       <Stats />
       <TrustStrip />
       <Features />
-      <WhyOpenClaw />
+      <WhyDispatch />
       <Architecture />
       <CodePreview />
       <Chains />

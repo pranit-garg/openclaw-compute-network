@@ -1,36 +1,35 @@
 ---
-title: OpenClaw Compute Network
-description: Decentralized compute with x402 stablecoin micropayments, mobile seekers, and trust-paired privacy routing.
+title: Dispatch
+description: The dispatch layer where AI agents buy compute from idle hardware — paid in USDC over x402, verified with ERC-8004 reputation on Monad and Solana.
 ---
 
-# OpenClaw Compute Network
+# Dispatch
 
-Decentralized compute that pays workers per job over HTTP 402.
+Dispatch idle compute to AI agents.
 
-OpenClaw connects AI workloads to a distributed network of workers — desktops, servers, and mobile devices — and settles every job with x402 micropayments on Monad and Solana.
+Dispatch is the layer where AI agents submit compute jobs over HTTP, pay with USDC via x402, and receive results from idle hardware — phones, laptops, and desktops. Workers build verifiable reputation through ERC-8004 on Monad. Live on Monad and Solana testnet.
+
+## Three pillars
+
+- **Agent-native compute** — AI agents are the customers. They submit HTTP requests with x402 payment headers. No SDK, no wallet setup, just HTTP and USDC.
+- **Idle hardware as supply** — Phones and desktops earn USDC by processing AI inference while idle. The network scales with devices people already own.
+- **On-chain trust** — Workers register as ERC-8004 agents on Monad. Every job builds verifiable reputation. Ed25519 receipts prove every result.
 
 ## What it does
 
-- **Seekers** submit AI inference and data-processing jobs via the SDK or REST API
+- **Agents** submit AI inference and data-processing jobs via the SDK or REST API
 - **Coordinators** match jobs with available workers over WebSocket
 - **Workers** execute jobs and return signed receipts
 - **x402** settles stablecoin payments automatically on every job commit
-
-## Key features
-
-- **x402-native payments** — every job is a stablecoin micropayment via Coinbase's HTTP 402 protocol. No custom token, no staking.
-- **Mobile-first supply** — seekers turn phones into compute nodes for lightweight tasks (summarize, classify, extract JSON).
-- **Privacy by architecture** — trust pairing routes private jobs exclusively to workers you control, enforced at the coordinator level.
-- **Dual-chain** — Monad (EVM) and Solana run as parallel coordinators with separate databases from day one.
-- **Cryptographic receipts** — workers sign ed25519 receipts over output hashes, designed for on-chain anchoring.
+- **ERC-8004** tracks worker identity and reputation on Monad
 
 ## Architecture at a glance
 
 ```
 ┌──────────┐     REST/x402      ┌──────────────┐     WebSocket     ┌──────────┐
-│  Seeker  │ ─────────────────▶ │ Coordinator  │ ◀───────────────▶ │  Worker  │
+│  Agent   │ ─────────────────▶ │ Coordinator  │ ◀───────────────▶ │  Worker  │
 │  (SDK)   │ ◀───── poll ────── │ (Monad/Sol)  │ ──── assign ────▶ │ (Desktop │
-└──────────┘                    └──────────────┘                    │  /Seeker)│
+└──────────┘                    └──────────────┘                    │  /Mobile)│
                                        │                           └──────────┘
                                  ┌─────┴─────┐
                                  │  SQLite DB │
@@ -39,11 +38,11 @@ OpenClaw connects AI workloads to a distributed network of workers — desktops,
                                  └───────────┘
 ```
 
-1. Seeker gets a **price quote** (`GET /v1/quote`)
-2. Seeker **commits** the job with x402 payment (`POST /v1/jobs/commit/fast` or `/cheap`)
+1. Agent gets a **price quote** (`GET /v1/quote`)
+2. Agent **commits** the job with x402 payment (`POST /v1/jobs/commit/fast` or `/cheap`)
 3. Coordinator finds an available worker and sends a **job_assign** over WebSocket
 4. Worker executes the job and sends **job_complete** with a signed receipt
-5. Seeker **polls** for the result (`GET /v1/jobs/\{id\}`)
+5. Agent **polls** for the result (`GET /v1/jobs/\{id\}`)
 
 ## Monorepo structure
 
@@ -51,13 +50,14 @@ OpenClaw connects AI workloads to a distributed network of workers — desktops,
 packages/
   protocol/        → Shared types, enums, pricing, WebSocket message schemas
   compute-router/  → SDK — routes jobs to decentralized workers or hosted BYOK
+  erc8004/         → ERC-8004 identity + reputation contracts and TS client
 
 apps/
   coordinator-core/   → Express server, SQLite DB, WebSocket hub, route handlers
   coordinator-monad/  → Monad testnet coordinator (port 4010, EVM x402)
   coordinator-solana/ → Solana devnet coordinator (port 4020, SVM x402)
   worker-desktop/     → Desktop worker node (LLM + TASK)
-  seeker-simulator/   → Mobile seeker simulator (TASK only)
+  seeker-simulator/   → Mobile worker simulator (TASK only)
   cloudbot-demo/      → Demo CLI for end-to-end testing
 ```
 

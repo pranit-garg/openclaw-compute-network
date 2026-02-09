@@ -5,12 +5,12 @@ description: ComputeRouter SDK reference — route AI jobs to decentralized work
 
 # SDK Reference
 
-The `@openclaw/compute-router` package is the main SDK for submitting jobs to the OpenClaw network. It routes jobs to decentralized workers first, then falls back to hosted BYOK providers (OpenAI, Anthropic) if the decentralized network is unavailable.
+The `@dispatch/compute-router` package is the main SDK for submitting jobs to the Dispatch network. It routes jobs to decentralized workers first, then falls back to hosted BYOK providers (OpenAI, Anthropic) if the decentralized network is unavailable.
 
 ## Installation
 
 ```bash
-pnpm add @openclaw/compute-router @openclaw/protocol
+pnpm add @dispatch/compute-router @dispatch/protocol
 ```
 
 ## ComputeRouter
@@ -18,7 +18,7 @@ pnpm add @openclaw/compute-router @openclaw/protocol
 ### Constructor
 
 ```typescript
-import { ComputeRouter } from "@openclaw/compute-router";
+import { ComputeRouter } from "@dispatch/compute-router";
 
 const router = new ComputeRouter({
   coordinatorUrls: {

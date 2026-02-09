@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const terminalLines = [
-  { text: "$ openclaw submit --task summarize --chain monad", color: "text-text" },
-  { text: "→ Quoted: 0.001 USDC (CHEAP tier)", color: "text-green" },
-  { text: "→ Payment: x402 HTTP 402 → Monad", color: "text-green" },
-  { text: "→ Matched: seeker-7f3a (mobile)", color: "text-green" },
-  { text: "→ Settled: 0.001 USDC in 12ms", color: "text-green" },
-  { text: "→ Receipt: ed25519 verified ✓", color: "text-green font-bold" },
+  { text: "$ dispatch submit --task summarize --chain monad", color: "text-text" },
+  { text: "→ Worker: node-7f3a (reputation: 4.8★)", color: "text-green" },
+  { text: "→ Payment: 0.001 USDC via x402", color: "text-green" },
+  { text: "→ Processing: summarization (1.2s)", color: "text-green" },
+  { text: "→ Receipt: ed25519 verified ✓", color: "text-green" },
+  { text: "→ Reputation: feedback posted to Monad", color: "text-green font-bold" },
 ];
 
 export function Hero() {
@@ -53,9 +53,9 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-4xl font-bold leading-tight tracking-tight md:text-6xl lg:text-7xl"
         >
-          The compute network that{" "}
+          Dispatch idle compute{" "}
           <span className="bg-gradient-to-r from-accent-bright to-accent bg-clip-text text-transparent">
-            pays over HTTP.
+            to AI agents.
           </span>
         </motion.h1>
 
@@ -66,9 +66,9 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-muted md:text-xl"
         >
-          OpenClaw routes AI jobs to desktops and mobile devices, settles every
-          task with x402 stablecoin micropayments, and verifies results with
-          cryptographic receipts. Live on Monad and Solana.
+          Your hardware processes AI jobs while idle. Agents pay in USDC over
+          x402. Workers build on-chain reputation via ERC-8004. Live on Monad
+          and Solana testnet.
         </motion.p>
 
         {/* CTA buttons */}
@@ -79,7 +79,7 @@ export function Hero() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <a
-            href="https://github.com/openclaw"
+            href="https://github.com/dispatch"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-bright"
@@ -90,7 +90,7 @@ export function Hero() {
             View Source
           </a>
           <a
-            href="https://github.com/openclaw"
+            href="https://github.com/dispatch"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 font-medium text-text-muted transition-colors hover:border-border-bright hover:text-text"

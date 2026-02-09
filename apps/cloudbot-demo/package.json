@@ -1,11 +1,11 @@
 {
-  "name": "@openclaw/cloudbot-demo",
+  "name": "@dispatch/cloudbot-demo",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "dependencies": {
-    "@openclaw/protocol": "workspace:*",
-    "@openclaw/compute-router": "workspace:*"
+    "@dispatch/protocol": "workspace:*",
+    "@dispatch/compute-router": "workspace:*"
   }
 }

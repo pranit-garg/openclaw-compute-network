@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/coordinator-solana",
+  "name": "@dispatch/coordinator-solana",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "dependencies": {
-    "@openclaw/coordinator-core": "workspace:*",
-    "@openclaw/protocol": "workspace:*",
+    "@dispatch/coordinator-core": "workspace:*",
+    "@dispatch/protocol": "workspace:*",
     "@x402/express": "^2.0.0",
     "@x402/svm": "^2.0.0",
     "@x402/core": "^2.0.0"

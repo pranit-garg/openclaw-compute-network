@@ -5,7 +5,7 @@ import {
   resolvePolicy,
   getPrice,
   type Quote,
-} from "@openclaw/protocol";
+} from "@dispatch/protocol";
 
 export function quoteRouter(network: string): Router {
   const router = Router();

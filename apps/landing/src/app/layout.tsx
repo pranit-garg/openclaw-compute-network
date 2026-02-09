@@ -7,7 +7,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://landing-pi-ashen-62.vercel.app"),
-  title: "OpenClaw — Decentralized Compute with x402 Micropayments",
+  title: "Dispatch — Decentralized Compute with x402 Micropayments",
   description:
     "Decentralized compute network with x402 stablecoin micropayments, mobile seekers, and trust-paired privacy routing. Built on Monad and Solana.",
   keywords: [
@@ -20,19 +20,19 @@ export const metadata: Metadata = {
     "distributed computing",
     "pay-per-job",
     "crypto compute",
-    "OpenClaw",
+    "Dispatch",
   ],
   icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
   openGraph: {
-    title: "OpenClaw — Decentralized Compute with x402 Micropayments",
+    title: "Dispatch — Decentralized Compute with x402 Micropayments",
     description:
       "Pay-per-job compute, settled in stablecoins over HTTP. Mobile seekers, desktop workers, trust-paired privacy.",
     type: "website",
-    siteName: "OpenClaw",
+    siteName: "Dispatch",
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenClaw — Decentralized Compute with x402 Micropayments",
+    title: "Dispatch — Decentralized Compute with x402 Micropayments",
     description:
       "Pay-per-job compute, settled in stablecoins over HTTP. Mobile seekers, desktop workers, trust-paired privacy.",
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "OpenClaw Compute Network",
+  name: "Dispatch Compute Network",
   description:
     "Decentralized compute network with x402 stablecoin micropayments",
   applicationCategory: "DeveloperApplication",

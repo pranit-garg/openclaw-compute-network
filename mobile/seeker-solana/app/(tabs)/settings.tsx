@@ -210,7 +210,7 @@ export default function SettingsScreen() {
               style={styles.input}
               value={urlInput}
               onChangeText={setUrlInput}
-              placeholder="wss://openclaw-solana.up.railway.app"
+              placeholder="wss://dispatch-solana.up.railway.app"
               placeholderTextColor={colors.textDim}
               autoCapitalize="none"
               autoCorrect={false}
@@ -280,7 +280,7 @@ export default function SettingsScreen() {
           <Text style={styles.sectionTitle}>About</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>App</Text>
-            <Text style={styles.infoValue}>OpenClaw Seeker</Text>
+            <Text style={styles.infoValue}>Dispatch</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Version</Text>

@@ -63,7 +63,7 @@ export function dashboardRouter(db: Database.Database, hub: WorkerHub): Router {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="refresh" content="10" />
-  <title>OpenClaw Dashboard</title>
+  <title>Dispatch Dashboard</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -155,7 +155,7 @@ export function dashboardRouter(db: Database.Database, hub: WorkerHub): Router {
   </style>
 </head>
 <body>
-  <h1>OpenClaw Network</h1>
+  <h1>Dispatch Network</h1>
   <p class="subtitle">Verifiable Compute &mdash; live &mdash; auto-refreshes every 10s</p>
 
   <div class="cards">
@@ -195,7 +195,7 @@ export function dashboardRouter(db: Database.Database, hub: WorkerHub): Router {
   </table>
 
   <div class="footer">
-    OpenClaw &mdash; Verifiable Compute Network &bull; ${new Date().toISOString()}
+    Dispatch &mdash; Verifiable Compute Network &bull; ${new Date().toISOString()}
   </div>
 </body>
 </html>`;

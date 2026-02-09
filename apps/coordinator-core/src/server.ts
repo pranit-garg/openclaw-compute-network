@@ -2,7 +2,7 @@ import express from "express";
 import http from "node:http";
 import type { CoordinatorConfig } from "./config.js";
 import { createDb } from "./db.js";
-import { WorkerHub } from "./ws/workerHub.js";
+import { WorkerHub, type ERC8004Config } from "./ws/workerHub.js";
 import { healthRouter } from "./routes/health.js";
 import { quoteRouter } from "./routes/quote.js";
 import { jobsRouter } from "./routes/jobs.js";
@@ -27,6 +27,7 @@ export function createServer(
   options?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     paymentMiddleware?: any;
+    erc8004?: ERC8004Config;
   }
 ): CoordinatorServer {
   const app = express();
@@ -34,7 +35,7 @@ export function createServer(
 
   const db = createDb(config.dbPath);
   const httpServer = http.createServer(app);
-  const hub = new WorkerHub(httpServer, db);
+  const hub = new WorkerHub(httpServer, db, options?.erc8004);
 
   // Apply x402 payment middleware if provided
   if (options?.paymentMiddleware) {
