@@ -29,33 +29,33 @@ pnpm build 2>&1 | tail -1
 
 # 2. Start coordinator
 echo -e "${CYAN}Starting Solana coordinator (testnet mode)...${NC}"
-TESTNET_MODE=true node apps/coordinator-solana/dist/index.js > /tmp/openclaw-coordinator.log 2>&1 &
+TESTNET_MODE=true node apps/coordinator-solana/dist/index.js > /tmp/dispatch-coordinator.log 2>&1 &
 COORD_PID=$!
 sleep 2
 
 # Verify coordinator
 if ! curl -sf http://localhost:4020/v1/health > /dev/null 2>&1; then
-  echo "ERROR: Coordinator failed to start. Check /tmp/openclaw-coordinator.log"
+  echo "ERROR: Coordinator failed to start. Check /tmp/dispatch-coordinator.log"
   exit 1
 fi
 echo -e "${GREEN}  Coordinator running on port 4020${NC}"
 
 # 3. Start Cloudflare tunnel
 echo -e "${CYAN}Starting Cloudflare tunnel...${NC}"
-cloudflared tunnel --url http://localhost:4020 > /tmp/openclaw-tunnel.log 2>&1 &
+cloudflared tunnel --url http://localhost:4020 > /tmp/dispatch-tunnel.log 2>&1 &
 TUNNEL_PID=$!
 sleep 5
 
-TUNNEL_URL=$(grep -o 'https://[^ ]*\.trycloudflare\.com' /tmp/openclaw-tunnel.log | head -1)
+TUNNEL_URL=$(grep -o 'https://[^ ]*\.trycloudflare\.com' /tmp/dispatch-tunnel.log | head -1)
 if [ -z "$TUNNEL_URL" ]; then
-  echo "ERROR: Tunnel failed to start. Check /tmp/openclaw-tunnel.log"
+  echo "ERROR: Tunnel failed to start. Check /tmp/dispatch-tunnel.log"
   exit 1
 fi
 echo -e "${GREEN}  Tunnel: $TUNNEL_URL${NC}"
 
 # 4. Start desktop worker
 echo -e "${CYAN}Starting desktop worker...${NC}"
-COORDINATOR_URL=ws://localhost:4020 node apps/worker-desktop/dist/index.js > /tmp/openclaw-worker.log 2>&1 &
+COORDINATOR_URL=ws://localhost:4020 node apps/worker-desktop/dist/index.js > /tmp/dispatch-worker.log 2>&1 &
 WORKER_PID=$!
 sleep 2
 echo -e "${GREEN}  Desktop worker online${NC}"
@@ -63,7 +63,7 @@ echo -e "${GREEN}  Desktop worker online${NC}"
 # 5. Print summary
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  OpenClaw Demo Environment Running${NC}"
+echo -e "${GREEN}  Dispatch Demo Environment Running${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "  Dashboard:   ${CYAN}${TUNNEL_URL}/dashboard${NC}"

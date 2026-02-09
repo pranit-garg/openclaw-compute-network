@@ -4,7 +4,7 @@
 #
 # Prerequisites:
 #   1. Coordinator deployed on Railway (TESTNET_MODE=true)
-#   2. Desktop worker running: COORDINATOR_URL=wss://openclaw-solana.up.railway.app pnpm worker:desktop
+#   2. Desktop worker running: COORDINATOR_URL=wss://dispatch-solana.up.railway.app pnpm worker:desktop
 #   3. Mobile app connected to Railway URL
 #
 # Usage:
@@ -13,10 +13,10 @@
 
 set -euo pipefail
 
-RAILWAY_URL="${RAILWAY_URL:-https://openclaw-solana.up.railway.app}"
+RAILWAY_URL="${RAILWAY_URL:-https://dispatch-solana.up.railway.app}"
 
 echo "══════════════════════════════════════════"
-echo "  OpenClaw Live E2E Test"
+echo "  Dispatch Live E2E Test"
 echo "  Coordinator: $RAILWAY_URL"
 echo "══════════════════════════════════════════"
 

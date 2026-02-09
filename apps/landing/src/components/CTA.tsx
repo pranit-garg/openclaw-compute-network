@@ -24,7 +24,7 @@ export function CTA() {
           viewport={{ once: true }}
           className="text-3xl font-bold md:text-4xl"
         >
-          Open protocol. Start shipping.
+          Ship a worker node in 15 minutes.
         </motion.h2>
 
         <motion.p
@@ -34,8 +34,8 @@ export function CTA() {
           transition={{ delay: 0.1 }}
           className="mx-auto mt-4 max-w-xl text-text-muted"
         >
-          Run a worker node. Submit jobs via the SDK. Extend the coordinator.
-          All open source.
+          Open protocol, open source. Spin up a worker, submit jobs via the SDK,
+          or fork the coordinator. Everything you need is in the docs.
         </motion.p>
 
         <motion.div

@@ -4,40 +4,40 @@ import { motion } from "framer-motion";
 
 const differentiators = [
   {
-    title: "No custom token",
-    dispatch: "Workers get paid in USDC via x402. No token to buy, stake, or bridge.",
-    others: "Require buying a native token to participate. Staking, slashing, withdrawal delays.",
+    title: "HTTP-native payments",
+    dispatch: "x402 turns HTTP 402 into real money. Agents pay in the request header, workers receive USDC instantly. No token to buy, stake, or bridge.",
+    others: "Require buying a native token to participate. Staking, slashing, withdrawal delays before you see a cent.",
     tag: "x402 / USDC",
   },
   {
-    title: "On-chain reputation",
-    dispatch: "Workers build ERC-8004 reputation on Monad. Every job adds verifiable feedback. Agents pick workers by track record.",
-    others: "No on-chain identity or reputation. Workers are anonymous and interchangeable.",
+    title: "Portable onchain reputation",
+    dispatch: "Workers build ERC-8004 reputation that follows them across apps. Agents verify track record trustlessly — no platform lock-in.",
+    others: "No onchain identity. Workers are anonymous, interchangeable, and start from zero on every platform.",
     tag: "ERC-8004",
   },
   {
-    title: "Idle hardware as supply",
-    dispatch: "Phones and desktops earn USDC while idle. The network scales with devices people already own — no GPU required.",
-    others: "GPU-only networks that require datacenter hardware. High barrier to entry.",
+    title: "100x lower barrier to entry",
+    dispatch: "Any phone or laptop earns USDC while idle. ~$0.001 per task on CHEAP tier, $0.010 per LLM job on FAST. No GPU, no datacenter.",
+    others: "GPU-only networks need $10k+ hardware. High barrier locks out 99% of potential workers.",
     tag: "Idle devices",
   },
   {
-    title: "Dual-chain from day one",
-    dispatch: "Monad (EVM) and Solana run as parallel coordinators with separate databases and settlement rails.",
-    others: "Single-chain lock-in. Cross-chain support bolted on later, if at all.",
+    title: "Dual-chain architecture",
+    dispatch: "Monad (EVM) and Solana run as separate coordinators with independent databases, settlement, and worker pools. True redundancy.",
+    others: "Single-chain lock-in. Cross-chain support bolted on as an afterthought, if at all.",
     tag: "Monad + Solana",
   },
   {
     title: "Cryptographic receipts",
-    dispatch: "Every result comes with an ed25519-signed receipt over the output hash. Verifiable proof of who computed what.",
-    others: "Trust the platform. No cryptographic proof that a specific worker produced a specific result.",
+    dispatch: "Every result includes an ed25519 signature over the output hash. Verifiable, auditable proof of who computed what and when.",
+    others: "Trust the platform. No cryptographic proof tying a specific worker to a specific result.",
     tag: "ed25519",
   },
   {
-    title: "Open source protocol",
-    dispatch: "Coordinator, worker SDK, mobile app — all open source. Fork it, extend it, audit it.",
-    others: "Closed-source infrastructure. Vendor lock-in by design.",
-    tag: "Fully open",
+    title: "Fully open source",
+    dispatch: "Coordinator, worker SDK, Seeker mobile app — all open source. Fork it, audit it, deploy your own network.",
+    others: "Closed-source infrastructure. Vendor lock-in by design. Can't verify what's running.",
+    tag: "MIT license",
   },
 ];
 
@@ -55,7 +55,7 @@ export function WhyDispatch() {
             Why Dispatch?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-muted">
-            Different decisions from the ground up.
+            Every architectural decision is a competitive advantage.
           </p>
         </motion.div>
 

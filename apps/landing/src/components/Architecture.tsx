@@ -6,32 +6,32 @@ const steps = [
   {
     num: "01",
     label: "Quote",
-    detail: "Client requests price for job type + policy tier",
-    sub: "GET /v1/quote → deterministic pricing",
+    detail: "Agent requests price for job type and policy tier",
+    sub: "GET /v1/quote → CHEAP ~$0.001 | FAST ~$0.010",
   },
   {
     num: "02",
     label: "Pay",
-    detail: "x402 header with stablecoin micropayment",
-    sub: "HTTP 402 → sign → retry with payment",
+    detail: "x402 embeds USDC payment directly in the HTTP header",
+    sub: "HTTP 402 → sign USDC tx → retry with X-PAYMENT",
   },
   {
     num: "03",
     label: "Match",
-    detail: "Coordinator claims best available worker atomically",
-    sub: "FAST → desktop, CHEAP → seeker",
+    detail: "Coordinator atomically claims the best worker by reputation and tier",
+    sub: "FAST → desktop workers | CHEAP → Seeker mobile nodes",
   },
   {
     num: "04",
     label: "Execute",
-    detail: "Worker runs job and signs receipt",
-    sub: "LLM inference or task processing",
+    detail: "Worker processes the task and signs the output",
+    sub: "LLM inference, summarization, classification → ed25519 sig",
   },
   {
     num: "05",
     label: "Verify",
-    detail: "Receipt stored with ed25519 signature verification",
-    sub: "Cryptographic proof of work",
+    detail: "Signed receipt stored, reputation feedback posted onchain",
+    sub: "ed25519 over output hash → ERC-8004 score update",
   },
 ];
 
@@ -49,8 +49,8 @@ export function Architecture() {
             Job lifecycle
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-muted">
-            Five steps from request to verified result. Every job follows the
-            same protocol on both chains.
+            Five steps from request to cryptographically verified result.
+            Same protocol on Monad and Solana.
           </p>
         </motion.div>
 

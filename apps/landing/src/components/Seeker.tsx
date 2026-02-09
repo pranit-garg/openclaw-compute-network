@@ -9,8 +9,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
       </svg>
     ),
-    title: "Idle Earnings",
-    description: "Your phone picks up tasks over WebSocket while you sleep. Earnings accumulate in the background.",
+    title: "Passive Income, Zero Effort",
+    description: "Your phone picks up AI tasks over WebSocket while you sleep. USDC earnings accumulate automatically — no interaction needed.",
   },
   {
     icon: (
@@ -18,8 +18,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
       </svg>
     ),
-    title: "On-chain Reputation",
-    description: "Every completed task adds to your ERC-8004 score on Monad. Higher reputation, better jobs.",
+    title: "Onchain Reputation That Grows",
+    description: "Every completed task builds your ERC-8004 score. Higher reputation means priority matching and better-paying jobs.",
   },
   {
     icon: (
@@ -27,8 +27,8 @@ const features = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     ),
-    title: "Lightweight Tasks",
-    description: "Text classification, summarization, data extraction. No GPU — just your phone.",
+    title: "No GPU Required",
+    description: "Summarization, classification, data extraction — all run on your phone's CPU. No special hardware, no setup.",
   },
 ];
 
@@ -162,7 +162,7 @@ export function Seeker() {
               viewport={{ once: true }}
               className="text-3xl font-bold md:text-4xl"
             >
-              Your phone is a compute node.
+              Earn from your phone.
             </motion.h2>
 
             <motion.p
@@ -172,8 +172,9 @@ export function Seeker() {
               transition={{ delay: 0.1 }}
               className="mt-4 text-text-muted leading-relaxed"
             >
-              Dispatch Seeker turns idle screen time into USDC. Connect, execute
-              lightweight AI tasks, build on-chain reputation — from your pocket.
+              The Seeker app turns any idle phone into a compute node. Connect to
+              the network, execute AI tasks in the background, and build onchain
+              reputation — all from your pocket.
             </motion.p>
 
             <div className="mt-8 space-y-5">

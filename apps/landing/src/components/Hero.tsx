@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const terminalLines = [
-  { text: "$ dispatch submit --task summarize --chain monad", color: "text-text" },
-  { text: "→ Worker: node-7f3a (reputation: 4.8★)", color: "text-green" },
-  { text: "→ Payment: 0.001 USDC via x402", color: "text-green" },
-  { text: "→ Processing: summarization (1.2s)", color: "text-green" },
-  { text: "→ Receipt: ed25519 verified ✓", color: "text-green" },
-  { text: "→ Reputation: feedback posted to Monad", color: "text-green font-bold" },
+  { text: "$ dispatch submit --task llm-summarize --chain monad --tier FAST", color: "text-text" },
+  { text: "→ Matched: node-7f3a | ERC-8004 rep: 4.82 | 847 jobs", color: "text-green" },
+  { text: "→ x402 payment: $0.010 USDC sent in request header", color: "text-green" },
+  { text: "→ Executing: LLM summarization (340ms)", color: "text-green" },
+  { text: "→ Receipt: ed25519 sig over output hash ✓", color: "text-green" },
+  { text: "→ Reputation: feedback posted onchain to Monad", color: "text-green font-bold" },
 ];
 
 export function Hero() {
@@ -62,7 +62,7 @@ export function Hero() {
           <span className="bg-gradient-to-r from-[#d4a246] to-[#f0c674] bg-clip-text text-transparent">
             Dispatch
           </span>{" "}
-          idle compute to AI agents.
+          any device into an AI compute network.
         </motion.h1>
 
         {/* Subheadline */}
@@ -72,9 +72,9 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-muted md:text-xl"
         >
-          Turn idle phones and desktops into an AI compute fleet. Workers get
-          paid in USDC. Every completed job builds verifiable reputation
-          on-chain.
+          Phones and laptops earn USDC for running AI tasks. Workers build
+          portable, onchain reputation via ERC-8004. Agents pay per request
+          through x402 — no tokens, no staking, no middlemen.
         </motion.p>
 
         {/* CTA buttons */}

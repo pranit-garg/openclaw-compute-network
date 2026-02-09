@@ -1,0 +1,85 @@
+---
+title: ERC-8004 Reputation
+description: How Dispatch uses ERC-8004 for trustless agent identity and portable reputation onchain — on Monad.
+---
+
+# ERC-8004 Reputation
+
+Dispatch uses [ERC-8004](https://github.com/parity-asia/ERC-8004) to give every worker a verifiable, portable identity and reputation score onchain. Reputation lives on Monad regardless of which chain the job settles on. Workers take their track record anywhere — it's not locked to Dispatch.
+
+## What is ERC-8004
+
+ERC-8004 is a standard for trustless agent identity and reputation onchain. It defines two registries:
+
+### Identity Registry
+
+Contract: `0x8004A818...` (Monad testnet)
+
+Agents register as ERC-721 NFTs. Each token has a URI pointing to metadata — name, description, capabilities. This gives every worker a persistent, ownable identity that any protocol can read.
+
+### Reputation Registry
+
+Contract: `0x8004B663...` (Monad testnet)
+
+Tracks feedback entries with aggregated scores. Each entry includes a numeric score, tags, and the feedback provider's address. Scores are filterable by tag, so consumers can query reputation for specific job types.
+
+## How Dispatch uses it
+
+### Deterministic agent mapping
+
+Every worker's ed25519 public key maps deterministically to an ERC-8004 agent ID:
+
+```
+worker ed25519 pubkey → keccak256 hash → 128-bit agentId
+```
+
+This means the same worker always resolves to the same onchain identity, no manual registration needed.
+
+### Feedback posting
+
+After a job completes, the coordinator posts feedback to the Reputation Registry:
+
+- **Success**: 80 points
+- **Failure**: 20 points
+
+Feedback is posted automatically as part of the job completion flow.
+
+### Score retrieval
+
+Worker reputations are read on-the-fly from the Reputation Registry. Scores are normalized to a 0–100 scale. The coordinator can use these scores when selecting workers for jobs — higher reputation means priority assignment.
+
+### Cross-chain reputation
+
+Reputation always lives on Monad, even when a job settles on Solana. The Solana coordinator posts feedback back to Monad after job completion. One reputation, one chain, regardless of where the work happens.
+
+### Optional activation
+
+ERC-8004 integration is activated when the `ERC8004_PRIVATE_KEY` environment variable is set. Without it, the coordinator runs without reputation tracking.
+
+```bash
+ERC8004_PRIVATE_KEY=0xabc123... pnpm --filter coordinator-monad start
+```
+
+## API functions
+
+The `@dispatch/erc8004` package exposes these functions:
+
+| Function | Description |
+|----------|-------------|
+| `registerAgent()` | Register a new agent identity as an ERC-721 NFT |
+| `getReputationSummary(agentId)` | Get aggregated reputation score for an agent (0–100) |
+| `giveFeedback(entry, account)` | Post a feedback entry to the Reputation Registry |
+| `getFeedbackClients()` | List addresses that have submitted feedback |
+| `readFeedback()` | Read raw feedback entries for an agent |
+| `buildJobFeedback()` | Construct a feedback entry from job completion data |
+
+## Why it matters
+
+Most compute marketplaces lock worker reputation inside their own platform. ERC-8004 makes reputation portable and verifiable:
+
+- **Workers own their reputation** — it's an onchain asset, not a platform metric
+- **Any protocol can read it** — not just Dispatch, any service can check a worker's track record
+- **Trustless verification** — no need to trust Dispatch's word, the data is onchain
+- **Sybil resistance** — reputation accumulates over real work, making it expensive to fake
+
+This creates a trustless labor marketplace where good workers are rewarded across the entire ecosystem, not just one platform.
