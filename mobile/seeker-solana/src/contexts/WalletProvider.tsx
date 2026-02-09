@@ -61,10 +61,9 @@ const STORAGE_JOBS_COMPLETED = "openclaw_jobs_completed";
 const STORAGE_JOB_HISTORY = "openclaw_job_history";
 const STORAGE_COORDINATOR_URL = "openclaw_coordinator_url";
 
-// Railway deployment URL — update after `railway up`
-// Falls back to localhost for local dev
+// Coordinator URL — set via EXPO_PUBLIC_COORDINATOR_URL or defaults to Cloudflare tunnel
 const DEFAULT_COORDINATOR_URL =
-  process.env.EXPO_PUBLIC_COORDINATOR_URL ?? "wss://openclaw-solana.up.railway.app";
+  process.env.EXPO_PUBLIC_COORDINATOR_URL ?? "wss://edge-garlic-explore-furnished.trycloudflare.com";
 
 // ── Provider ──────────────────────────────────
 
