@@ -8,6 +8,11 @@ const navLinks = [
   { label: "Architecture", href: "#architecture" },
   { label: "Code", href: "#code" },
   {
+    label: "Docs",
+    href: "https://docs-theta-mocha.vercel.app/docs",
+    external: true,
+  },
+  {
     label: "GitHub",
     href: "https://github.com/dispatch",
     external: true,

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 export const alt =
-  "Dispatch — Decentralized Compute with x402 Micropayments";
+  "Dispatch — Idle Compute for AI Agents | x402 + ERC-8004 on Monad & Solana";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -52,7 +52,7 @@ export default function TwitterImage() {
           }}
         >
           <div style={{ fontSize: "64px", marginBottom: "8px", display: "flex" }}>
-            {"{ }"}
+            {"⚡"}
           </div>
           <div
             style={{
@@ -76,7 +76,7 @@ export default function TwitterImage() {
               display: "flex",
             }}
           >
-            Decentralized compute with x402 stablecoin micropayments
+            Dispatch idle compute to AI agents. x402 payments + ERC-8004 reputation.
           </div>
           <div style={{ display: "flex", gap: "12px", marginTop: "16px" }}>
             <div

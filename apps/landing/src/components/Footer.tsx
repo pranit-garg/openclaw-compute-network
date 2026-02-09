@@ -10,12 +10,20 @@ export function Footer() {
             </span>
           </div>
           <p className="mt-1 text-sm text-text-dim">
-            Decentralized compute with x402 stablecoin micropayments.
+            Dispatch idle compute to AI agents. x402 payments + ERC-8004 reputation.
           </p>
         </div>
 
         <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
           <div className="flex items-center gap-6">
+            <a
+              href="https://docs-theta-mocha.vercel.app/docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-text-muted transition-colors hover:text-text"
+            >
+              Docs
+            </a>
             <a
               href="https://github.com/dispatch"
               target="_blank"
@@ -25,7 +33,7 @@ export function Footer() {
               GitHub
             </a>
             <a
-              href="https://x.com/dispatch"
+              href="https://x.com/pranit"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-text-muted transition-colors hover:text-text"

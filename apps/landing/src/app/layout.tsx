@@ -7,45 +7,69 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://landing-pi-ashen-62.vercel.app"),
-  title: "Dispatch — Decentralized Compute with x402 Micropayments",
+  title: "Dispatch — Idle Compute for AI Agents | x402 + ERC-8004",
   description:
-    "Decentralized compute network with x402 stablecoin micropayments, mobile seekers, and trust-paired privacy routing. Built on Monad and Solana.",
+    "Dispatch routes AI jobs to idle phones and desktops. Workers earn USDC via x402 micropayments and build on-chain reputation through ERC-8004 on Monad. Live on Monad and Solana testnet.",
   keywords: [
-    "decentralized compute",
-    "x402",
-    "micropayments",
-    "stablecoin",
+    "Dispatch",
+    "AI compute network",
+    "x402 micropayments",
+    "ERC-8004",
+    "agent compute",
+    "idle hardware",
+    "USDC payments",
     "Monad",
     "Solana",
+    "decentralized compute",
+    "AI inference",
+    "on-chain reputation",
+    "DePIN",
+    "Solana Seeker",
     "distributed computing",
-    "pay-per-job",
-    "crypto compute",
-    "Dispatch",
   ],
   icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
+  alternates: {
+    canonical: "https://landing-pi-ashen-62.vercel.app",
+  },
   openGraph: {
-    title: "Dispatch — Decentralized Compute with x402 Micropayments",
+    title: "Dispatch — Dispatch Idle Compute to AI Agents",
     description:
-      "Pay-per-job compute, settled in stablecoins over HTTP. Mobile seekers, desktop workers, trust-paired privacy.",
+      "Your hardware processes AI jobs while idle. Agents pay in USDC over x402. Workers build on-chain reputation via ERC-8004. Live on Monad and Solana testnet.",
     type: "website",
     siteName: "Dispatch",
+    url: "https://landing-pi-ashen-62.vercel.app",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dispatch — Decentralized Compute with x402 Micropayments",
+    title: "Dispatch — Dispatch Idle Compute to AI Agents",
     description:
-      "Pay-per-job compute, settled in stablecoins over HTTP. Mobile seekers, desktop workers, trust-paired privacy.",
+      "Your hardware processes AI jobs while idle. Agents pay in USDC over x402. Workers build on-chain reputation via ERC-8004. Live on Monad and Solana testnet.",
+    creator: "@pranit",
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Dispatch Compute Network",
+  name: "Dispatch",
+  alternateName: "Dispatch Compute Network",
   description:
-    "Decentralized compute network with x402 stablecoin micropayments",
+    "The dispatch layer where AI agents buy compute from idle hardware — paid in USDC over x402, verified with ERC-8004 reputation on Monad and Solana.",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Cross-platform",
+  url: "https://landing-pi-ashen-62.vercel.app",
+  author: {
+    "@type": "Person",
+    name: "Pranit Garg",
+    url: "https://x.com/pranit",
+  },
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+    description: "Open source — testnet MVP",
+  },
+  keywords: "AI compute, x402, ERC-8004, Monad, Solana, DePIN, idle hardware, USDC micropayments",
 };
 
 export default function RootLayout({

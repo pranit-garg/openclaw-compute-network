@@ -4,12 +4,42 @@ import type { Metadata } from 'next';
 import './global.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://docs-theta-mocha.vercel.app'),
   title: {
     template: '%s | Dispatch Docs',
-    default: 'Dispatch Compute Network',
+    default: 'Dispatch Docs — AI Compute Network with x402 + ERC-8004',
   },
   description:
-    'Documentation for the Dispatch Compute Network — decentralized compute with x402 stablecoin micropayments.',
+    'Technical documentation for Dispatch — the compute layer where AI agents buy inference from idle hardware. x402 micropayments, ERC-8004 reputation, Monad + Solana.',
+  keywords: [
+    'Dispatch',
+    'AI compute',
+    'x402',
+    'ERC-8004',
+    'Monad',
+    'Solana',
+    'decentralized compute',
+    'DePIN',
+    'documentation',
+  ],
+  alternates: {
+    canonical: 'https://docs-theta-mocha.vercel.app',
+  },
+  openGraph: {
+    title: 'Dispatch Docs — AI Compute Network',
+    description:
+      'Technical docs for Dispatch. x402 micropayments, ERC-8004 reputation on Monad, dual-chain architecture.',
+    type: 'website',
+    siteName: 'Dispatch Docs',
+    url: 'https://docs-theta-mocha.vercel.app',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Dispatch Docs — AI Compute Network',
+    description:
+      'Technical docs for Dispatch. x402 micropayments, ERC-8004 reputation on Monad, dual-chain architecture.',
+    creator: '@pranit',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

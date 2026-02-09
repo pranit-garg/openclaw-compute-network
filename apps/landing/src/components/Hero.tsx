@@ -90,7 +90,7 @@ export function Hero() {
             View Source
           </a>
           <a
-            href="https://github.com/dispatch"
+            href="https://docs-theta-mocha.vercel.app/docs"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 font-medium text-text-muted transition-colors hover:border-border-bright hover:text-text"

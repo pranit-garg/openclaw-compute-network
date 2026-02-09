@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 export const alt =
-  "Dispatch — Decentralized Compute with x402 Micropayments";
+  "Dispatch — Idle Compute for AI Agents | x402 + ERC-8004 on Monad & Solana";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -56,7 +56,7 @@ export default function OgImage() {
             zIndex: 1,
           }}
         >
-          {/* Claw icon */}
+          {/* Icon */}
           <div
             style={{
               fontSize: "64px",
@@ -64,7 +64,7 @@ export default function OgImage() {
               display: "flex",
             }}
           >
-            {"{ }"}
+            {"⚡"}
           </div>
 
           {/* Main title */}
@@ -92,7 +92,7 @@ export default function OgImage() {
               display: "flex",
             }}
           >
-            Decentralized compute with x402 stablecoin micropayments
+            Dispatch idle compute to AI agents. x402 payments + ERC-8004 reputation.
           </div>
 
           {/* Tags */}
