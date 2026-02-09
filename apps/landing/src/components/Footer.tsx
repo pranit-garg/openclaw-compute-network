@@ -10,7 +10,7 @@ export function Footer() {
             </span>
           </div>
           <p className="mt-1 text-sm text-text-dim">
-            Dispatch idle compute to AI agents. x402 payments + ERC-8004 reputation.
+            The dispatch layer for AI compute. x402 payments, ERC-8004 reputation.
           </p>
         </div>
 

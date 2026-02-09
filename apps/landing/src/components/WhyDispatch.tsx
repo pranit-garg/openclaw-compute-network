@@ -11,7 +11,7 @@ const differentiators = [
   },
   {
     title: "On-chain reputation",
-    dispatch: "Workers build ERC-8004 reputation on Monad. Every job adds verifiable feedback. Agents pick workers by track record.",
+    dispatch: "Your reputation follows you on-chain. Every job adds to it. Agents pick workers they can verify.",
     others: "No on-chain identity or reputation. Workers are anonymous and interchangeable.",
     tag: "ERC-8004",
   },
@@ -23,7 +23,7 @@ const differentiators = [
   },
   {
     title: "Dual-chain from day one",
-    dispatch: "Monad (EVM) and Solana run as parallel coordinators with separate databases and settlement rails.",
+    dispatch: "Two chains, two coordinators, two databases. Not an afterthought.",
     others: "Single-chain lock-in. Cross-chain support bolted on later, if at all.",
     tag: "Monad + Solana",
   },
@@ -43,7 +43,7 @@ export function WhyDispatch() {
             Why Dispatch?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-muted">
-            Different decisions from the ground up.
+            Built differently from day one.
           </p>
         </motion.div>
 

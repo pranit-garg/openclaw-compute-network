@@ -5,8 +5,17 @@ import { motion } from "framer-motion";
 export function CTA() {
   return (
     <section className="relative overflow-hidden border-t border-border px-6 py-20 md:py-28">
-      {/* Gradient glow background */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-accent/5 blur-[100px]" />
+      {/* Top accent line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-1/3 bg-gradient-to-r from-transparent via-[#0ea5e9]/50 to-transparent" />
+
+      {/* Radial grid glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[500px] w-full max-w-3xl"
+          style={{
+            background: "radial-gradient(ellipse at center top, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.02) 50%, transparent 80%)",
+          }}
+        />
+      </div>
 
       <div className="relative mx-auto max-w-2xl text-center">
         <motion.h2
@@ -15,7 +24,7 @@ export function CTA() {
           viewport={{ once: true }}
           className="text-3xl font-bold md:text-4xl"
         >
-          The protocol is open. Start building today.
+          Open protocol. Start shipping.
         </motion.h2>
 
         <motion.p
@@ -25,8 +34,8 @@ export function CTA() {
           transition={{ delay: 0.1 }}
           className="mx-auto mt-4 max-w-xl text-text-muted"
         >
-          Run a worker, submit jobs through the SDK, or extend the coordinator.
-          Everything is open source and ready to integrate.
+          Run a worker node. Submit jobs via the SDK. Extend the coordinator.
+          All open source.
         </motion.p>
 
         <motion.div
@@ -37,7 +46,7 @@ export function CTA() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <a
-            href="https://github.com/dispatch"
+            href="https://docs-theta-mocha.vercel.app/docs"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-bright"

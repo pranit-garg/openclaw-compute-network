@@ -11,7 +11,7 @@ const features = [
     ),
     title: "x402 Micropayments",
     description:
-      "Every job includes an x402 payment header. Workers receive USDC automatically on completion. No custom token, no staking — just HTTP and stablecoins.",
+      "Attach a payment to any HTTP request. Workers get USDC on completion. No custom token. No staking.",
     tag: "Coinbase x402",
   },
   {
@@ -22,7 +22,7 @@ const features = [
     ),
     title: "ERC-8004 Reputation",
     description:
-      "Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable on-chain reputation. Agents discover trusted workers through the reputation registry.",
+      "Workers register on Monad and build reputation with every job. Agents pick workers by track record, not luck.",
     tag: "On-chain trust",
   },
   {
@@ -33,7 +33,7 @@ const features = [
     ),
     title: "Mobile Dispatch Nodes",
     description:
-      "Phones become compute nodes for lightweight AI tasks — summarization, classification, extraction. The Android app picks up jobs over WebSocket while idle.",
+      "Your phone picks up AI tasks while it's sitting on your desk — summarization, classification, extraction. No GPU needed.",
     tag: "Idle hardware",
   },
   {
@@ -44,7 +44,7 @@ const features = [
     ),
     title: "Dual-Chain Architecture",
     description:
-      "Two coordinators, two chains, one protocol. Monad handles EVM settlements, Solana handles SPL. Same worker code, different payment rails.",
+      "Monad for EVM, Solana for SPL. Same worker code, same protocol, different settlement rails.",
     tag: "Monad + Solana",
   },
   {
@@ -55,7 +55,7 @@ const features = [
     ),
     title: "Cryptographic Receipts",
     description:
-      "Workers sign ed25519 receipts over the job output hash. Receipts are verified server-side and designed for on-chain anchoring — proof that a specific worker produced a specific result.",
+      "Every result comes with a signed receipt — ed25519 over the output hash. Proof that this worker produced this result.",
     tag: "ed25519 signed",
   },
   {
@@ -66,7 +66,7 @@ const features = [
     ),
     title: "Desktop Workers",
     description:
-      "Desktop nodes handle LLM inference via Ollama and all task types. Atomic job claims prevent race conditions. FAST policy prefers desktops, CHEAP prefers mobile.",
+      "Desktop nodes run LLM inference via Ollama. Atomic job claims prevent double-processing. FAST prefers desktop, CHEAP prefers mobile.",
     tag: "LLM inference",
   },
 ];
@@ -85,8 +85,7 @@ export function Features() {
             How Dispatch Works
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-muted">
-            Every component built, tested, and verified. The dispatch layer for
-            agent-to-compute transactions.
+            Six building blocks. Each one built, tested, and running on testnet.
           </p>
         </motion.div>
 
@@ -98,7 +97,9 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="group rounded-xl border border-border bg-bg-card p-6 transition-colors hover:border-border-bright hover:bg-bg-card-hover"
+              className={`group rounded-xl border border-border bg-bg-card p-6 transition-colors hover:border-border-bright hover:bg-bg-card-hover ${
+                i === 0 ? "lg:col-span-2" : ""
+              }`}
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent-bright">

@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 
 const stats = [
-  { label: "Lines of Code", value: "8,227", detail: "TypeScript monorepo" },
-  { label: "Source Files", value: "83", detail: "Across 8 packages" },
-  { label: "Unit Tests", value: "11", detail: "All passing" },
-  { label: "E2E Scenarios", value: "6", detail: "Both chains verified" },
+  { label: "Lines of Code", value: "8,227", detail: "TypeScript, end to end" },
+  { label: "Source Files", value: "83", detail: "8 packages, 2 chains" },
+  { label: "Unit Tests", value: "11", detail: "All green" },
+  { label: "E2E Scenarios", value: "6", detail: "Monad + Solana verified" },
 ];
 
 export function Stats() {
