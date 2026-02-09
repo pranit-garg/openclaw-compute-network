@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       nav={{
         title: (
           <span className="font-bold text-lg">
-            <span className="text-[#6366f1]">Open</span>Claw
+            <span className="text-[#6366f1]">Dis</span>patch
           </span>
         ),
       }}
