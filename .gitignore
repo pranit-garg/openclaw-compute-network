@@ -11,3 +11,9 @@ data/
 .vercel/
 *.tsbuildinfo
 tsconfig.tsbuildinfo
+
+# Local Claude Code config
+.claude/
+
+# Demo/test keys
+.worker-key-demo.json
