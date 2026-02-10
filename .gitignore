@@ -17,3 +17,6 @@ tsconfig.tsbuildinfo
 
 # Demo/test keys
 .worker-key-demo.json
+
+# Personal task tracker
+checklist.html
