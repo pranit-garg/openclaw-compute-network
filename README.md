@@ -8,6 +8,18 @@ Agents submit HTTP requests with x402 payment headers. USDC auto-converts to BOL
 
 ---
 
+## Litepaper
+
+> AI agents are becoming autonomous economic actors, but they lack infrastructure to purchase compute on their own terms. They cannot negotiate GPU leases, sign enterprise contracts, or evaluate provider quality. They need compute that is purchasable via HTTP, priced per job, and backed by verifiable trust signals.
+>
+> Dispatch is a protocol that routes AI inference jobs from agents to idle consumer hardware — phones and desktops — using x402 micropayments for settlement and ERC-8004 on-chain reputation for trust. Agents pay in USDC via standard HTTP headers. Workers process jobs and sign ed25519 receipts over their outputs. Coordinators match jobs to workers based on device type, routing policy, and on-chain reputation scores. The system runs on a dual-chain architecture: Solana as the economic layer (BOLT token, staking, USDC payments, 150K+ Seeker devices) and Monad as the trust layer (ERC-8004 identity and reputation, governance, receipt anchoring).
+>
+> Dispatch is the first protocol to combine x402 payments with ERC-8004 reputation — both co-authored by the same team at Coinbase — into a working compute marketplace built on idle consumer devices.
+
+**[Read the full litepaper (PDF)](docs/Dispatch_Litepaper.pdf)** · *Pranit Garg, February 2026*
+
+---
+
 ## How It Works
 
 ```
@@ -111,7 +123,7 @@ chain/
 
 | Layer | Tech |
 |-------|------|
-| Protocol | TypeScript monorepo, 8K+ lines |
+| Protocol | TypeScript monorepo, 12K+ lines |
 | Coordinators | Express, SQLite, WebSocket |
 | Payments | x402 USDC micropayments (Coinbase) |
 | Verification | ed25519 signed receipts |
@@ -172,7 +184,7 @@ pnpm test   # Unit tests
 | Android APK | [Download](https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk) |
 | ERC-8004 Contracts | [erc-8004/erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts) |
 | x402 Protocol | [x402.org](https://www.x402.org/) |
-| Litepaper | [docs/litepaper.md](docs/litepaper.md) |
+| Litepaper | [Dispatch_Litepaper.pdf](docs/Dispatch_Litepaper.pdf) |
 
 ## License
 
