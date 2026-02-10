@@ -39,3 +39,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# dApp Store build artifacts
+dapp-store-build/
+dapp-store-signing-keys/

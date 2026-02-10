@@ -52,9 +52,9 @@ AI agents are the natural customers for decentralized compute. They need cheap i
 - Ed25519 receipts use Solana's native signature scheme
 
 ### Links
-- Source: [GitHub repo URL]
-- Landing: https://landing-pi-ashen-62.vercel.app
-- Docs: https://docs-theta-mocha.vercel.app
+- Source: https://github.com/pranit-garg/dispatch
+- Landing: https://dispatch.computer
+- Docs: https://docs.dispatch.computer
 - Demo video: [TBD]
 
 ---
@@ -126,9 +126,9 @@ ERC-8004 was co-authored by Erik Reppel (Coinbase, x402 creator). Dispatch alrea
 - Client agent registration (agents also get reputation)
 
 ### Links
-- Source: [GitHub repo URL]
-- Landing: https://landing-pi-ashen-62.vercel.app
-- Docs: https://docs-theta-mocha.vercel.app
+- Source: https://github.com/pranit-garg/dispatch
+- Landing: https://dispatch.computer
+- Docs: https://docs.dispatch.computer
 - ERC-8004 Contracts: https://github.com/erc-8004/erc-8004-contracts
 - Demo video: [TBD]
 
@@ -185,7 +185,7 @@ The Seeker has 150K+ pre-orders — that's a massive untapped compute fleet. The
 - Workers only see job inputs for jobs they're assigned. No data leaks to other workers.
 
 ### Links
-- Source: [GitHub repo URL]
-- Landing: https://landing-pi-ashen-62.vercel.app
-- Docs: https://docs-theta-mocha.vercel.app
+- Source: https://github.com/pranit-garg/dispatch
+- Landing: https://dispatch.computer
+- Docs: https://docs.dispatch.computer
 - APK: https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk

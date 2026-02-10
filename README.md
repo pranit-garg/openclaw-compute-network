@@ -2,7 +2,7 @@
 
 Decentralized compute network where **Seekers** (mobile/simulated) and **Desktop Workers** handle TASK and LLM jobs. Two blockchain tracks: **Monad testnet** (EVM) and **Solana devnet** for x402 payment gating.
 
-**Landing page:** [landing-pi-ashen-62.vercel.app](https://landing-pi-ashen-62.vercel.app) | **API Docs:** [docs/openapi.yaml](docs/openapi.yaml)
+**Landing page:** [dispatch.computer](https://dispatch.computer) | **API Docs:** [docs.dispatch.computer](https://docs.dispatch.computer)
 
 ## Architecture
 
