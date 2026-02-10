@@ -14,4 +14,4 @@ Dispatch is the first protocol to combine x402 payments with ERC-8004 reputation
 
 ---
 
-**[Read the full litepaper (PDF)](Dispatch_Litepaper.pdf)**
+**[Read the full litepaper (PDF)](https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf)**

@@ -33,7 +33,7 @@ export function Footer() {
               GitHub
             </a>
             <a
-              href="https://github.com/pranit-garg/Dispatch/blob/main/docs/Dispatch_Litepaper.pdf"
+              href="https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-text-muted transition-colors hover:text-text"

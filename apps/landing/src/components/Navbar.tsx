@@ -9,7 +9,7 @@ const navLinks = [
   { label: "BOLT", href: "#bolt" },
   {
     label: "Litepaper",
-    href: "https://github.com/pranit-garg/Dispatch/blob/main/docs/Dispatch_Litepaper.pdf",
+    href: "https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf",
     external: true,
   },
   {

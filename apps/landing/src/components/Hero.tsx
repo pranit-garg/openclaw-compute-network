@@ -73,7 +73,7 @@ export function Hero() {
             Read the Docs
           </a>
           <a
-            href="https://github.com/pranit-garg/Dispatch/blob/main/docs/Dispatch_Litepaper.pdf"
+            href="https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg border border-border px-6 py-3 font-medium text-text-muted transition-colors hover:border-border-bright hover:text-text"
