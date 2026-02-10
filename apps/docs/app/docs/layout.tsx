@@ -17,6 +17,17 @@ export default function Layout({ children }: { children: ReactNode }) {
       sidebar={{
         defaultOpenLevel: 1,
       }}
+      themeSwitch={{ enabled: false }}
+      links={[
+        {
+          text: 'Litepaper',
+          url: 'https://github.com/pranit-garg/Dispatch/blob/main/docs/Dispatch_Litepaper.pdf',
+        },
+        {
+          text: 'GitHub',
+          url: 'https://github.com/pranit-garg/Dispatch',
+        },
+      ]}
     >
       {children}
     </DocsLayout>
