@@ -32,7 +32,7 @@ AI agents are the natural customers for decentralized compute. They need cheap i
 - **Workers**: Desktop (Node.js + Ollama) + Mobile (React Native)
 - **Mobile**: Solana MWA authentication, WebSocket job delivery
 - **Payments**: x402 stablecoin micropayments (Coinbase protocol)
-- **Verification**: ed25519 signed receipts, on-chain anchoring ready
+- **Verification**: ed25519 signed receipts, onchain anchoring ready
 - **Reputation**: ERC-8004 agent identity + reputation on Monad
 
 ### What's Working (Testnet MVP)
@@ -48,7 +48,7 @@ AI agents are the natural customers for decentralized compute. They need cheap i
 ### Solana-Specific
 - Mobile Wallet Adapter for worker authentication
 - SPL USDC settlement via x402 ExactSvmScheme
-- Compatible with Solana Seeker's 150K+ pre-order devices
+- Compatible with Solana Seeker devices
 - Ed25519 receipts use Solana's native signature scheme
 
 ### BOLT on Solana
@@ -61,10 +61,10 @@ AI agents are the natural customers for decentralized compute. They need cheap i
 - **5% burn.** Protocol fee permanently burned per job, creating deflationary pressure
 
 ### Links
-- Source: https://github.com/pranit-garg/dispatch
-- Landing: https://dispatch.computer
+- Source: https://github.com/pranit-garg/Dispatch
+- Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
-- Litepaper: https://github.com/pranit-garg/dispatch/blob/main/docs/litepaper.md
+- Litepaper: https://github.com/pranit-garg/Dispatch/blob/main/docs/litepaper.md
 - Demo video: [TBD]
 
 ---
@@ -78,10 +78,10 @@ Dispatch
 Dispatch idle compute to AI agents.
 
 ### Short Description (1-2 sentences)
-Dispatch is the first compute marketplace on Monad with ERC-8004 agent reputation. Workers register on-chain, build verifiable track records per job, and earn BOLT tokens for processing AI inference. Agents discover trusted workers through the reputation registry.
+Dispatch is the first compute marketplace on Monad with ERC-8004 agent reputation. Workers register onchain, build verifiable track records per job, and earn BOLT tokens for processing AI inference. Agents discover trusted workers through the reputation registry.
 
 ### What It Does
-Dispatch is a decentralized compute network where AI agents buy inference from idle hardware (phones and desktops). What makes it unique on Monad: every worker registers as an ERC-8004 agent with on-chain identity, and every completed job posts verifiable reputation feedback to the ERC-8004 Reputation Registry. Monad's high-throughput finality makes per-job reputation updates practical at scale.
+Dispatch is a decentralized compute network where AI agents buy inference from idle hardware (phones and desktops). What makes it unique on Monad: every worker registers as an ERC-8004 agent with onchain identity, and every completed job posts verifiable reputation feedback to the ERC-8004 Reputation Registry. Monad's high-throughput finality makes per-job reputation updates practical at scale.
 
 ### ERC-8004 Integration (Identity + Reputation)
 This is the core Monad-native feature:
@@ -92,7 +92,7 @@ This is the core Monad-native feature:
 - Contract: `0x8004A818BFB912233c491871b3d84c89A494BD9e` on Monad Testnet
 
 **Reputation (Reputation Registry)**
-- After every completed job, the coordinator posts on-chain feedback: score, skill tag, endpoint, feedback hash
+- After every completed job, the coordinator posts onchain feedback: score, skill tag, endpoint, feedback hash
 - Agents query reputation before routing, and higher-reputation workers get preferred
 - Tags enable per-skill reputation (e.g., "llm-inference" vs "summarization")
 - Contract: `0x8004B663056A597Dffe9eCcC1965A193B7388713` on Monad Testnet
@@ -104,11 +104,11 @@ Workers who stake BOLT earn higher reputation multipliers. Verified (100 BOLT) g
 ERC-8004 was co-authored by Erik Reppel (Coinbase, x402 creator). Dispatch already uses x402 for payments. Adding ERC-8004 for trust completes the stack: the same team at Coinbase designed both the payment layer and the trust layer. Dispatch is the first project to combine them.
 
 ### How It Works
-1. **Worker registers on-chain.** Mints an ERC-8004 agent NFT on Monad. Sets agent URI pointing to a registration file with capabilities.
+1. **Worker registers onchain.** Mints an ERC-8004 agent NFT on Monad. Sets agent URI pointing to a registration file with capabilities.
 2. **Worker connects to coordinator.** WebSocket connection. Coordinator reads reputation score (async, non-blocking).
 3. **Agent submits a job.** HTTP POST with x402 payment header. Coordinator routes to the best available worker, preferring higher reputation.
 4. **Worker processes + signs receipt.** ed25519 signature over output hash.
-5. **Coordinator posts feedback.** On-chain feedback to ERC-8004 Reputation Registry. Score, skill tag, job type recorded.
+5. **Coordinator posts feedback.** Onchain feedback to ERC-8004 Reputation Registry. Score, skill tag, job type recorded.
 6. **Reputation accumulates.** Over time, reliable workers build visible track records. Agents can query the registry to find trusted workers.
 
 ### Monad-Specific Advantages
@@ -134,16 +134,16 @@ ERC-8004 was co-authored by Erik Reppel (Coinbase, x402 creator). Dispatch alrea
 
 ### What's on the Roadmap
 - ERC-8004 Validation Registry (re-execution, zkML proofs)
-- Agent discovery via on-chain registry (find workers without coordinator)
+- Agent discovery via onchain registry (find workers without coordinator)
 - Cross-chain reputation bridging (Monad ↔ Solana)
 - Client agent registration (agents also get reputation)
 
 ### Links
-- Source: https://github.com/pranit-garg/dispatch
-- Landing: https://dispatch.computer
+- Source: https://github.com/pranit-garg/Dispatch
+- Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
 - ERC-8004 Contracts: https://github.com/erc-8004/erc-8004-contracts
-- Litepaper: https://github.com/pranit-garg/dispatch/blob/main/docs/litepaper.md
+- Litepaper: https://github.com/pranit-garg/Dispatch/blob/main/docs/litepaper.md
 - Demo video: [TBD]
 
 ---
@@ -166,7 +166,7 @@ Dispatch routes AI jobs to your phone while it's idle: summarization, classifica
 Dispatch turns Solana Seeker devices into compute nodes for AI agents. The Android app connects to the Dispatch coordinator over WebSocket and picks up inference jobs while the device is idle. Workers authenticate via Mobile Wallet Adapter (Phantom), process lightweight AI tasks, sign ed25519 receipts over results, and earn BOLT per completed job via x402 micropayments.
 
 ### Why Seeker?
-The Seeker has 150K+ pre-orders, a massive untapped compute fleet. These devices sit idle 90%+ of the time. Dispatch lets owners earn passive income by processing AI inference (summarization, classification, JSON extraction) during idle periods. The jobs are lightweight enough for mobile hardware. Seeker's MWA integration means workers authenticate with their existing Phantom wallet, no new keys needed.
+The Seeker is a massive untapped compute fleet. These devices sit idle 90%+ of the time. Dispatch lets owners earn passive income by processing AI inference (summarization, classification, JSON extraction) during idle periods. The jobs are lightweight enough for mobile hardware. Seeker's MWA integration means workers authenticate with their existing Phantom wallet, no new keys needed.
 
 ### User Experience
 1. **Install Dispatch** from dApp Store
@@ -202,8 +202,8 @@ The Seeker has 150K+ pre-orders, a massive untapped compute fleet. These devices
 - Workers only see job inputs for jobs they're assigned. No data leaks to other workers.
 
 ### Links
-- Source: https://github.com/pranit-garg/dispatch
-- Landing: https://dispatch.computer
+- Source: https://github.com/pranit-garg/Dispatch
+- Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
 - APK: https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk
-- Litepaper: https://github.com/pranit-garg/dispatch/blob/main/docs/litepaper.md
+- Litepaper: https://github.com/pranit-garg/Dispatch/blob/main/docs/litepaper.md

@@ -20,8 +20,8 @@ AI agents are the customers. They submit HTTP requests with x402 payment headers
 ### Pillar 2: Idle Hardware as Supply
 Phones and desktops earn BOLT by processing AI inference while idle. The network scales with devices people already own, no GPU required. The Android app picks up jobs over WebSocket while the device is idle. Workers hold BOLT for upside, stake for priority matching, or sell for USDC anytime.
 
-### Pillar 3: On-Chain Trust
-Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable reputation through on-chain feedback. Ed25519 receipts prove every result. Agents discover trusted workers through the reputation registry. Staking tiers amplify reputation. Verified and Sentinel workers earn higher rep multipliers and priority matching.
+### Pillar 3: Onchain Trust
+Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable reputation through onchain feedback. Ed25519 receipts prove every result. Agents discover trusted workers through the reputation registry. Staking tiers amplify reputation. Verified and Sentinel workers earn higher rep multipliers and priority matching.
 
 ---
 
@@ -30,7 +30,7 @@ Workers register as ERC-8004 agents on Monad. Every completed job builds verifia
 ### Angle A: "The Agent Compute Layer"
 
 **Headline:** Dispatch idle compute to AI agents.
-**Subhead:** AI agents submit jobs over HTTP. Workers process them while idle. Reputation lives on-chain.
+**Subhead:** AI agents submit jobs over HTTP. Workers process them while idle. Reputation lives onchain.
 
 AI agents need compute but can't negotiate GPU leases. Dispatch gives them a simple interface: submit an HTTP request with a payment header, get a result with a cryptographic receipt. The network's supply side is idle hardware (phones and desktops), not datacenters.
 
@@ -41,12 +41,12 @@ AI agents need compute but can't negotiate GPU leases. Dispatch gives them a sim
 
 Every other DePIN project targets datacenter GPUs and high-end servers. Dispatch turns idle consumer devices into compute nodes, handling summarization, classification, and extraction. This dramatically expands the supply side beyond the GPU arms race. Workers build ERC-8004 reputation that makes them more visible to agents.
 
-### Angle C: "On-Chain Compute Reputation"
+### Angle C: "Onchain Compute Reputation"
 
 **Headline:** Verifiable workers, trusted results.
 **Subhead:** ERC-8004 reputation on Monad. Every job builds track record.
 
-Permissionless compute networks have a trust problem: how do you know a worker will deliver quality results? Dispatch solves this with ERC-8004 agent registration on Monad. Every completed job posts verifiable feedback. Agents query the reputation registry to find trusted workers. Track record is portable, on-chain, and tamper-proof.
+Permissionless compute networks have a trust problem: how do you know a worker will deliver quality results? Dispatch solves this with ERC-8004 agent registration on Monad. Every completed job posts verifiable feedback. Agents query the reputation registry to find trusted workers. Track record is portable, onchain, and tamper-proof.
 
 ### Angle D: "BOLT-as-Settlement"
 
@@ -85,7 +85,7 @@ Every job includes an x402 payment header. USDC auto-swaps to BOLT via Jupiter D
 
 ### ERC-8004 Reputation
 **Headline:** Workers with verifiable track records.
-Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable on-chain reputation. Agents discover trusted workers through the reputation registry.
+Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable onchain reputation. Agents discover trusted workers through the reputation registry.
 
 ### Mobile Dispatch Nodes
 **Headline:** Phones become compute nodes.
@@ -97,7 +97,7 @@ Two coordinators, two chains, one protocol. Monad handles EVM settlements, Solan
 
 ### Cryptographic Receipts
 **Headline:** Proof for every job.
-Workers sign ed25519 receipts over the job output hash. Receipts are verified server-side and designed for on-chain anchoring. Proof that a specific worker produced a specific result.
+Workers sign ed25519 receipts over the job output hash. Receipts are verified server-side and designed for onchain anchoring. Proof that a specific worker produced a specific result.
 
 ### Desktop Workers
 **Headline:** Full LLM inference on desktop.
@@ -113,7 +113,7 @@ Desktop nodes handle LLM inference via Ollama and all task types. Atomic job cla
 | **Payment** | USDC via x402 | Native tokens | Credit card |
 | **Hardware** | Idle phones + desktops | Datacenter GPUs | Proprietary clusters |
 | **Identity** | ERC-8004 on Monad | None | None |
-| **Reputation** | On-chain, verifiable | None | Opaque SLAs |
+| **Reputation** | Onchain, verifiable | None | Opaque SLAs |
 | **Verification** | Ed25519 receipts | None | Trust the provider |
 | **Token** | BOLT (100% settlement) | Native tokens (staking/gas) | None |
 | **Multi-chain** | Monad + Solana | Single chain | N/A |
@@ -135,10 +135,10 @@ Desktop nodes handle LLM inference via Ollama and all task types. Atomic job cla
 ## 8. Hackathon-Specific Messaging
 
 ### Colosseum (Solana)
-**Angle:** Agent-native compute on Solana. Dispatch turns Solana Mobile devices into AI inference nodes. Workers authenticate via Mobile Wallet Adapter, earn BOLT via x402 settlement, and deliver ed25519-signed receipts. Compatible with Solana Seeker's 150K+ devices.
+**Angle:** Agent-native compute on Solana. Dispatch turns Solana Mobile devices into AI inference nodes. Workers authenticate via Mobile Wallet Adapter, earn BOLT via x402 settlement, and deliver ed25519-signed receipts. Compatible with Solana Seeker devices.
 
 ### Monad Moltiverse
-**Angle:** ERC-8004 agent reputation on Monad. Workers register as ERC-8004 agents with verifiable on-chain reputation. Every completed job posts feedback to the reputation contract. Monad's fast finality makes per-job reputation updates practical.
+**Angle:** ERC-8004 agent reputation on Monad. Workers register as ERC-8004 agents with verifiable onchain reputation. Every completed job posts feedback to the reputation contract. Monad's fast finality makes per-job reputation updates practical.
 
 ### Solana Mobile
 **Angle:** Turn every Seeker into a dispatch node. The Android app connects to the coordinator over WebSocket and picks up AI inference jobs while idle. Workers earn BOLT for summarization, classification, and extraction tasks. Designed for the Seeker hardware.
@@ -161,7 +161,7 @@ The dispatch layer where AI agents buy compute from idle hardware, paid in USDC 
 
 **Tone:** Technical-confident. Builders reading this know what a coordinator is, understand WebSocket connections, have deployed contracts. Write to that level.
 
-**Words to use:** dispatch, workers, agents, coordinators, receipts, reputation, micropayments, stablecoins, idle hardware, on-chain trust
+**Words to use:** dispatch, workers, agents, coordinators, receipts, reputation, micropayments, stablecoins, idle hardware, onchain trust
 
 **Words to avoid:** revolutionary, game-changing, web3, next-generation, paradigm, ecosystem (as filler), AI-powered (everything here involves AI, be specific), decentralize everything
 
@@ -178,6 +178,6 @@ The dispatch layer where AI agents buy compute from idle hardware, paid in USDC 
 
 **What we say CAREFULLY:**
 - "Designed to lower inference costs" (not "lowers costs by X%")
-- "Compatible with Solana Seeker's 150K+ devices" (not "has 150K workers")
+- "Compatible with Solana Seeker devices" (not "has 150K workers")
 - "x402 payment rails built in, testnet mode" (not "payments flowing")
 - "Testnet MVP" (not "production ready")

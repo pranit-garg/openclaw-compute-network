@@ -4,7 +4,7 @@
 
 Agents submit HTTP requests with x402 payment headers. USDC auto-converts to BOLT via Jupiter DEX. Workers earn BOLT: hold for upside, stake for priority matching, or sell.
 
-[dispatch.computer](https://dispatch.computer) · [Docs](https://docs.dispatch.computer) · [Android APK](https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk)
+[dispatch.computer](https://www.dispatch.computer) · [Docs](https://docs.dispatch.computer) · [Android APK](https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk)
 
 ---
 
@@ -12,7 +12,7 @@ Agents submit HTTP requests with x402 payment headers. USDC auto-converts to BOL
 
 > AI agents are becoming autonomous economic actors, but they lack infrastructure to purchase compute on their own terms. They cannot negotiate GPU leases, sign enterprise contracts, or evaluate provider quality. They need compute that is purchasable via HTTP, priced per job, and backed by verifiable trust signals.
 >
-> Dispatch is a protocol that routes AI inference jobs from agents to idle consumer hardware (phones and desktops) using x402 micropayments for settlement and ERC-8004 on-chain reputation for trust. Agents pay in USDC via standard HTTP headers. Workers process jobs and sign ed25519 receipts over their outputs. Coordinators match jobs to workers based on device type, routing policy, and on-chain reputation scores. The system runs on a dual-chain architecture: Solana as the economic layer (BOLT token, staking, USDC payments, 150K+ Seeker devices) and Monad as the trust layer (ERC-8004 identity and reputation, governance, receipt anchoring).
+> Dispatch is a protocol that routes AI inference jobs from agents to idle consumer hardware (phones and desktops) using x402 micropayments for settlement and ERC-8004 onchain reputation for trust. Agents pay in USDC via standard HTTP headers. Workers process jobs and sign ed25519 receipts over their outputs. Coordinators match jobs to workers based on device type, routing policy, and onchain reputation scores. The system runs on a dual-chain architecture: Solana as the economic layer (BOLT token, staking, USDC payments, Seeker device support) and Monad as the trust layer (ERC-8004 identity and reputation, governance, receipt anchoring).
 >
 > Dispatch is the first protocol to combine x402 payments with ERC-8004 reputation, both co-authored by the same team at Coinbase, into a working compute marketplace built on idle consumer devices.
 
@@ -78,7 +78,7 @@ AI agents need cheap inference at scale. They operate autonomously and can't neg
 
 - **Mobile Wallet Adapter** for worker authentication via Phantom
 - **SPL USDC** settlement via x402 `ExactSvmScheme`
-- **150K+ Seeker pre-orders**, each device is a potential compute node
+- **Seeker support**, each device is a potential compute node
 - **Ed25519 receipts** use Solana's native signature scheme
 - Seeker app submitted to the [Solana dApp Store](https://dappstore.app/)
 
@@ -179,7 +179,7 @@ pnpm test   # Unit tests
 
 | | |
 |-|-|
-| Landing page | [dispatch.computer](https://dispatch.computer) |
+| Landing page | [dispatch.computer](https://www.dispatch.computer) |
 | Documentation | [docs.dispatch.computer](https://docs.dispatch.computer) |
 | Android APK | [Download](https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk) |
 | ERC-8004 Contracts | [erc-8004/erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts) |

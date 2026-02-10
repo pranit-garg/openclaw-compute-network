@@ -35,7 +35,7 @@ const chains = [
     ),
     network: "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
     scheme: "ExactSvmScheme",
-    facilitator: "x402.org/facilitator",
+    facilitator: "www.x402.org/facilitator",
     port: "4020",
     color: "green",
   },

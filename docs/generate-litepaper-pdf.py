@@ -110,8 +110,23 @@ def process_longtable_inner(inner: str) -> str:
     else:
         ncols = 2
 
-    # Simple column spec: all left-aligned
-    colspec = 'l' * ncols
+    # Use tabularx so tables fit cleanly in a two-column layout.
+    # Y is a ragged-right X column (defined in the LaTeX template).
+    if ncols == 5:
+        env = "tabularx"
+        colspec = r"lrrrY"
+    elif ncols == 4:
+        env = "tabularx"
+        colspec = r"lrrY"
+    elif ncols == 3:
+        env = "tabularx"
+        colspec = r"lrY"
+    elif ncols == 2:
+        env = "tabularx"
+        colspec = r"lY"
+    else:
+        env = "tabular"
+        colspec = "l" * ncols
 
     # Remove everything from \begin{longtable} up to (but not including) \toprule
     # This handles both simple and complex multiline column specs
@@ -125,12 +140,20 @@ def process_longtable_inner(inner: str) -> str:
     # Remove \end{longtable} if still present
     inner = inner.replace(r'\end{longtable}', '')
 
+    if env == "tabularx":
+        begin = r"\begin{tabularx}{\columnwidth}{" + colspec + "}"
+        end = r"\end{tabularx}"
+    else:
+        begin = r"\begin{tabular}{" + colspec + "}"
+        end = r"\end{tabular}"
+
     return (
-        r'\begin{center}\scriptsize' '\n'
-        r'\begin{tabular}{' + colspec + '}\n'
-        + inner.strip() + '\n'
-        r'\end{tabular}' '\n'
-        r'\end{center}'
+        r"\begin{center}\scriptsize" "\n"
+        r"\setlength{\tabcolsep}{3pt}" "\n"
+        + begin + "\n"
+        + inner.strip() + "\n"
+        + end + "\n"
+        r"\end{center}"
     )
 
 
@@ -150,7 +173,9 @@ LATEX_TEMPLATE = r"""
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{tabularx}
 \usepackage{longtable}   % needed for \real{} in column specs
+\usepackage{xurl}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{fancyhdr}
@@ -159,6 +184,7 @@ LATEX_TEMPLATE = r"""
 \usepackage{enumitem}
 \usepackage{microtype}
 \usepackage{fancyvrb}
+\usepackage{fvextra}
 \usepackage{float}
 
 % ── Colors ──
@@ -172,9 +198,23 @@ LATEX_TEMPLATE = r"""
     linkcolor=linkblue,
     urlcolor=linkblue,
     citecolor=linkblue,
+    breaklinks=true,
     pdftitle={$title$},
     pdfauthor={$for(author)$$author$$sep$, $endfor$},
 }
+
+% Better wrapping for long links/monospace tokens in narrow two-column layout
+\Urlmuskip=0mu plus 2mu\relax
+\setlength{\emergencystretch}{5em}
+\fvset{
+  breaklines=true,
+  breakanywhere=true,
+  fontsize=\footnotesize
+}
+
+% Pandoc emits \begin{verbatim} for fenced code blocks. Re-map it to Verbatim
+% so long lines wrap in a two-column layout.
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true,breakanywhere=true}
 
 % ── Headers/footers ──
 \pagestyle{fancy}
@@ -206,6 +246,7 @@ LATEX_TEMPLATE = r"""
 
 % ── Table formatting ──
 \renewcommand{\arraystretch}{1.3}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
 % ── Pandoc tightlist ──
 \providecommand{\tightlist}{%
@@ -232,7 +273,7 @@ $endif$
     \vspace{4pt}
     {\small $date$ \par}
     \vspace{2pt}
-    {\small\color{gray} \url{https://dispatch.computer} \par}
+    {\small\color{gray} \url{https://www.dispatch.computer} \par}
     \vspace{12pt}
 \end{center}
 
@@ -323,7 +364,8 @@ abstract: |
 
     # Step 3: Compile with tectonic
     print("Step 3: Compiling PDF with tectonic...")
-    cmd_pdf = ["tectonic", "-X", "compile", "--keep-intermediates", latex_path, "-o", str(DOCS_DIR)]
+    # Do not keep intermediates; it creates noisy .aux/.out files in docs/.
+    cmd_pdf = ["tectonic", "-X", "compile", latex_path, "-o", str(DOCS_DIR)]
     r2 = subprocess.run(cmd_pdf, capture_output=True, text=True)
 
     # Check if PDF was actually produced (nonstopmode means exit code may still be non-zero)

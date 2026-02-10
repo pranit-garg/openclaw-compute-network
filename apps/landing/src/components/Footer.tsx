@@ -25,7 +25,7 @@ export function Footer() {
               Docs
             </a>
             <a
-              href="https://github.com/pranit-garg/dispatch"
+              href="https://github.com/pranit-garg/Dispatch"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-text-muted transition-colors hover:text-text"

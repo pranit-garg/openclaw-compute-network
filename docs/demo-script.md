@@ -2,7 +2,7 @@
 
 ## Intro (30s)
 
-**What is Dispatch?** The dispatch layer where AI agents buy compute from idle hardware. Agents submit jobs over HTTP, pay in USDC via x402, and workers build on-chain reputation through ERC-8004 on Monad. Live on Monad and Solana testnet.
+**What is Dispatch?** The dispatch layer where AI agents buy compute from idle hardware. Agents submit jobs over HTTP, pay in USDC via x402, and workers build onchain reputation through ERC-8004 on Monad. Live on Monad and Solana testnet.
 
 **The problem:** AI inference is centralized, expensive, and opaque. You pay OpenAI and trust they ran your model. Dispatch makes compute verifiable, permissionless, and multi-chain, with AI agents as first-class customers.
 
@@ -94,17 +94,17 @@ pnpm --filter dispatch-demo start -- --chain solana
 **Show:**
 - Worker's ERC-8004 agent registration on Monad explorer
 - Reputation score from completed jobs
-- Feedback record posted on-chain
+- Feedback record posted onchain
 
-**Say:** "Workers register as ERC-8004 agents on Monad. Every completed job posts feedback to the reputation contract. Agents can discover trusted workers through the on-chain registry. The more jobs you complete, the more visible and trusted you become."
+**Say:** "Workers register as ERC-8004 agents on Monad. Every completed job posts feedback to the reputation contract. Agents can discover trusted workers through the onchain registry. The more jobs you complete, the more visible and trusted you become."
 
 ---
 
-### Step 8: (Optional) On-Chain Receipt
+### Step 8: (Optional) Onchain Receipt
 
 If Solana anchoring is enabled, show the transaction on Solana Explorer.
 
-**Say:** "Receipts can be anchored on-chain for permanent, tamper-proof audit trails. This transaction proves this specific worker produced this specific output at this specific time."
+**Say:** "Receipts can be anchored onchain for permanent, tamper-proof audit trails. This transaction proves this specific worker produced this specific output at this specific time."
 
 ---
 
@@ -113,7 +113,7 @@ If Solana anchoring is enabled, show the transaction on Solana Explorer.
 - **Agent-native:** AI agents submit jobs over plain HTTP with x402 payment headers. No SDK required, no wallet setup. Just HTTP and USDC.
 - **Multi-chain:** Same coordinator protocol works on Monad (EVM) and Solana (SVM). Workers register on either chain.
 - **x402 payments:** Jobs are paid via the x402 HTTP payment protocol. The fee is embedded in the HTTP request itself. No token approvals, no separate payment step.
-- **ERC-8004 reputation:** Workers register as agents on Monad with verifiable on-chain reputation. Every job builds track record.
+- **ERC-8004 reputation:** Workers register as agents on Monad with verifiable onchain reputation. Every job builds track record.
 - **Idle hardware:** The Dispatch app runs on Solana Mobile Stack. Any Android phone becomes a compute node while idle, earning USDC for processing AI tasks.
 - **Atomic matching:** The coordinator uses a synchronous claim-and-assign pattern. No race conditions, no double-booking workers.
 
@@ -128,10 +128,10 @@ Those are GPU rental marketplaces. Dispatch is an agent-to-compute dispatch laye
 Receipts and reputation. The worker signs a hash of the output. If the output doesn't match the hash, the receipt is invalid. ERC-8004 reputation means bad workers lose track record. Future: stake slashing for invalid receipts.
 
 **"Why ERC-8004?"**
-It gives workers a portable, on-chain identity. Agents can query the reputation registry to find trusted workers before submitting jobs. It's the trust layer that makes a permissionless compute network practical.
+It gives workers a portable, onchain identity. Agents can query the reputation registry to find trusted workers before submitting jobs. It's the trust layer that makes a permissionless compute network practical.
 
 **"What's the business model?"**
-The coordinator takes a fee on each job via x402. Workers set their own prices. Market-driven pricing with on-chain reputation as the quality signal.
+The coordinator takes a fee on each job via x402. Workers set their own prices. Market-driven pricing with onchain reputation as the quality signal.
 
 **"Is this mainnet-ready?"**
 This is a testnet MVP. The protocol design is production-grade, but we're on devnet/testnet. Next steps: mainnet deployment, multi-coordinator federation, GPU worker support.

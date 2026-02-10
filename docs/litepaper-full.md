@@ -8,7 +8,7 @@
 
 AI agents are becoming autonomous economic actors, but they lack infrastructure to purchase compute on their own terms. They cannot negotiate GPU leases, sign enterprise contracts, or evaluate provider quality. They need compute that is purchasable via HTTP, priced per job, and backed by verifiable trust signals.
 
-Dispatch is a protocol that routes AI inference jobs from agents to idle consumer hardware (phones and desktops) using x402 micropayments for settlement and ERC-8004 on-chain reputation for trust. Agents pay in USDC via standard HTTP headers. Workers process jobs and sign ed25519 receipts over their outputs. Coordinators match jobs to workers based on device type, routing policy, and on-chain reputation scores. The system runs on a dual-chain architecture: Solana as the economic layer (BOLT token, staking, USDC payments, Seeker device support) and Monad as the trust layer (ERC-8004 identity and reputation, governance, receipt anchoring).
+Dispatch is a protocol that routes AI inference jobs from agents to idle consumer hardware (phones and desktops) using x402 micropayments for settlement and ERC-8004 onchain reputation for trust. Agents pay in USDC via standard HTTP headers. Workers process jobs and sign ed25519 receipts over their outputs. Coordinators match jobs to workers based on device type, routing policy, and onchain reputation scores. The system runs on a dual-chain architecture: Solana as the economic layer (BOLT token, staking, USDC payments, Seeker device support) and Monad as the trust layer (ERC-8004 identity and reputation, governance, receipt anchoring).
 
 Dispatch is the first protocol to combine x402 payments with ERC-8004 reputation, both co-authored by the same team at Coinbase, into a working compute marketplace built on idle consumer devices. BOLT is the settlement token that aligns network incentives: agents pay USDC, coordinators auto-swap to BOLT, workers earn BOLT, and a 5% burn on every job creates deflationary pressure. The testnet MVP is live on Monad and Solana with 8,000+ lines of TypeScript, dual-chain coordinators, mobile and desktop workers, and end-to-end cryptographic verification.
 
@@ -31,7 +31,7 @@ The gap is clear: there is no per-job compute market that AI agents can access v
 **Design principles:**
 - Agents are first-class customers. The interface is HTTP. Any agent that can make a web request can buy compute.
 - Workers are idle consumer devices. No datacenter GPU required. Phones and laptops earn by processing jobs while idle.
-- Trust is on-chain. Every worker has a verifiable identity and reputation that accumulates with each completed job.
+- Trust is onchain. Every worker has a verifiable identity and reputation that accumulates with each completed job.
 - Payments are atomic. USDC settles per job via the x402 HTTP payment protocol. No accounts, no invoices, no credit.
 
 ---
@@ -88,9 +88,11 @@ Dispatch operates on two chains simultaneously, a practical decision driven by w
 - Worker reputation: Reputation Registry at `0x8004B663056A597Dffe9eCcC1965A193B7388713`
 - Fast finality makes per-job reputation updates practical
 - Governance via wrapped BOLT (ERC-20)
-- Receipt on-chain anchoring
+- Receipt onchain anchoring
 - USDC payments settle via x402 `ExactEvmScheme`
 - Coordinator network: `eip155:10143`
+
+*Contract addresses referenced in this document are deployed on Monad Testnet (chain ID 10143) and Solana Devnet.*
 
 Both coordinators share the same core codebase (`@dispatch/coordinator-core`) but differ only in their x402 payment scheme and chain-specific configuration. Each coordinator is independent: its own SQLite database, its own x402 facilitator, its own worker pool. Cross-chain reputation is unified: even the Solana coordinator posts ERC-8004 feedback to Monad.
 
@@ -100,19 +102,19 @@ Both coordinators share the same core codebase (`@dispatch/coordinator-core`) bu
 |-------|-----------|
 | Protocol | TypeScript monorepo, 8,000+ lines |
 | Coordinators | Express, SQLite, WebSocket (ws) |
-| Payments | x402 USDC micropayments (`@x402/express`, `@x402/core`) |
+| Payments | x402 USDC micropayments (@x402/express, @x402/core) |
 | Verification | Ed25519 receipts (tweetnacl) |
 | Reputation | ERC-8004 on Monad (viem) |
 | Mobile | React Native, Expo, Solana Mobile Wallet Adapter |
 | Desktop Workers | Node.js + Ollama for LLM inference |
-| Client SDK | `@dispatch/compute-router` (decentralized + hosted adapters) |
+| Client SDK | @dispatch/compute-router (decentralized + hosted adapters) |
 | Landing + Docs | Next.js 15, Tailwind, Fumadocs |
 
 ---
 
 ## 3. Job Lifecycle
 
-Every Dispatch job follows a five-step lifecycle: **Quote, Pay, Match, Execute, Verify**. Each step maps to concrete protocol messages and on-chain actions.
+Every Dispatch job follows a five-step lifecycle: **Quote, Pay, Match, Execute, Verify**. Each step maps to concrete protocol messages and onchain actions.
 
 ```
 Agent                    Coordinator                 Worker
@@ -148,7 +150,7 @@ The agent requests a price quote. The coordinator resolves the routing policy an
 
 ```
 GET /v1/quote?type=LLM_INFER&policy=FAST
-→ { price: "$0.010", policy_resolved: "FAST", network: "eip155:10143" }
+-> { price: "$0.010", policy_resolved: "FAST", network: "eip155:10143" }
 ```
 
 **Pricing table** (from `PRICING_MAP` in `packages/protocol/src/types.ts`):
@@ -184,7 +186,7 @@ The coordinator selects a worker through the `claimWorker()` function, an atomic
 
 1. **Policy preference** (+10): FAST jobs prefer DESKTOP workers (full Ollama inference). CHEAP+TASK jobs prefer SEEKER workers (lightweight mobile inference).
 2. **Heartbeat freshness** (+0 to +5): Workers with recent heartbeats score higher. Staleness penalty starts at 10 seconds, scales linearly.
-3. **ERC-8004 reputation** (+0 to +10): On-chain reputation score (0-100) maps to a 0-10 matching bonus. Workers with higher reputation get routed more jobs.
+3. **ERC-8004 reputation** (+0 to +10): Onchain reputation score (0-100) maps to a 0-10 matching bonus. Workers with higher reputation get routed more jobs.
 4. **Privacy filtering**: PRIVATE jobs are restricted to workers that hold a claimed trust pairing with the requesting user.
 
 The claim is atomic: the worker's status changes from `idle` to `busy` in the same synchronous tick as the selection. No `await` between check and claim. This eliminates the race condition where two jobs could claim the same worker.
@@ -249,20 +251,30 @@ Both coordinators validate payments through an x402 facilitator service. The pay
 
 ### 4.2 ERC-8004 Reputation [IMPLEMENTED]
 
-ERC-8004 (Trustless Agents) is a Coinbase-authored ERC standard that provides on-chain identity and reputation for autonomous agents. Dispatch uses both registries:
+ERC-8004 (Trustless Agents) is a Coinbase-authored ERC standard that provides onchain identity and reputation for autonomous agents. Dispatch uses both registries:
 
-**Identity Registry** (`0x8004A818BFB912233c491871b3d84c89A494BD9e` on Monad Testnet)
+**Identity Registry** (Monad Testnet)
+
+Contract address:
+```
+0x8004A818BFB912233c491871b3d84c89A494BD9e
+```
 - Workers register as ERC-8004 agents and receive a non-transferable agent NFT
-- Each agent has an on-chain `agentURI` pointing to a registration file with services, skills, and x402 support declaration
-- Worker ed25519 pubkeys map to on-chain `agentId` via deterministic `keccak256` hashing: `agentId = keccak256(pubkey) & ((1 << 128) - 1)`
+- Each agent has an onchain `agentURI` pointing to a registration file with services, skills, and x402 support declaration
+- Worker ed25519 pubkeys map to onchain agentId via deterministic keccak256 hashing: agentId = keccak256(pubkey) & ((1 << 128) - 1)
 
-**Reputation Registry** (`0x8004B663056A597Dffe9eCcC1965A193B7388713` on Monad Testnet)
-- After every completed job, the coordinator posts on-chain feedback: a signed score (0-100 scaled to int128 with 2 decimal places), a skill tag (`dispatch-compute`), a job type tag (`COMPUTE`), and the coordinator's endpoint
+**Reputation Registry** (Monad Testnet)
+
+Contract address:
+```
+0x8004B663056A597Dffe9eCcC1965A193B7388713
+```
+- After every completed job, the coordinator posts onchain feedback: a signed score (0-100 scaled to int128 with 2 decimal places), a skill tag (`dispatch-compute`), a job type tag (`COMPUTE`), and the coordinator's endpoint
 - Feedback is accumulated per-agent. The `getSummary()` function returns aggregate count, value, and decimals
 - Feedback can be filtered by client address and tags, enabling per-coordinator or per-skill-type reputation queries
 - Feedback is revocable. The original poster can revoke a feedback entry
 
-**Reputation-aware routing**: The `workerScore()` function in `workerHub.ts` adds up to 10 bonus points for workers with high on-chain reputation. A worker with a reputation score of 80/100 receives an 8-point bonus, making them significantly more likely to win job matching over unrated workers. This creates a virtuous cycle: completing jobs builds reputation, higher reputation wins more jobs.
+**Reputation-aware routing**: The `workerScore()` function in `workerHub.ts` adds up to 10 bonus points for workers with high onchain reputation. A worker with a reputation score of 80/100 receives an 8-point bonus, making them significantly more likely to win job matching over unrated workers. This creates a virtuous cycle: completing jobs builds reputation, higher reputation wins more jobs.
 
 The Solana coordinator also posts ERC-8004 feedback to Monad. Reputation is cross-chain and unified regardless of which coordinator processed the job.
 
@@ -286,7 +298,7 @@ The coordinator verifies signatures using tweetnacl's `nacl.sign.detached.verify
 Receipts serve three purposes:
 - **Attribution**: Cryptographic proof that a specific worker (identified by their ed25519 public key) produced a specific output (identified by its hash).
 - **Auditability**: Any party with the worker's public key can independently verify a receipt.
-- **On-chain anchoring** [DESIGNED]: Receipts are structured for future submission to on-chain anchor contracts (Solidity on Monad, Anchor on Solana) that permanently record the proof of computation.
+- **Onchain anchoring** [DESIGNED]: Receipts are structured for future submission to onchain anchor contracts (Solidity on Monad, Anchor on Solana) that permanently record the proof of computation.
 
 ### 4.4 Trust Pairing [IMPLEMENTED]
 
@@ -353,7 +365,7 @@ Staking is optional. Any worker can join at the OPEN tier with zero BOLT. This p
 
 These values are defined in `STAKE_PRIORITY` and `STAKE_REQUIREMENTS` in `packages/protocol/src/types.ts`. The matching bonus directly influences `workerScore()`. A SENTINEL worker receives a +10 bonus, equivalent to the maximum device-type preference or full reputation score.
 
-The reputation multiplier amplifies on-chain reputation growth. A SENTINEL worker earning 80 reputation points from a job receives an effective 160 points for matching purposes, compounding their competitive advantage over time.
+The reputation multiplier amplifies onchain reputation growth. A SENTINEL worker earning 80 reputation points from a job receives an effective 160 points for matching purposes, compounding their competitive advantage over time.
 
 ### 5.4 Token Distribution
 
@@ -401,15 +413,15 @@ Failed jobs trigger negative ERC-8004 feedback (score: 20/100 vs. 80/100 for suc
 
 ### 6.5 Worker Identity [IMPLEMENTED]
 
-Workers register as ERC-8004 agents on Monad and receive a non-transferable agent NFT. The `agentId` is derived deterministically from the worker's ed25519 public key via keccak256 hashing. This binds on-chain identity to cryptographic identity without requiring the worker to manage separate EVM keys for registration.
+Workers register as ERC-8004 agents on Monad and receive a non-transferable agent NFT. The `agentId` is derived deterministically from the worker's ed25519 public key via keccak256 hashing. This binds onchain identity to cryptographic identity without requiring the worker to manage separate EVM keys for registration.
 
 ### 6.6 Worker Liveness [IMPLEMENTED]
 
 Workers send heartbeat messages every few seconds. The coordinator prunes workers that miss heartbeats for more than 30 seconds (`HEARTBEAT_TIMEOUT_MS`). If a worker disconnects with an active job, the job is marked as `failed` with `worker_disconnected` and the worker is removed from the pool. The pruning interval runs every 10 seconds.
 
-### 6.7 On-Chain Receipt Anchoring [DESIGNED]
+### 6.7 Onchain Receipt Anchoring [DESIGNED]
 
-Receipts are structured for submission to on-chain anchor contracts (Solidity on Monad and Anchor programs on Solana). Anchored receipts provide permanent, tamper-proof records of computation that can be verified by any party against the chain state.
+Receipts are structured for submission to onchain anchor contracts (Solidity on Monad and Anchor programs on Solana). Anchored receipts provide permanent, tamper-proof records of computation that can be verified by any party against the chain state.
 
 ---
 
@@ -464,12 +476,12 @@ Delivered and running on Monad testnet and Solana devnet:
 
 ### Phase 3: Scale [FUTURE]
 
-- On-chain receipt anchoring on both Monad (Solidity) and Solana (Anchor)
+- Onchain receipt anchoring on both Monad (Solidity) and Solana (Anchor)
 - zkML validation: zero-knowledge proofs that a specific model produced a specific output
 - Dynamic pricing: job prices adjust based on supply/demand ratio and worker availability
 - Confidential compute: TEE-based execution for sensitive workloads
 - Agent discovery: agents query the ERC-8004 Identity Registry to find workers by skill, reputation, and availability
-- Multi-coordinator routing: agents discover coordinators via on-chain registry
+- Multi-coordinator routing: agents discover coordinators via onchain registry
 - GPU worker tier: extend beyond consumer hardware to dedicated GPU nodes
 - Governance: BOLT holders vote on protocol parameters (pricing, fee rate, staking thresholds)
 
@@ -483,7 +495,7 @@ Delivered and running on Monad testnet and Solana devnet:
 | **Payment method** | USDC via x402 HTTP | Native token | FIL | HNT (burn-and-mint) | Credit card |
 | **Payment trigger** | Automatic (HTTP 402) | Manual provisioning | Deal negotiation | Automatic | API key |
 | **Hardware requirement** | Phone or desktop | Datacenter GPU | HDD/SSD arrays | Hotspot hardware | N/A (centralized) |
-| **Identity / reputation** | ERC-8004 on-chain | None | Reputation power | None | Opaque SLA |
+| **Identity / reputation** | ERC-8004 onchain | None | Reputation power | None | Opaque SLA |
 | **Verification** | Ed25519 receipts | None | PoRep / PoST | PoC | Trust the provider |
 | **Multi-chain** | Solana + Monad | Cosmos (single) | Filecoin (single) | Solana (single) | N/A |
 | **Agent-native** | Yes (HTTP + x402) | No (CLI/SDK) | No (deal protocol) | No (IoT protocol) | Partial (API key) |
@@ -495,7 +507,7 @@ Dispatch's closest analogy is Helium's approach to hardware onboarding, leveragi
 ## 10. References
 
 1. **x402 Protocol.** HTTP-native payments by Coinbase. Specification: [https://www.x402.org/](https://www.x402.org/)
-2. **ERC-8004: Trustless Agents.** On-chain agent identity and reputation by Coinbase. Contracts: [https://github.com/erc-8004/erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts)
+2. **ERC-8004: Trustless Agents.** Onchain agent identity and reputation by Coinbase. Contracts: [https://github.com/erc-8004/erc-8004-contracts](https://github.com/erc-8004/erc-8004-contracts)
 3. **Ed25519.** Edwards-curve Digital Signature Algorithm. RFC 8032.
 4. **tweetnacl.** JavaScript implementation of NaCl cryptographic library. Used for receipt signature verification.
 5. **viem.** TypeScript interface for Ethereum. Used for ERC-8004 contract interactions on Monad.
@@ -508,5 +520,3 @@ Dispatch's closest analogy is Helium's approach to hardware onboarding, leveragi
 ---
 
 *Dispatch is open source under the MIT license. Codebase: 8,000+ lines of TypeScript across 14 packages and applications.*
-
-*Contract addresses referenced in this document are deployed on Monad Testnet (chain ID 10143) and Solana Devnet.*

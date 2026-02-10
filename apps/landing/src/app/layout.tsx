@@ -7,7 +7,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://dispatch.computer"),
+  metadataBase: new URL("https://www.dispatch.computer"),
   title: "Dispatch: Idle Compute for AI Agents | BOLT Token + x402 + ERC-8004",
   description:
     "Dispatch routes AI jobs to idle phones and desktops. Agents pay USDC via x402, workers earn BOLT tokens and build onchain reputation through ERC-8004. Live on Monad and Solana testnet.",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   ],
   icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
   alternates: {
-    canonical: "https://dispatch.computer",
+    canonical: "https://www.dispatch.computer",
   },
   openGraph: {
     title: "Dispatch: Turn Idle Devices into AI Compute Nodes",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
       "Your phone or laptop runs AI jobs while idle. Agents pay USDC, workers earn BOLT tokens and build onchain reputation via ERC-8004. Live on Monad and Solana testnet.",
     type: "website",
     siteName: "Dispatch",
-    url: "https://dispatch.computer",
+    url: "https://www.dispatch.computer",
   },
   twitter: {
     card: "summary_large_image",
@@ -59,7 +59,7 @@ const jsonLd = {
     "AI agents buy compute from idle phones and laptops. Agents pay USDC, workers earn BOLT tokens. Verified with ERC-8004 onchain reputation. Live on Monad and Solana.",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Cross-platform",
-  url: "https://dispatch.computer",
+  url: "https://www.dispatch.computer",
   author: {
     "@type": "Person",
     name: "Pranit Garg",

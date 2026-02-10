@@ -659,7 +659,7 @@ components:
         payment_ref:
           type: string
           nullable: true
-          description: On-chain payment reference (null if no payment).
+          description: Onchain payment reference (null if no payment).
         signature:
           type: string
           description: Worker's cryptographic signature over the receipt.

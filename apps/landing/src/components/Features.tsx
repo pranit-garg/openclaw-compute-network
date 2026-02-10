@@ -23,7 +23,7 @@ const features = [
     title: "ERC-8004 Reputation",
     description:
       "Workers register on Monad and build reputation with every job. Agents pick workers by track record, not luck.",
-    tag: "On-chain trust",
+    tag: "Onchain trust",
   },
   {
     icon: (

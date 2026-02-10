@@ -11,6 +11,10 @@ data/
 .vercel/
 *.tsbuildinfo
 tsconfig.tsbuildinfo
+docs/tmp*.aux
+docs/tmp*.out
+mobile/seeker-solana/build-*.apk
+mobile/seeker-solana/publishing/.asset-manifest*.json
 
 # Local Claude Code config
 .claude/
