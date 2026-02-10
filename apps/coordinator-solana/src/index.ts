@@ -78,14 +78,6 @@ if (erc8004Key) {
   console.log(`[Solana Coordinator] ERC-8004 reputation: DISABLED (no ERC8004_PRIVATE_KEY)`);
 }
 
-// ── Start server ────────────────────────────────
-const server = createServer(config, {
-  ...(middleware && { paymentMiddleware: middleware }),
-  ...(erc8004 && { erc8004 }),
-  ...(stakeConfig && { stakeConfig }),
-});
-startServer(config, server);
-
 // ── BOLT staking (optional) ────────────────────
 // Solana coordinator reads BOLT stake levels natively (SPL token balance).
 // Activated when BOLT_MINT env var is set.
@@ -126,5 +118,13 @@ if (boltMint) {
 } else {
   console.log(`[Solana Coordinator] BOLT staking: DISABLED (no BOLT_MINT)`);
 }
+
+// ── Start server ────────────────────────────────
+const server = createServer(config, {
+  ...(middleware && { paymentMiddleware: middleware }),
+  ...(erc8004 && { erc8004 }),
+  ...(stakeConfig && { stakeConfig }),
+});
+startServer(config, server);
 
 console.log(`[Solana Coordinator] x402 payment gating: ${testnetMode ? "DISABLED (testnet mode)" : "ENABLED"}`);
