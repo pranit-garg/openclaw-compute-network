@@ -5,6 +5,9 @@
   "scripts": {
     "build": "tsc --build",
     "links:check": "node scripts/check-links.mjs",
+    "quality:links": "pnpm links:check",
+    "quality:check": "pnpm build && pnpm test && pnpm -C apps/landing build && pnpm -C apps/docs build",
+    "quality:public": "node scripts/verify-public-surface.mjs",
     "dev:monad": "tsx apps/coordinator-monad/src/index.ts",
     "dev:solana": "tsx apps/coordinator-solana/src/index.ts",
     "worker:desktop": "tsx apps/worker-desktop/src/index.ts",

@@ -64,7 +64,7 @@ AI agents are the natural customers for decentralized compute. They need cheap i
 - Source: https://github.com/pranit-garg/Dispatch
 - Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
-- Litepaper: https://github.com/pranit-garg/Dispatch/blob/main/docs/litepaper.md
+- Litepaper (PDF): https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf
 - Demo video: [TBD]
 
 ---
@@ -143,7 +143,7 @@ ERC-8004 was co-authored by Erik Reppel (Coinbase, x402 creator). Dispatch alrea
 - Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
 - ERC-8004 Contracts: https://github.com/erc-8004/erc-8004-contracts
-- Litepaper: https://github.com/pranit-garg/Dispatch/blob/main/docs/litepaper.md
+- Litepaper (PDF): https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf
 - Demo video: [TBD]
 
 ---
@@ -206,4 +206,4 @@ The Seeker is a massive untapped compute fleet. These devices sit idle 90%+ of t
 - Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
 - APK: https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk
-- Litepaper: https://github.com/pranit-garg/Dispatch/blob/main/docs/litepaper.md
+- Litepaper (PDF): https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf

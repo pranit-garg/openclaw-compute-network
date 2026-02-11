@@ -9,6 +9,8 @@ Dispatch mobile worker app (`mobile/seeker-solana/`) to the Solana dApp Store.
 - Android package: `com.dispatch.seeker`
 - Publisher keypair (local path): `~/dispatch-publisher.json`
 - Publishing docs: `https://docs.solanamobile.com/dapp-publishing/intro`
+- Discord review channel: `#dev-answers` in Solana Mobile Community
+- Review contact email: `publishersupport@dappstore.solanamobile.com`
 
 ## Mainnet Submission (Submitted Feb 10, 2026)
 
@@ -82,3 +84,15 @@ wait ~30 seconds and retry. This can happen due to RPC/indexing propagation.
 - `catalog` must be nested under `release` (not top-level).
 - `short_description` has a strict max length (30 chars).
 - `publish submit` requires `mainnet-beta` even if devnet works end-to-end.
+
+## Review Follow-up Process
+
+After successful submission:
+
+- Expected response window: 3-5 business days by email.
+- If no response after 5 business days, post an "App Review Inquiry" in the
+  Solana Mobile Community `#dev-answers` channel.
+- For publishing portal issues, post in `#dev-answers` with:
+  - app package (`com.dispatch.seeker`)
+  - app NFT + release NFT addresses
+  - exact CLI command and error output

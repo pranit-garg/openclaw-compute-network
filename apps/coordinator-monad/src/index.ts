@@ -90,13 +90,15 @@ let stakeConfig: StakeConfig | undefined;
 const boltMint = process.env.BOLT_MINT;
 if (boltMint) {
   const { StakeTier, STAKE_REQUIREMENTS } = await import("@dispatch/protocol");
+  const solanaWeb3Module = "@solana/web3.js";
+  const splTokenModule = "@solana/spl-token";
 
   stakeConfig = {
     async readStakeLevel(pubkey: string) {
       try {
         // Cross-chain read: query Solana for BOLT balance
-        const { Connection, PublicKey } = await import("@solana/web3.js");
-        const { getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const { Connection, PublicKey } = await import(solanaWeb3Module);
+        const { getAssociatedTokenAddress } = await import(splTokenModule);
         const solanaRpc = process.env.SOLANA_RPC ?? "https://api.devnet.solana.com";
         const connection = new Connection(solanaRpc, "confirmed");
         const mint = new PublicKey(boltMint);

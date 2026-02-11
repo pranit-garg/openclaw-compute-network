@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       links={[
         {
           text: 'Litepaper',
-          url: 'https://github.com/pranit-garg/Dispatch/blob/main/docs/Dispatch_Litepaper.pdf',
+          url: 'https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf',
         },
         {
           text: 'GitHub',

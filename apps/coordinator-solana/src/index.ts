@@ -87,14 +87,16 @@ let stakeConfig: StakeConfig | undefined;
 const boltMint = process.env.BOLT_MINT;
 if (boltMint) {
   const { StakeTier, STAKE_REQUIREMENTS } = await import("@dispatch/protocol");
+  const solanaWeb3Module = "@solana/web3.js";
+  const splTokenModule = "@solana/spl-token";
 
   stakeConfig = {
     async readStakeLevel(pubkey: string) {
       try {
         // [DESIGNED] Read BOLT SPL token balance as stake proxy
         // In production: read dedicated staking program accounts
-        const { Connection, PublicKey } = await import("@solana/web3.js");
-        const { getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const { Connection, PublicKey } = await import(solanaWeb3Module);
+        const { getAssociatedTokenAddress } = await import(splTokenModule);
         const connection = new Connection(
           process.env.SOLANA_RPC ?? "https://api.devnet.solana.com",
           "confirmed"

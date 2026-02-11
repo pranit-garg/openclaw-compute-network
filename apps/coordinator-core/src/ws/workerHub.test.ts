@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import http from "node:http";
+import net from "node:net";
 import { WebSocket, WebSocketServer } from "ws";
 import { createDb } from "../db.js";
 import { WorkerHub } from "./workerHub.js";
@@ -10,13 +11,26 @@ import crypto from "node:crypto";
 
 const TEST_DB = "./data/test-hub.db";
 
+async function canListenOnLoopback(): Promise<boolean> {
+  return await new Promise((resolve) => {
+    const probe = net.createServer() as any;
+    probe.on("error", () => resolve(false));
+    probe.listen(0, "127.0.0.1", () => {
+      probe.close(() => resolve(true));
+    });
+  });
+}
+
+const CAN_BIND_SOCKET = await canListenOnLoopback();
+const describeSockets = CAN_BIND_SOCKET ? describe : describe.skip;
+
 function cleanup() {
   try { fs.unlinkSync(TEST_DB); } catch {}
   try { fs.unlinkSync(TEST_DB + "-wal"); } catch {}
   try { fs.unlinkSync(TEST_DB + "-shm"); } catch {}
 }
 
-describe("WorkerHub", () => {
+describeSockets("WorkerHub", () => {
   let server: http.Server;
   let hub: WorkerHub;
   let db: ReturnType<typeof createDb>;
@@ -29,16 +43,19 @@ describe("WorkerHub", () => {
     hub = new WorkerHub(server, db);
 
     await new Promise<void>((resolve) => {
-      server.listen(0, () => {
+      // Bind tests to loopback only so they can run in stricter sandboxes/CI.
+      server.listen(0, "127.0.0.1", () => {
         port = (server.address() as { port: number }).port;
         resolve();
       });
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     hub.shutdown();
-    server.close();
+    await new Promise<void>((resolve) => {
+      server.close(() => resolve());
+    });
     db.close();
     cleanup();
   });
@@ -46,7 +63,7 @@ describe("WorkerHub", () => {
   it("registers a worker and increments online count", async () => {
     expect(hub.onlineCount).toBe(0);
 
-    const ws = new WebSocket(`ws://localhost:${port}`);
+    const ws = new WebSocket(`ws://127.0.0.1:${port}`);
     await new Promise<void>((resolve) => ws.on("open", resolve));
 
     // Send register
@@ -75,8 +92,8 @@ describe("WorkerHub", () => {
 
   it("claimWorker prefers DESKTOP for FAST policy", async () => {
     // Register two workers
-    const wsDesktop = new WebSocket(`ws://localhost:${port}`);
-    const wsSeeker = new WebSocket(`ws://localhost:${port}`);
+    const wsDesktop = new WebSocket(`ws://127.0.0.1:${port}`);
+    const wsSeeker = new WebSocket(`ws://127.0.0.1:${port}`);
 
     await Promise.all([
       new Promise<void>((r) => wsDesktop.on("open", r)),
@@ -103,8 +120,8 @@ describe("WorkerHub", () => {
   });
 
   it("claimWorker prefers SEEKER for CHEAP+TASK", async () => {
-    const wsDesktop = new WebSocket(`ws://localhost:${port}`);
-    const wsSeeker = new WebSocket(`ws://localhost:${port}`);
+    const wsDesktop = new WebSocket(`ws://127.0.0.1:${port}`);
+    const wsSeeker = new WebSocket(`ws://127.0.0.1:${port}`);
 
     await Promise.all([
       new Promise<void>((r) => wsDesktop.on("open", r)),
@@ -129,7 +146,7 @@ describe("WorkerHub", () => {
   });
 
   it("privacy filter blocks untrusted workers", async () => {
-    const ws = new WebSocket(`ws://localhost:${port}`);
+    const ws = new WebSocket(`ws://127.0.0.1:${port}`);
     await new Promise<void>((r) => ws.on("open", r));
 
     ws.send(JSON.stringify({
@@ -145,7 +162,7 @@ describe("WorkerHub", () => {
   });
 
   it("atomic claim prevents double-claiming", async () => {
-    const ws = new WebSocket(`ws://localhost:${port}`);
+    const ws = new WebSocket(`ws://127.0.0.1:${port}`);
     await new Promise<void>((r) => ws.on("open", r));
 
     ws.send(JSON.stringify({
@@ -169,7 +186,7 @@ describe("WorkerHub", () => {
     const keypair = nacl.sign.keyPair();
     const pubkeyHex = Buffer.from(keypair.publicKey).toString("hex");
 
-    const ws = new WebSocket(`ws://localhost:${port}`);
+    const ws = new WebSocket(`ws://127.0.0.1:${port}`);
     await new Promise<void>((r) => ws.on("open", r));
 
     // Register with real pubkey
@@ -250,7 +267,7 @@ describe("WorkerHub", () => {
     const realPubkeyHex = Buffer.from(realKeypair.publicKey).toString("hex");
     const wrongKeypair = nacl.sign.keyPair();
 
-    const ws = new WebSocket(`ws://localhost:${port}`);
+    const ws = new WebSocket(`ws://127.0.0.1:${port}`);
     await new Promise<void>((r) => ws.on("open", r));
 
     ws.send(JSON.stringify({

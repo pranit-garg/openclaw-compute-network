@@ -175,6 +175,16 @@ pnpm e2e    # Spawns coordinators + workers, runs demo scenarios, cleans up
 pnpm test   # Unit tests
 ```
 
+### Quality Gates
+
+```bash
+pnpm quality:check   # Build + tests + app builds
+pnpm quality:links   # Strict external link correctness check
+pnpm quality:public  # Verify live landing/docs/search/litepaper/dApp links
+```
+
+Detailed checklist: [`docs/quality-playbook.md`](docs/quality-playbook.md)
+
 ## Links
 
 | | |
