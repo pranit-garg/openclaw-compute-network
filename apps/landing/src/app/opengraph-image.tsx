@@ -1,17 +1,17 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-export const runtime = "edge";
 export const alt =
   "Dispatch: Idle Compute for AI Agents | BOLT Token + x402 + ERC-8004";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const fontData = fetch(
-  new URL("./fonts/SpaceGrotesk-Latin.woff2", import.meta.url)
-).then((res) => res.arrayBuffer());
-
 export default async function OgImage() {
-  const fontBuffer = await fontData;
+  const [regularFont, boldFont] = await Promise.all([
+    readFile(join(process.cwd(), "src/app/fonts/SpaceGrotesk-Regular.ttf")),
+    readFile(join(process.cwd(), "src/app/fonts/SpaceGrotesk-Bold.ttf")),
+  ]);
 
   return new ImageResponse(
     (
@@ -181,8 +181,15 @@ export default async function OgImage() {
       fonts: [
         {
           name: "Space Grotesk",
-          data: fontBuffer,
-          style: "normal",
+          data: regularFont,
+          weight: 400 as const,
+          style: "normal" as const,
+        },
+        {
+          name: "Space Grotesk",
+          data: boldFont,
+          weight: 700 as const,
+          style: "normal" as const,
         },
       ],
     }
