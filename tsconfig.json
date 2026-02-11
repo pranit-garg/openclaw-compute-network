@@ -19,6 +19,7 @@
   "references": [
     { "path": "packages/protocol" },
     { "path": "packages/compute-router" },
+    { "path": "packages/cli" },
     { "path": "apps/coordinator-core" },
     { "path": "apps/coordinator-monad" },
     { "path": "apps/coordinator-solana" },
