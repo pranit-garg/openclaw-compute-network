@@ -19,7 +19,7 @@ app:
       uri: media/app_icon.png
 release:
   version: 1.1.0
-  address: CnQAdgmbNPMr3yfwFfKt5n9KE3zKG2TWsfmS8rHVu4qV
+  address: F17PWWV7YmJFwmdQ3d199oWuFonccz4zTxVfA8TKcdez
   media:
     - purpose: icon
       width: 512
@@ -47,7 +47,7 @@ release:
       uri: media/screenshot_settings.png
   files:
     - purpose: install
-      uri: ../build-1770731703429.apk
+      uri: ../build-onchain.apk
   catalog:
     en-US:
       name: Dispatch
@@ -88,8 +88,8 @@ solana_mobile_dapp_publisher_portal:
     and cryptographic signing are real. Connect to the test coordinator
     at the default URL to see jobs arrive.
 lastSubmittedVersionOnChain:
-  address: CnQAdgmbNPMr3yfwFfKt5n9KE3zKG2TWsfmS8rHVu4qV
-  version_code: 1
-  apk_hash: LL1RVZ0q+gsUJrOZ9CVbxl66cphmbLwIO3OD3w9kIDU=
+  address: F17PWWV7YmJFwmdQ3d199oWuFonccz4zTxVfA8TKcdez
+  version_code: 2
+  apk_hash: 2p5ENJ3awF7/dyplQdR1RlUMiGLK7i8Sncr0xJKI4nw=
 lastUpdatedVersionOnStore:
-  address: CnQAdgmbNPMr3yfwFfKt5n9KE3zKG2TWsfmS8rHVu4qV
+  address: F17PWWV7YmJFwmdQ3d199oWuFonccz4zTxVfA8TKcdez

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Dispatch",
     "slug": "seeker-solana",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "dispatch",
@@ -28,6 +28,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
+      "versionCode": 2,
       "package": "com.dispatch.seeker",
       "intentFilters": [
         {
