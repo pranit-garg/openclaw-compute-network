@@ -3,6 +3,7 @@ import { createFromSource } from "fumadocs-core/search/server";
 
 export const revalidate = false;
 
-// Fumadocs server-side search endpoint.
-export const { staticGET: GET } = createFromSource(source);
-
+// Fumadocs server-side query endpoint.
+// `GET` returns an array of search results for `?query=...`.
+// `staticGET` exports the full index and breaks the client search UI.
+export const { GET } = createFromSource(source);

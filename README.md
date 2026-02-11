@@ -80,7 +80,7 @@ AI agents need cheap inference at scale. They operate autonomously and can't neg
 - **SPL USDC** settlement via x402 `ExactSvmScheme`
 - **Seeker support**, each device is a potential compute node
 - **Ed25519 receipts** use Solana's native signature scheme
-- Seeker app submitted to the [Solana dApp Store](https://dappstore.app/)
+- Seeker app submitted to the [Solana dApp Store](https://docs.solanamobile.com/dapp-publishing/intro)
 
 ## Monad + ERC-8004
 

@@ -176,10 +176,10 @@ function ruleFor(url) {
       must: true,
     },
     {
-      name: "Solana dApp Store",
-      match: /^https:\/\/dappstore\.app\/?$/,
-      expectFinal: /^https:\/\/dappstore\.app\/?$/,
-      bodyIncludes: ["dApp Store", "Solana"],
+      name: "Solana dApp Store Docs",
+      match: /^https:\/\/docs\.solanamobile\.com\/dapp-publishing\/intro\/?$/,
+      expectFinal: /^https:\/\/docs\.solanamobile\.com\/dapp-publishing\/intro\/?$/,
+      bodyIncludes: ["dApp", "publish"],
       must: false,
     },
   ];

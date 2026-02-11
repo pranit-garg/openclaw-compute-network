@@ -8,6 +8,7 @@ Dispatch mobile worker app (`mobile/seeker-solana/`) to the Solana dApp Store.
 - App name: Dispatch
 - Android package: `com.dispatch.seeker`
 - Publisher keypair (local path): `~/dispatch-publisher.json`
+- Publishing docs: `https://docs.solanamobile.com/dapp-publishing/intro`
 
 ## Mainnet Submission (Submitted Feb 10, 2026)
 
@@ -81,4 +82,3 @@ wait ~30 seconds and retry. This can happen due to RPC/indexing propagation.
 - `catalog` must be nested under `release` (not top-level).
 - `short_description` has a strict max length (30 chars).
 - `publish submit` requires `mainnet-beta` even if devnet works end-to-end.
-
