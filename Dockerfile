@@ -32,7 +32,7 @@ RUN npm install -g esbuild && esbuild apps/coordinator-solana/dist/index.js \
     --platform=node \
     --format=esm \
     --outfile=/app/server.mjs \
-    --banner:js="import{createRequire}from'module';const require=createRequire(import.meta.url);" \
+    --banner:js="import{createRequire}from'module';import{fileURLToPath as _furl}from'url';import{dirname as _dir}from'path';const require=createRequire(import.meta.url);const __filename=_furl(import.meta.url);const __dirname=_dir(__filename);" \
     --external:better-sqlite3 \
     --external:bufferutil \
     --external:utf-8-validate \
