@@ -12,9 +12,9 @@ const solanaBullets = [
 
 const monadBullets = [
   "ERC-8004 reputation registries",
-  "Governance via wrapped $BOLT",
-  "Receipt anchoring",
-  "Worker identity verification",
+  "wBOLT (ERC-20) distribution",
+  "Per-job onchain feedback",
+  "Fast finality for reputation updates",
 ];
 
 export function DualChain() {

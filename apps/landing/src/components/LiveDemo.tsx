@@ -12,7 +12,7 @@ const cliResponse = `Quantum computing leverages quantum mechanical phenomena
 like superposition and entanglement to perform computations
 that would be impractical for classical computers...
 
-  Route:   decentralized:monad
+  Route:   monad-testnet
   Price:   $0.010
   Latency: 342ms
   Receipt: hash=6fa2faf... worker=7f3a92c1...`;

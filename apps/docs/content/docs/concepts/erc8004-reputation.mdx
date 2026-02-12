@@ -25,28 +25,19 @@ Tracks feedback entries with aggregated scores. Each entry includes a numeric sc
 
 ## How Dispatch uses it
 
-### Deterministic agent mapping
+### Agent registration
 
-Every worker's ed25519 public key maps deterministically to an ERC-8004 agent ID:
-
-```
-worker ed25519 pubkey → keccak256 hash → 128-bit agentId
-```
-
-The same worker always resolves to the same onchain identity. No manual registration needed.
+Workers register as ERC-8004 agents via an onchain transaction. The `registerAgent()` function mints an ERC-721 identity NFT and returns the assigned `agentId` from the contract event. Registration is a one-time operation per worker.
 
 ### Feedback posting
 
-After a job completes, the coordinator posts feedback to the Reputation Registry:
-
-- **Success**: 80 points
-- **Failure**: 20 points
+After a job completes, the coordinator posts feedback to the Reputation Registry with a configurable score (0-100). Typical values: 80 for success, 20 for failure. The `buildJobFeedback()` helper constructs the feedback entry from job completion data.
 
 Feedback posts automatically as part of the job completion flow.
 
 ### Score retrieval
 
-The coordinator reads worker reputations from the Reputation Registry on-the-fly. Scores are normalized to a 0-100 scale. Higher reputation means priority assignment when the coordinator selects workers for jobs.
+The coordinator reads worker reputations from the Reputation Registry on-the-fly. The raw `summaryValue` is returned from the contract. Higher reputation means priority assignment when the coordinator selects workers for jobs.
 
 ### Cross-chain reputation
 
@@ -67,11 +58,13 @@ The `@dispatch/erc8004` package exposes:
 | Function | Description |
 |----------|-------------|
 | `registerAgent()` | Register a new agent identity as an ERC-721 NFT |
-| `getReputationSummary(agentId)` | Get aggregated reputation score for an agent (0-100) |
+| `getReputationSummary(agentId)` | Get aggregated reputation summary for an agent |
 | `giveFeedback(entry, account)` | Post a feedback entry to the Reputation Registry |
-| `getFeedbackClients()` | List addresses that have submitted feedback |
-| `readFeedback()` | Read raw feedback entries for an agent |
+| `getFeedbackClients(agentId)` | List addresses that have submitted feedback for an agent |
+| `readFeedback(agentId, clientAddress, feedbackIndex)` | Read a specific feedback entry |
 | `buildJobFeedback()` | Build a feedback entry from job completion data |
+| `getAgentInfo(agentId)` | Get agent metadata (owner, URI) |
+| `buildFeedbackHash(...)` | Build a keccak256 hash for feedback verification |
 
 ## Why it matters
 

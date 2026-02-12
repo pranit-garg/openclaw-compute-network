@@ -18,7 +18,7 @@ const tiers = [
   {
     name: "Sentinel",
     stake: "1,000 $BOLT",
-    benefits: "Priority matching, +10 bonus, 2x rep, revenue share",
+    benefits: "Priority matching, +10 bonus, 2x rep, revenue share (planned)",
     color: "text-accent",
   },
 ];
@@ -29,7 +29,7 @@ const flywheelSteps = [
   "Buy pressure",
   "Workers stake",
   "Supply locks",
-  "5% burned",
+  "5% protocol fee",
 ];
 
 function AnimatedChevron({ delay }: { delay: number }) {
@@ -123,8 +123,8 @@ export function Tokenomics() {
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-text-muted">
             Workers earn BOLT (SPL) on Solana devnet and wBOLT (ERC-20) on
-            Monad testnet. Every job creates buy pressure, supply lock, and
-            burns. No token required to participate.
+            Monad testnet. Every job creates buy pressure and supply lock.
+            No token required to participate.
           </p>
         </motion.div>
 
@@ -154,8 +154,8 @@ export function Tokenomics() {
         >
           <div className="mb-8 flex items-center justify-center gap-3">
             <h3 className="text-lg font-semibold">Value Accrual Flywheel</h3>
-            <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-              Active
+            <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+              Testnet
             </span>
           </div>
 

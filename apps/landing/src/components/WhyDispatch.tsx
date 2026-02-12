@@ -66,7 +66,7 @@ const workerCards = [
     ),
     title: "Zero barrier to entry",
     description:
-      "Download the Seeker app or install the CLI. Connect in minutes, earn USDC per completed job. Trust pairing available for private workloads.",
+      "Download the Seeker app or install the CLI. Connect in minutes, earn BOLT per completed job. Trust pairing available for private workloads.",
   },
 ];
 

@@ -154,7 +154,7 @@ export class BoltDistributor {
         this.connection,
         tx,
         [this.authority],
-        { commitment: "confirmed" },
+        { commitment: "confirmed", maxRetries: 3, skipPreflight: true },
       );
 
       console.log(

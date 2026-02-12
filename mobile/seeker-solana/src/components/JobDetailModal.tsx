@@ -129,8 +129,11 @@ export function JobDetailModal({ job, visible, onClose }: JobDetailModalProps) {
               {pendingTx && job.success && (
                 <Text style={styles.pendingText}>Transaction processing...</Text>
               )}
-              {(job.feedbackFailed || job.paymentFailed) && (
-                <Text style={styles.failedText}>Transaction failed</Text>
+              {job.paymentFailed && (
+                <Text style={styles.failedText}>Payment failed</Text>
+              )}
+              {job.feedbackFailed && !job.paymentFailed && (
+                <Text style={styles.pendingText}>Reputation update failed</Text>
               )}
             </View>
           </ScrollView>

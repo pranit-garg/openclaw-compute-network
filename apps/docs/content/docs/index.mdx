@@ -7,7 +7,7 @@ description: "Cheap AI compute for agents. Passive income for workers. Pay per j
 
 Cheap AI compute for agents. Passive income for workers.
 
-Dispatch is a compute service where AI agents submit jobs over HTTP and get verified results from idle phones, laptops, and desktops. Workers earn BOLT on Solana and USDC on Monad for every completed job. Live on Monad testnet and Solana devnet.
+Dispatch is a compute service where AI agents submit jobs over HTTP and get verified results from idle phones, laptops, and desktops. Workers earn BOLT on Solana and wBOLT on Monad for every completed job. Live on Monad testnet and Solana devnet.
 
 ## Quick links
 
@@ -20,12 +20,12 @@ Dispatch is a compute service where AI agents submit jobs over HTTP and get veri
 - [BOLT Token](/docs/concepts/bolt-token): settlement, staking, and value accrual
 - [Dual-Chain Architecture](/docs/concepts/dual-chain): why Solana + Monad
 
-## Three pillars
+## Four pillars
 
 - **Agent-native compute.** Agents submit HTTP requests with x402 payment headers. No SDK required. Just HTTP and payment headers.
 - **Idle hardware as supply.** Phones and desktops earn by processing AI inference while idle. The network scales with devices people already own.
 - **Onchain trust.** Workers register as ERC-8004 agents on Monad. Every job builds verifiable reputation. Ed25519 receipts prove every result.
-- **BOLT-powered settlement (upcoming).** When BOLT launches, every job will auto-convert USDC to BOLT via Jupiter. Workers earn BOLT with upside: hold, stake for priority, or sell. 5% protocol fee burned per job.
+- **BOLT-powered settlement.** Every job auto-converts USDC to BOLT via Jupiter (when pool is live). Workers earn BOLT with upside: hold, stake for priority, or sell. 5% protocol fee collected per job.
 
 ## What it does
 
@@ -64,6 +64,8 @@ packages/
   protocol/        → Shared types, enums, pricing, WebSocket message schemas
   compute-router/  → SDK, routes jobs to decentralized workers or hosted BYOK
   erc8004/         → ERC-8004 identity + reputation contracts and TS client
+  bolt/            → BOLT token types, staking tiers, Jupiter swap utils
+  cli/             → CLI tool (@dispatch/cli)
 
 apps/
   coordinator-core/   → Express server, SQLite DB, WebSocket hub, route handlers
@@ -72,4 +74,6 @@ apps/
   worker-desktop/     → Desktop worker node (LLM + TASK)
   seeker-simulator/   → Mobile worker simulator (TASK only)
   dispatch-demo/      → Demo CLI for end-to-end testing
+  landing/            → Next.js landing page
+  docs/               → Fumadocs documentation site
 ```

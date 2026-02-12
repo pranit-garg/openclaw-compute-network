@@ -17,6 +17,7 @@ Solana handles money and mobile devices:
 - **USDC payments.** x402 settlement via `ExactSvmScheme` on Solana devnet.
 - **Seeker devices.** Phones with Solana wallets (via MWA). These are the supply-side workers.
 - **Staking.** BOLT staking program for tier-based matching priority.
+- **Receipt anchoring.** Job receipt hashes anchored onchain via Anchor program for permanent, verifiable proof.
 - **DeFi.** Jupiter, Raydium, giving workers immediate liquidity and trading.
 - **Cost.** Sub-cent transaction fees make frequent stake/unstake operations practical.
 
@@ -27,7 +28,6 @@ Monad handles identity and governance:
 - **ERC-8004 reputation.** The ERC-8004 standard is EVM-only Solidity. It can't run on Solana. Workers register as agents and build verifiable, onchain track records.
 - **wBOLT distribution.** Wrapped BOLT (ERC-20) live on Monad testnet. Workers earn wBOLT per job via WrappedBoltDistributor.
 - **Governance.** wBOLT holders will participate in protocol proposals and voting (planned).
-- **Receipt anchoring.** Job receipt hashes anchored onchain for permanent, verifiable proof.
 - **Smart contract programmability.** Monad's EVM compatibility enables complex reputation logic (validation registries, slashing conditions, cross-protocol composability).
 
 ## Why Not Just One Chain?

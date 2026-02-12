@@ -154,8 +154,11 @@ export class WrappedBoltDistributor {
         chain: this.chain,
       });
 
-      // Wait for confirmation
-      await this.publicClient.waitForTransactionReceipt({ hash: txHash });
+      // Wait for confirmation (timeout after 60s to avoid hanging on testnet)
+      await this.publicClient.waitForTransactionReceipt({
+        hash: txHash,
+        timeout: 60_000,
+      });
 
       // Track per-worker custodial balance
       const prevBalance = this.workerBalances.get(workerPubkey) ?? 0;

@@ -11,7 +11,7 @@ const features = [
     ),
     title: "x402 Micropayments",
     description:
-      "Attach a payment to any HTTP request. Workers get USDC on completion. No custom token. No staking.",
+      "Attach a payment to any HTTP request. Workers earn BOLT on completion. Optional staking for priority.",
     tag: "x402 Protocol",
   },
   {

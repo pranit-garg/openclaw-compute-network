@@ -1,5 +1,6 @@
 {
   "name": "dispatch-compute-network",
+  "description": "Cheap AI compute for agents. Passive income for workers.",
   "private": true,
   "type": "module",
   "scripts": {

@@ -20,7 +20,7 @@ The key insight: instead of skimming a percentage fee, **100% of economic activi
 1. **Agent pays USDC.** Standard x402 payment header, same as always.
 2. **Coordinator receives USDC.** x402 facilitator verifies payment.
 3. **Auto-swap via Jupiter.** USDC converts to BOLT on Jupiter DEX (with fallback to direct authority distribution).
-4. **Protocol fee.** 5% of BOLT permanently burned.
+4. **Protocol fee.** 5% of BOLT collected by treasury.
 5. **Worker receives BOLT.** Remaining 95% deposited to worker via batched settlement.
 
 Workers choose what to do with earned BOLT:
@@ -34,7 +34,7 @@ Three sources of pressure work together:
 
 1. **Buy pressure.** Every job creates a USDC-to-BOLT swap on Jupiter. More jobs = more buying.
 2. **Supply lock.** Workers stake BOLT for better matching priority. Staked BOLT is locked, reducing circulating supply.
-3. **Burn.** 5% protocol fee is permanently burned on every job. Total supply decreases over time.
+3. **Protocol fee.** 5% collected per job, funding the treasury for buybacks and ecosystem grants.
 
 Result: More jobs, more buying, less supply, price appreciation, workers earn more value per job, more workers, more capacity, more jobs.
 

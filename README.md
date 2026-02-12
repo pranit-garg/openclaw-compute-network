@@ -95,7 +95,7 @@ Agent (HTTP + x402)  →  Coordinator  →  Worker (phone/desktop)
 2. **Coordinator routes it.** Matches to the best worker by device type, reputation score, and routing policy (FAST / CHEAP / PRIVATE).
 3. **Worker processes.** Summarization, classification, extraction, or LLM inference via Ollama.
 4. **Worker signs a receipt.** ed25519 signature over the output hash. Cryptographic proof of who computed what.
-5. **Payment settles.** Worker receives BOLT (Solana) or wBOLT (Monad) for completed job. 5% protocol fee burned.
+5. **Payment settles.** Worker receives BOLT (Solana) or wBOLT (Monad) for completed job. 5% protocol fee collected.
 
 ## What's Working (Testnet)
 
@@ -121,7 +121,7 @@ BOLT is the settlement token for the Dispatch network. Agents pay USDC via x402 
 **Value accrual:**
 1. **Buy pressure.** Every job converts USDC to BOLT on Jupiter (when pool exists)
 2. **Supply lock.** Workers stake BOLT for priority matching
-3. **Burn.** 5% protocol fee permanently burned per job
+3. **Protocol fee.** 5% collected per job, funding treasury and future buybacks
 
 **Staking tiers** (zero stake required to earn):
 
@@ -157,7 +157,7 @@ BOLT is the settlement token for the Dispatch network. Agents pay USDC via x402 
 - **SPL BOLT** settlement on Solana devnet
 - **Seeker support**, each device is a potential compute node
 - **Ed25519 receipts** use Solana's native signature scheme
-- Seeker app submitted to the [Solana dApp Store](https://docs.solanamobile.com/dapp-publishing/intro)
+- Seeker app live on the [Solana dApp Store](https://docs.solanamobile.com/dapp-publishing/intro)
 
 ## Monad + ERC-8004
 
@@ -180,6 +180,7 @@ packages/
   compute-router/    # Client SDK (decentralized + hosted adapters)
   bolt/              # BOLT token types, staking tiers, Jupiter swap utils
   erc8004/           # ERC-8004 viem wrappers (identity + reputation)
+  cli/               # CLI tool (@dispatch/cli)
 apps/
   coordinator-core/     # Express + SQLite + WebSocket hub
   coordinator-monad/    # Monad x402 config (port 4010)
@@ -190,7 +191,8 @@ apps/
   landing/              # Next.js landing page
   docs/                 # Fumadocs API documentation
 mobile/
-  seeker-solana/        # React Native Seeker app (Expo + MWA)
+  seeker-solana/           # React Native Seeker app (Expo + MWA)
+  seeker-worker-android/   # Native Android worker (Kotlin)
 chain/
   monad/contracts/      # Solidity receipt anchor
   solana/receipt-anchor/ # Anchor program receipt anchor
@@ -200,7 +202,7 @@ chain/
 
 | Layer | Tech |
 |-------|------|
-| Protocol | TypeScript monorepo, 12K+ lines |
+| Protocol | TypeScript monorepo, 16K+ lines |
 | Coordinators | Express, SQLite, WebSocket |
 | Payments | x402 USDC micropayments |
 | Verification | ed25519 signed receipts |
