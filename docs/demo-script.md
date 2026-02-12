@@ -28,11 +28,11 @@ Open `http://localhost:4400/dashboard` in browser.
 Open the Dispatch app on the Android device.
 
 **Show:**
-- Tap "Connect Wallet". Phantom opens, approve connection
+- Tap "Connect Wallet". Solana wallet opens, approve connection
 - Wallet address appears in the app
 - Toggle between "Wallet Signing" and "Device Key" modes
 
-**Say:** "Workers authenticate with their Solana wallet. The app supports Phantom via Mobile Wallet Adapter, or a local device key for background operation."
+**Say:** "Workers authenticate with their Solana wallet. The app supports any Solana wallet via Mobile Wallet Adapter, or a local device key for background operation."
 
 ---
 

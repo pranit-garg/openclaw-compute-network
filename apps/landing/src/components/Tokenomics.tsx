@@ -119,12 +119,12 @@ export function Tokenomics() {
             Coming Soon
           </span>
           <h2 className="text-3xl font-bold md:text-4xl">
-            USDC today. BOLT tomorrow.
+            BOLT on Solana. USDC on Monad. One token to unify them.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-text-muted">
-            Workers earn USDC per job right now. When BOLT launches, every
-            dollar of compute will flow through the BOLT token, creating buy
-            pressure, supply lock, and burns.
+            Workers earn BOLT on Solana and USDC on Monad today. When BOLT
+            launches on mainnet, all payments converge to a single token,
+            creating buy pressure, supply lock, and burns.
           </p>
         </motion.div>
 
@@ -139,8 +139,8 @@ export function Tokenomics() {
             Current Status
           </p>
           <p className="mt-2 text-sm text-text-muted">
-            Today: Workers earn USDC for each completed job via x402
-            micropayments. No token required to participate.
+            Today: Workers earn BOLT on Solana devnet and USDC on Monad
+            testnet via x402. No token required to participate.
           </p>
         </motion.div>
 

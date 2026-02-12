@@ -78,7 +78,7 @@ adb install /Users/pranitgarg/Vibecoding/Dispatch/mobile/seeker-solana/build-177
 
 1. Find **Dispatch** in your app drawer and open it
 2. Complete the onboarding screens (3 swipes)
-3. Tap **Connect Wallet** to authenticate via Phantom (MWA)
+3. Tap **Connect Wallet** to authenticate via MWA
 4. Set coordinator URL (default should work for testnet)
 5. Tap the big gold **EARNING** button to go online
 6. Your phone is now a compute node
@@ -100,7 +100,7 @@ adb install /path/to/dispatch.apk
 
 **App crashes on launch**
 - Check logs: `adb logcat | grep -i dispatch`
-- Ensure Phantom wallet is installed on the device
+- Ensure a Solana wallet app is installed on the device
 
 ---
 

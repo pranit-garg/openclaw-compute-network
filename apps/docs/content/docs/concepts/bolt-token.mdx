@@ -72,7 +72,7 @@ Fixed supply of 1 billion BOLT. No inflation mechanism.
 
 ## Cross-Chain Design
 
-- **Solana.** BOLT is a native SPL token. Workers earn, stake, and trade where they already have wallets (Seeker, Phantom). Deeper consumer DeFi via Jupiter and Raydium.
+- **Solana.** BOLT is a native SPL token. Workers earn, stake, and trade where they already have wallets. Deeper consumer DeFi via Jupiter and Raydium.
 - **Monad.** Wrapped BOLT (ERC-20) for governance. Protocol proposals and voting happen on Monad alongside the ERC-8004 reputation system.
 - Both coordinators read Solana stake levels to determine worker tier.
 
@@ -85,7 +85,7 @@ BOLT will trade on Jupiter with real liquidity (planned). The swap happens atomi
 3. Builds swap transaction (USDC input, BOLT output, 0.5% slippage)
 4. Signs and submits as part of the job commit
 
-On devnet: BOLT SPL token deployed with seeded liquidity pool.
+On Solana devnet: BOLT SPL token deployed with seeded liquidity pool.
 On mainnet: BOLT trades with organic liquidity.
 
 ## Implementation Status

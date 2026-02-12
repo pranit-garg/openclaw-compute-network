@@ -8,7 +8,7 @@
 
 **Tagline:** Cheap AI compute for agents. Passive income for workers.
 
-**One-liner:** A compute service where AI agents buy verified inference from idle hardware. Workers earn USDC per job. Agents pay via x402 HTTP headers. Results are cryptographically signed with ed25519.
+**One-liner:** A compute service where AI agents buy verified inference from idle hardware. Workers earn BOLT on Solana and USDC on Monad per job. Agents pay via x402 HTTP headers. Results are cryptographically signed with ed25519.
 
 ---
 
@@ -18,7 +18,7 @@
 AI agents are the customers. They submit HTTP requests with x402 payment headers. No SDK, no wallet setup, just HTTP and USDC. Any agent that can make an HTTP call can buy compute.
 
 ### Pillar 2: Idle Hardware as Supply
-Phones and desktops earn USDC by processing AI inference while idle. The network scales with devices people already own, no GPU required. The Android app picks up jobs over WebSocket while the device is idle. When BOLT launches (planned), workers will gain token upside on top of USDC earnings.
+Phones and desktops earn by processing AI inference while idle. The network scales with devices people already own, no GPU required. The Android app picks up jobs over WebSocket while the device is idle. Workers earn BOLT on Solana and USDC on Monad.
 
 ### Pillar 3: Onchain Trust
 Workers register as ERC-8004 agents on Monad. Every completed job builds verifiable reputation through onchain feedback. Ed25519 receipts prove every result. Agents discover trusted workers through the reputation registry. Planned staking tiers will amplify reputation, giving Verified and Sentinel workers higher rep multipliers and priority matching.
@@ -37,7 +37,7 @@ AI agents need compute but can't negotiate GPU leases. Dispatch gives them a sim
 ### Angle B: "Earn While Idle"
 
 **Headline:** Your hardware earns while you sleep.
-**Subhead:** Phones and desktops earn USDC by processing AI jobs. No GPU required.
+**Subhead:** Phones and desktops earn by processing AI jobs. No GPU required.
 
 Every other DePIN project targets datacenter GPUs and high-end servers. Dispatch turns idle consumer devices into compute nodes, handling summarization, classification, and extraction. This dramatically expands the supply side beyond the GPU arms race. Workers build ERC-8004 reputation that makes them more visible to agents.
 
@@ -51,7 +51,7 @@ Permissionless compute networks have a trust problem: how do you know a worker w
 ### Angle D: "BOLT Token (Upcoming)"
 
 **Headline:** USDC today. BOLT with upside tomorrow.
-**Subhead:** Workers earn USDC now. When BOLT launches, every dollar of compute flows through the token.
+**Subhead:** Workers earn BOLT on Solana, USDC on Monad. Every dollar of compute flows through the network.
 
 Agents never touch BOLT. They pay stablecoins via x402, same as before. But when BOLT launches (planned), USDC will auto-swap to BOLT via Jupiter DEX at the coordinator. Workers will earn BOLT with real upside: price appreciation as usage grows, staking for priority matching, or sell for USDC anytime. This isn't a fee skim. 100% of payment volume will create BOLT demand.
 
@@ -59,11 +59,11 @@ Agents never touch BOLT. They pay stablecoins via x402, same as before. But when
 
 ## 4. Hero Section
 
-**Badge:** Live on Monad + Solana testnet
+**Badge:** Live on Monad testnet + Solana devnet
 
 **Headline:** Cheap AI compute for agents. Passive income for workers.
 
-**Subheadline:** Submit a job over HTTP. Get a verified result. Workers earn USDC per job. Ed25519 receipts, ERC-8004 reputation on Monad. Live on testnet.
+**Subheadline:** Submit a job over HTTP. Get a verified result. Workers earn BOLT on Solana and USDC on Monad per job. Ed25519 receipts, ERC-8004 reputation on Monad. Live on Monad testnet and Solana devnet.
 
 **Terminal demo:**
 ```
@@ -82,7 +82,7 @@ $ curl -X POST http://localhost:4010/v1/jobs/commit/fast \
 
 ### x402 Micropayments
 **Headline:** Pay per job. USDC via HTTP headers.
-Every job includes an x402 payment header. Workers earn USDC for completed jobs. When BOLT launches (planned), USDC will auto-swap to BOLT via Jupiter DEX. 5% protocol fee per job.
+Every job includes an x402 payment header. Workers earn BOLT on Solana and USDC on Monad for completed jobs. 5% protocol fee per job.
 
 ### ERC-8004 Reputation
 **Headline:** Workers with verifiable track records.
@@ -90,7 +90,7 @@ Workers register as ERC-8004 agents on Monad. Every completed job builds verifia
 
 ### Mobile Dispatch Nodes
 **Headline:** Phones become compute nodes.
-Phones process lightweight AI tasks (summarization, classification, extraction) while idle. The Android app picks up jobs over WebSocket. Workers earn USDC for every completed job.
+Phones process lightweight AI tasks (summarization, classification, extraction) while idle. The Android app picks up jobs over WebSocket. Workers earn for every completed job.
 
 ### Dual-Chain Architecture
 **Headline:** Monad and Solana, running in parallel.
@@ -136,25 +136,25 @@ Desktop nodes handle LLM inference via Ollama and all task types. Atomic job cla
 ## 8. Hackathon-Specific Messaging
 
 ### Colosseum (Solana)
-**Angle:** Agent-native compute on Solana. Dispatch turns Solana Mobile devices into AI inference nodes. Workers authenticate via Mobile Wallet Adapter, earn USDC via x402 settlement, and deliver ed25519-signed receipts. Compatible with Solana Seeker devices.
+**Angle:** Agent-native compute on Solana. Dispatch turns Solana Mobile devices into AI inference nodes. Workers authenticate via Mobile Wallet Adapter, earn BOLT via x402 settlement on Solana devnet, and deliver ed25519-signed receipts. Compatible with Solana Seeker devices.
 
 ### Monad Moltiverse
 **Angle:** ERC-8004 agent reputation on Monad. Workers register as ERC-8004 agents with verifiable onchain reputation. Every completed job posts feedback to the reputation contract. Monad's fast finality makes per-job reputation updates practical.
 
 ### Solana Mobile
-**Angle:** Turn every Seeker into a dispatch node. The Android app connects to the coordinator over WebSocket and picks up AI inference jobs while idle. Workers earn USDC for summarization, classification, and extraction tasks. Designed for the Seeker hardware.
+**Angle:** Turn every Seeker into a dispatch node. The Android app connects to the coordinator over WebSocket and picks up AI inference jobs while idle. Workers earn BOLT for summarization, classification, and extraction tasks on Solana devnet. Designed for the Seeker hardware.
 
 ---
 
 ## 9. Social Bio Copy
 
 ### Twitter/X Bio (160 chars max)
-Cheap AI compute for agents. Passive income for workers. x402 payments, ERC-8004 reputation on Monad. Live on testnet.
+Cheap AI compute for agents. Passive income for workers. x402 payments, ERC-8004 reputation on Monad. Live on Monad testnet and Solana devnet.
 
 *(112 characters)*
 
 ### GitHub Tagline
-AI agents buy verified compute from idle hardware. Workers earn USDC per job. Ed25519 receipts, ERC-8004 reputation.
+AI agents buy verified compute from idle hardware. Workers earn BOLT on Solana, USDC on Monad per job. Ed25519 receipts, ERC-8004 reputation.
 
 ---
 

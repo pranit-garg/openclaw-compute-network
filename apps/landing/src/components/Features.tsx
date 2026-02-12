@@ -85,7 +85,7 @@ export function Features() {
             How Dispatch Works
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-muted">
-            Six building blocks. Each one built, tested, and running on testnet.
+            Six building blocks. Each one built, tested, and running on Solana devnet and Monad testnet.
           </p>
         </motion.div>
 

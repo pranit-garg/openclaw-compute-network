@@ -4,7 +4,7 @@
  * Allows the user to:
  * - Change the coordinator URL
  * - Toggle between Wallet (MWA) and Device Key signing
- * - Connect/disconnect Phantom wallet
+ * - Connect/disconnect Solana wallet
  * - View and copy their worker ID or wallet address
  * - Reset their device keypair (irreversible)
  */
@@ -118,7 +118,7 @@ export default function SettingsScreen() {
             <Text style={styles.sectionTitle}>Signing Mode</Text>
           </View>
           <Text style={styles.sectionDescription}>
-            Wallet mode signs receipts with Phantom. Device key uses a local keypair for headless operation.
+            Wallet mode signs receipts with your Solana wallet. Device key uses a local keypair for headless operation.
           </Text>
 
           <View style={styles.toggleRow}>
@@ -159,7 +159,7 @@ export default function SettingsScreen() {
           </View>
 
           <Text style={styles.signingModeHelper}>
-            Device Key works on all platforms. Wallet mode requires Phantom on Android.
+            Device Key works on all platforms. Wallet mode requires a Solana wallet app on Android.
           </Text>
         </View>
 
@@ -207,7 +207,7 @@ export default function SettingsScreen() {
                 disabled={connectingWallet}
               >
                 <Text style={styles.walletButtonText}>
-                  {connectingWallet ? "Connecting..." : "Connect Phantom"}
+                  {connectingWallet ? "Connecting..." : "Connect Wallet"}
                 </Text>
               </Pressable>
             )}
@@ -311,11 +311,11 @@ export default function SettingsScreen() {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Version</Text>
-            <Text style={styles.infoValue}>1.0.0 (beta)</Text>
+            <Text style={styles.infoValue}>1.2.0 (beta)</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Network</Text>
-            <Text style={styles.infoValue}>Solana (Devnet)</Text>
+            <Text style={styles.infoValue}>Solana Devnet + Monad Testnet</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Signing</Text>

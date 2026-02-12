@@ -27,7 +27,7 @@ export function EarningsCard({ totalEarnings, jobsCompleted }: EarningsCardProps
           </View>
           <View>
             <Text style={styles.currency}>BOLT</Text>
-            <Text style={styles.networkLabel}>(devnet)</Text>
+            <Text style={styles.networkLabel}>(Solana devnet)</Text>
           </View>
         </View>
         <Text style={styles.rateLabel}>0.001 per job</Text>

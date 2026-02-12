@@ -51,7 +51,7 @@ release:
   catalog:
     en-US:
       name: Dispatch
-      short_description: Earn BOLT while your phone idles. AI compute, zero effort.
+      short_description: Earn BOLT from idle compute
       long_description: |
         Your phone has idle compute. Dispatch puts it to work.
 
@@ -67,7 +67,7 @@ release:
         the work is real and workers get paid for verified output.
 
         Works with device key signing (no wallet needed) or connect
-        Phantom via Mobile Wallet Adapter for full custody.
+        any Solana wallet via Mobile Wallet Adapter for full custody.
 
         Currently in devnet/beta. The protocol and cryptographic
         signing are production-grade, running against live coordinators.

@@ -163,14 +163,14 @@ Turn your Seeker into a compute node.
 Dispatch routes AI jobs to your phone while it's idle: summarization, classification, inference. Earn BOLT tokens per job. Cryptographic receipts prove every result.
 
 ### What It Does
-Dispatch turns Solana Seeker devices into compute nodes for AI agents. The Android app connects to the Dispatch coordinator over WebSocket and picks up inference jobs while the device is idle. Workers authenticate via Mobile Wallet Adapter (Phantom), process lightweight AI tasks, sign ed25519 receipts over results, and earn BOLT per completed job via x402 micropayments.
+Dispatch turns Solana Seeker devices into compute nodes for AI agents. The Android app connects to the Dispatch coordinator over WebSocket and picks up inference jobs while the device is idle. Workers authenticate via Mobile Wallet Adapter, process lightweight AI tasks, sign ed25519 receipts over results, and earn BOLT per completed job via x402 micropayments.
 
 ### Why Seeker?
-The Seeker is a massive untapped compute fleet. These devices sit idle 90%+ of the time. Dispatch lets owners earn passive income by processing AI inference (summarization, classification, JSON extraction) during idle periods. The jobs are lightweight enough for mobile hardware. Seeker's MWA integration means workers authenticate with their existing Phantom wallet, no new keys needed.
+The Seeker is a massive untapped compute fleet. These devices sit idle 90%+ of the time. Dispatch lets owners earn passive income by processing AI inference (summarization, classification, JSON extraction) during idle periods. The jobs are lightweight enough for mobile hardware. Seeker's MWA integration means workers authenticate with their existing Solana wallet, no new keys needed.
 
 ### User Experience
 1. **Install Dispatch** from dApp Store
-2. **Connect wallet.** MWA handshake with Phantom
+2. **Connect wallet.** MWA handshake with your Solana wallet
 3. **Set coordinator URL.** Defaults to production coordinator
 4. **Tap "Start Worker".** Device goes online, picks up jobs automatically
 5. **Earn BOLT.** Per-job payments, visible in dashboard tab
@@ -195,7 +195,7 @@ The Seeker is a massive untapped compute fleet. These devices sit idle 90%+ of t
 - Full E2E flow: connect → pick up job → process → sign receipt → earn
 - Dashboard showing completed jobs and earnings
 - Settings for coordinator URL, wallet mode toggle
-- Dual signing: MWA (Phantom) or device key
+- Dual signing: MWA (Solana wallet) or device key
 
 ### Privacy
 - Trust pairing system: create a pairing code, share with your phone. Private jobs route exclusively to paired workers. Enforced at coordinator level.

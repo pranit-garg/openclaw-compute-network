@@ -15,9 +15,9 @@ Solana handles money and mobile devices:
 
 - **BOLT token.** Native SPL token. Workers earn, stake, and trade BOLT on Solana.
 - **USDC payments.** x402 settlement via `ExactSvmScheme` on Solana devnet.
-- **Seeker devices.** Phones with Solana wallets (Phantom via MWA). These are the supply-side workers.
+- **Seeker devices.** Phones with Solana wallets (via MWA). These are the supply-side workers.
 - **Staking.** BOLT staking program for tier-based matching priority.
-- **DeFi.** Jupiter, Raydium, Phantom, giving workers immediate liquidity and trading.
+- **DeFi.** Jupiter, Raydium, giving workers immediate liquidity and trading.
 - **Cost.** Sub-cent transaction fees make frequent stake/unstake operations practical.
 
 ### Monad: The Trust Layer
@@ -33,7 +33,7 @@ Monad handles identity and governance:
 
 You can't run ERC-8004 on Solana. It's EVM-only Solidity with a specific contract interface (`IIdentityRegistry`, `IReputationRegistry`). Porting it would mean forking the standard, losing compatibility with the broader ERC-8004 ecosystem.
 
-You can't reach Seeker devices on Monad. They have Solana wallets, use Phantom, and interact via Mobile Wallet Adapter. Asking mobile workers to bridge to an EVM chain adds friction that kills adoption.
+You can't reach Seeker devices on Monad. They have Solana wallets and interact via Mobile Wallet Adapter. Asking mobile workers to bridge to an EVM chain adds friction that kills adoption.
 
 ## How It Works In Practice
 

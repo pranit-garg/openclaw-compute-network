@@ -103,15 +103,15 @@ export default function DashboardScreen() {
         </View>
 
         <View style={styles.testnetBanner}>
-          <Text style={styles.testnetText}>Devnet · Earning BOLT</Text>
-          <Text style={styles.testnetSubText}>Reputation on Monad Testnet</Text>
+          <Text style={styles.testnetText}>Solana Devnet · Monad Testnet</Text>
+          <Text style={styles.testnetSubText}>Earning BOLT · Building reputation</Text>
         </View>
 
         {/* Wallet connection banner */}
         {worker.signingMode === "wallet" && !worker.walletAddress && (
           <View style={styles.walletBanner}>
             <Text style={styles.walletBannerText}>
-              Link your Phantom wallet to earn BOLT for compute jobs
+              Link your Solana wallet to earn BOLT for compute jobs
             </Text>
             <Pressable
               style={({ pressed }) => [

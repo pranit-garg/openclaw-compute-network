@@ -2,7 +2,7 @@
 
 **Cheap AI compute for agents. Passive income for workers.**
 
-Dispatch is a compute service where AI agents submit jobs over HTTP and get verified results from idle hardware. Workers earn USDC for every completed job. Every result includes an ed25519 cryptographic receipt.
+Dispatch is a compute service where AI agents submit jobs over HTTP and get verified results from idle hardware. Workers earn BOLT on Solana and USDC on Monad for every completed job. Every result includes an ed25519 cryptographic receipt.
 
 [dispatch.computer](https://www.dispatch.computer) · [Docs](https://docs.dispatch.computer) · [Android APK](https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk)
 
@@ -54,7 +54,7 @@ console.log(result.receipt);  // ed25519 signed receipt
 
 ## Quick Start: Workers
 
-Earn USDC by processing AI jobs on your idle hardware:
+Earn by processing AI jobs on your idle hardware:
 
 ```bash
 # Install and build
@@ -88,14 +88,14 @@ Agent (HTTP + x402)  →  Coordinator  →  Worker (phone/desktop)
                      Route by reputation    Process job
                      + device type          Sign ed25519 receipt
                             ↓                    ↓
-                     USDC settles  ←──────── Result returned
+                     Payment settles  ←──────── Result returned
 ```
 
 1. **Agent submits a job.** HTTP POST with an x402 payment header. No SDK required.
 2. **Coordinator routes it.** Matches to the best worker by device type, reputation score, and routing policy (FAST / CHEAP / PRIVATE).
 3. **Worker processes.** Summarization, classification, extraction, or LLM inference via Ollama.
 4. **Worker signs a receipt.** ed25519 signature over the output hash. Cryptographic proof of who computed what.
-5. **USDC settles.** Worker receives payment for completed job. 5% protocol fee.
+5. **Payment settles.** Worker receives BOLT (Solana) or USDC (Monad) for completed job. 5% protocol fee.
 
 ## What's Working (Testnet)
 
@@ -146,8 +146,8 @@ BOLT will be a native SPL token on Solana. Wrapped BOLT (ERC-20) on Monad for go
 
 ## Solana + Seeker
 
-- **Mobile Wallet Adapter** for worker authentication via Phantom
-- **SPL USDC** settlement via x402 `ExactSvmScheme`
+- **Mobile Wallet Adapter** for worker authentication
+- **SPL BOLT** settlement on Solana devnet
 - **Seeker support**, each device is a potential compute node
 - **Ed25519 receipts** use Solana's native signature scheme
 - Seeker app submitted to the [Solana dApp Store](https://docs.solanamobile.com/dapp-publishing/intro)
