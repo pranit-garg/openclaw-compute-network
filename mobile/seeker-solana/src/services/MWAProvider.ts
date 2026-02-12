@@ -25,7 +25,7 @@ const WALLET_ADDRESS_KEY = "dispatch_mwa_wallet_address";
 
 const APP_IDENTITY = {
   name: "Dispatch",
-  uri: "https://dispatch.network",
+  uri: "https://dispatch.computer",
   icon: "favicon.ico",
 };
 

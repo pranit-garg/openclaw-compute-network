@@ -33,6 +33,15 @@ if (!testnetMode) {
 // Activated when ERC8004_PRIVATE_KEY env var is set.
 // Maps worker ed25519 pubkeys → on-chain agentId via keccak256 hash.
 
+// ── Monad tx queue (serialize writes to prevent nonce conflicts) ──
+let monadTxQueue: Promise<void> = Promise.resolve();
+
+function queueMonadTx<T>(fn: () => Promise<T>): Promise<T> {
+  const result = monadTxQueue.then(fn);
+  monadTxQueue = result.then(() => {}, () => {});
+  return result;
+}
+
 let erc8004: ERC8004Config | undefined;
 
 const erc8004Key = process.env.ERC8004_PRIVATE_KEY;
@@ -58,20 +67,17 @@ if (erc8004Key) {
       }
     },
 
-    async postFeedback(workerPubkey: string, jobId: string, success: boolean): Promise<void> {
-      try {
-        const agentId = pubkeyToAgentId(workerPubkey);
-        const entry = buildJobFeedback({
-          agentId,
-          score: success ? 80 : 20,
-          jobType: "COMPUTE",
-          endpoint: `http://localhost:${config.port}`,
-        });
-        await giveFeedback(entry, account);
-        console.log(`[ERC-8004] Posted ${success ? "positive" : "negative"} feedback for job ${jobId}`);
-      } catch (err) {
-        console.warn(`[ERC-8004] Failed to post feedback for job ${jobId}:`, err);
-      }
+    async postFeedback(workerPubkey: string, jobId: string, success: boolean): Promise<string> {
+      const agentId = pubkeyToAgentId(workerPubkey);
+      const entry = buildJobFeedback({
+        agentId,
+        score: success ? 80 : 20,
+        jobType: "COMPUTE",
+        endpoint: `http://localhost:${config.port}`,
+      });
+      const txHash = await queueMonadTx(() => giveFeedback(entry, account));
+      console.log(`[ERC-8004] Feedback tx: ${txHash} for job ${jobId}`);
+      return txHash;
     },
   };
 
@@ -136,6 +142,7 @@ if (wboltAddress && wboltKey) {
     rpcUrl: "https://testnet-rpc.monad.xyz",
     chainId: 10143,
     amountPerJob: 0.001,
+    txQueue: queueMonadTx,
     onSettled(result: WrappedBoltSettlementResult) {
       monadServerRef?.hub.sendToWorker(result.workerPubkey, {
         type: "payment_posted",

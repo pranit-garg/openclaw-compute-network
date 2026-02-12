@@ -25,6 +25,7 @@ interface WrappedBoltConfig {
   rpcUrl: string;
   chainId: number;
   amountPerJob: number;
+  txQueue?: <T>(fn: () => Promise<T>) => Promise<T>;
   onSettled?: (result: WrappedBoltSettlementResult) => void;
   onFailed?: (workerPubkey: string, jobIds: string[], error: string) => void;
 }
@@ -33,6 +34,7 @@ interface PendingPayout {
   workerPubkey: string;
   jobIds: string[];
   totalWBolt: number;
+  retryCount: number;
 }
 
 export interface WrappedBoltSettlementResult {
@@ -61,6 +63,8 @@ export class WrappedBoltDistributor {
   private readonly publicClient: any;
   private readonly coordinatorAddress: `0x${string}`;
   private readonly chain: Chain;
+  private readonly txQueue?: <T>(fn: () => Promise<T>) => Promise<T>;
+  private settling = false;
 
   // Settlement thresholds (matching BoltDistributor)
   private readonly JOBS_THRESHOLD = 5;
@@ -70,6 +74,7 @@ export class WrappedBoltDistributor {
     this.contractAddress = opts.contractAddress as `0x${string}`;
     this.onSettled = opts.onSettled;
     this.onFailed = opts.onFailed;
+    this.txQueue = opts.txQueue;
 
     const account = privateKeyToAccount(opts.privateKey as `0x${string}`);
     this.coordinatorAddress = account.address;
@@ -115,6 +120,7 @@ export class WrappedBoltDistributor {
         workerPubkey,
         jobIds: [jobId],
         totalWBolt: amount,
+        retryCount: 0,
       });
     }
   }
@@ -126,10 +132,16 @@ export class WrappedBoltDistributor {
 
   /** Settle all pending payouts */
   private async settleAll(): Promise<void> {
-    const workers = [...this.pendingPayouts.keys()];
-    console.log("[wBOLT] Periodic settle check:", workers.length, "pending workers");
-    for (const workerPubkey of workers) {
-      await this.settleWorker(workerPubkey);
+    if (this.settling) return;
+    this.settling = true;
+    try {
+      const workers = [...this.pendingPayouts.keys()];
+      console.log("[wBOLT] Periodic settle check:", workers.length, "pending workers");
+      for (const workerPubkey of workers) {
+        await this.settleWorker(workerPubkey);
+      }
+    } finally {
+      this.settling = false;
     }
   }
 
@@ -145,20 +157,26 @@ export class WrappedBoltDistributor {
       // Convert wBOLT amount to raw units (9 decimals, matching BOLT SPL)
       const rawAmount = BigInt(Math.round(payout.totalWBolt * 1e9));
 
-      // Mint wBOLT to coordinator's own address (custodial model)
-      const txHash: Hash = await this.walletClient.writeContract({
-        address: this.contractAddress,
-        abi: wBoltAbi,
-        functionName: "mint",
-        args: [this.coordinatorAddress, rawAmount],
-        chain: this.chain,
-      });
+      const executeTx = async (): Promise<Hash> => {
+        // Mint wBOLT to coordinator's own address (custodial model)
+        const hash: Hash = await this.walletClient.writeContract({
+          address: this.contractAddress,
+          abi: wBoltAbi,
+          functionName: "mint",
+          args: [this.coordinatorAddress, rawAmount],
+          chain: this.chain,
+        });
 
-      // Wait for confirmation (timeout after 60s to avoid hanging on testnet)
-      await this.publicClient.waitForTransactionReceipt({
-        hash: txHash,
-        timeout: 60_000,
-      });
+        // Wait for confirmation (timeout after 60s to avoid hanging on testnet)
+        await this.publicClient.waitForTransactionReceipt({
+          hash,
+          timeout: 60_000,
+        });
+
+        return hash;
+      };
+
+      const txHash = this.txQueue ? await this.txQueue(executeTx) : await executeTx();
 
       // Track per-worker custodial balance
       const prevBalance = this.workerBalances.get(workerPubkey) ?? 0;
@@ -176,19 +194,27 @@ export class WrappedBoltDistributor {
         amount: payout.totalWBolt,
       });
     } catch (err) {
+      const errMsg = err instanceof Error ? err.message : "Settlement failed";
       console.error(
         `[wBOLT] Settlement FAILED for ${workerPubkey.slice(0, 8)}... (${payout.jobIds.length} jobs, ${payout.totalWBolt} wBOLT):`,
-        err instanceof Error ? err.message : err
+        errMsg
       );
-      // Re-queue the failed payout so it can be retried next cycle
-      const current = this.pendingPayouts.get(workerPubkey);
-      if (current) {
-        current.jobIds.unshift(...payout.jobIds);
-        current.totalWBolt += payout.totalWBolt;
+
+      payout.retryCount++;
+      if (payout.retryCount < 3) {
+        // Re-queue for silent retry; don't notify the app yet
+        const current = this.pendingPayouts.get(workerPubkey);
+        if (current) {
+          current.jobIds.unshift(...payout.jobIds);
+          current.totalWBolt += payout.totalWBolt;
+        } else {
+          this.pendingPayouts.set(workerPubkey, payout);
+        }
+        console.log(`[wBOLT] Will retry (${payout.retryCount}/3) for ${workerPubkey.slice(0, 8)}...`);
       } else {
-        this.pendingPayouts.set(workerPubkey, payout);
+        // Max retries exhausted — notify app of failure
+        this.onFailed?.(workerPubkey, payout.jobIds, errMsg);
       }
-      this.onFailed?.(workerPubkey, payout.jobIds, err instanceof Error ? err.message : "Settlement failed");
     }
   }
 

@@ -249,7 +249,7 @@ That's Dispatch. A working dual-chain compute network with x402 payments, ERC-80
 
 - **Monad Testnet Explorer:** `https://testnet.monadexplorer.com`
 - **Transaction format:** `https://testnet.monadexplorer.com/tx/{hash}`
-- **Coordinator account:** Check Railway logs for `[Solana Coordinator] ERC-8004 reputation: ENABLED (account: 0x...)`
+- **Coordinator account:** Check Railway logs for `[Monad Coordinator] ERC-8004 reputation: ENABLED (account: 0x...)`
 
 ### Key Talking Points for Judges
 

@@ -433,6 +433,7 @@ class WebSocketService {
       job.feedbackTxHash = msg.tx_hash;
       job.feedbackExplorerUrl = msg.explorer_url;
       job.feedbackNetwork = msg.network;
+      job.feedbackFailed = false;
       this.emit("jobCompleted", job);
       this.emit("feedbackPosted", msg);
     }
@@ -445,6 +446,7 @@ class WebSocketService {
         job.paymentTxHash = msg.tx_hash;
         job.paymentExplorerUrl = msg.explorer_url;
         job.paymentAmount = msg.amount + " " + (msg.token ?? "BOLT");
+        job.paymentFailed = false;
         this.emit("jobCompleted", job);
       }
     }
