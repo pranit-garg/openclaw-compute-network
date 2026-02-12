@@ -15,6 +15,7 @@ docs/tmp*.aux
 docs/tmp*.out
 mobile/seeker-solana/build-*.apk
 mobile/seeker-solana/publishing/.asset-manifest*.json
+mobile/seeker-solana/publishing/build-latest.apk
 
 # Local Claude Code config
 .claude/
