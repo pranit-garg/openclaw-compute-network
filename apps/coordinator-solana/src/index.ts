@@ -16,20 +16,15 @@ function queueMonadTx<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 // ── Auto-discover a valid ERC-8004 target agent ──
-// Scans the Identity Registry for agents NOT owned by the coordinator,
-// then sends a real test feedback tx to verify (Monad eth_call is unreliable).
-async function discoverTargetAgent(
-  coordinatorAddress: string,
-  account: ReturnType<typeof privateKeyToAccount>,
-): Promise<bigint> {
+// Scans the Identity Registry for the first agent NOT owned by the coordinator
+// (self-feedback is disallowed on ERC-8004).
+async function discoverTargetAgent(coordinatorAddress: string): Promise<bigint> {
   const cfg = getChainConfig();
   const client = createPublicClient({
     chain: monadTestnet,
     transport: http(cfg.rpcUrl),
   });
 
-  // Phase 1: collect all non-coordinator agents
-  const candidates: bigint[] = [];
   for (let i = 0; i <= 30; i++) {
     try {
       const owner = await client.readContract({
@@ -38,35 +33,17 @@ async function discoverTargetAgent(
         functionName: "ownerOf",
         args: [BigInt(i)],
       });
-      const isCoord = (owner as string).toLowerCase() === coordinatorAddress.toLowerCase();
-      console.log(`[ERC-8004] Agent ${i}: owner ${(owner as string).slice(0, 10)}...${isCoord ? " (coordinator)" : ""}`);
-      if (!isCoord) candidates.push(BigInt(i));
+      if ((owner as string).toLowerCase() !== coordinatorAddress.toLowerCase()) {
+        console.log(`[ERC-8004] Discovered target agent ${i} (owner: ${(owner as string).slice(0, 10)}...)`);
+        return BigInt(i);
+      }
     } catch {
       break; // Sequential IDs — first gap means no more agents
     }
   }
 
-  console.log(`[ERC-8004] Found ${candidates.length} candidate agents, testing with real feedback tx...`);
-
-  // Phase 2: try a real feedback tx against each candidate (most reliable)
-  for (const agentId of candidates) {
-    try {
-      const entry = buildJobFeedback({
-        agentId,
-        score: 50,
-        jobType: "STARTUP_TEST",
-        endpoint: "https://dispatch.computer",
-      });
-      const txHash = await giveFeedback(entry, account);
-      console.log(`[ERC-8004] Verified target agent ${agentId} (test tx: ${txHash})`);
-      return agentId;
-    } catch (err: any) {
-      console.warn(`[ERC-8004] Agent ${agentId} feedback failed: ${err.shortMessage ?? err.message?.slice(0, 80)}`);
-    }
-  }
-
   throw new Error(
-    "No valid target agent found. All candidates rejected real feedback tx. " +
+    "No target agent found. Need at least one ERC-8004 agent not owned by the coordinator. " +
     "Run: npx tsx apps/coordinator-solana/find-agent.ts"
   );
 }
@@ -102,7 +79,7 @@ let erc8004: ERC8004Config | undefined;
 const erc8004Key = process.env.ERC8004_PRIVATE_KEY;
 if (erc8004Key) {
   const account = privateKeyToAccount(erc8004Key as `0x${string}`);
-  const agentId = await discoverTargetAgent(account.address, account);
+  const agentId = await discoverTargetAgent(account.address);
   const coordinatorEndpoint = process.env.RAILWAY_PUBLIC_DOMAIN
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
     : `http://localhost:${config.port}`;

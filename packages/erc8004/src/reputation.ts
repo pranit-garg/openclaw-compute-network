@@ -70,6 +70,9 @@ export async function giveFeedback(
       entry.feedbackURI,
       entry.feedbackHash,
     ],
+    // Monad testnet gas estimation reverts even when the tx would succeed.
+    // Explicit gas limit bypasses the broken estimation (matches find-agent.ts).
+    gas: 300_000n,
   });
 
   await publicClient().waitForTransactionReceipt({ hash, timeout: 60_000 });
