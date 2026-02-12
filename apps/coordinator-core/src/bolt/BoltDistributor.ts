@@ -25,6 +25,9 @@ export interface BoltSettlementResult {
   amount: number;
 }
 
+/** Settlement mode: how BOLT tokens are sourced for worker payouts */
+export type BoltSettlementMode = "authority" | "jupiter";
+
 export class BoltDistributor {
   private pendingPayouts = new Map<string, PendingPayout>();
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -32,6 +35,7 @@ export class BoltDistributor {
   private authority: Keypair;
   private boltMint: PublicKey;
   private decimals: number;
+  private mode: BoltSettlementMode;
   private onSettled?: (result: BoltSettlementResult) => void;
   private onFailed?: (workerPubkey: string, jobIds: string[], error: string) => void;
 
@@ -44,6 +48,12 @@ export class BoltDistributor {
     authority: Keypair;
     boltMint: PublicKey;
     decimals?: number;
+    /**
+     * Settlement mode:
+     * - "authority" (default): transfer BOLT from pre-minted coordinator balance
+     * - "jupiter": try Jupiter USDC->BOLT swap first, fall back to authority on failure
+     */
+    mode?: BoltSettlementMode;
     onSettled?: (result: BoltSettlementResult) => void;
     onFailed?: (workerPubkey: string, jobIds: string[], error: string) => void;
   }) {
@@ -51,13 +61,21 @@ export class BoltDistributor {
     this.authority = opts.authority;
     this.boltMint = opts.boltMint;
     this.decimals = opts.decimals ?? 9;
+    this.mode = opts.mode ?? "authority";
     this.onSettled = opts.onSettled;
     this.onFailed = opts.onFailed;
+
+    console.log(`[BOLT] BoltDistributor initialized in "${this.mode}" mode`);
 
     // Start periodic settlement timer
     this.timer = setInterval(() => {
       void this.settleAll();
     }, this.SETTLE_INTERVAL_MS);
+  }
+
+  /** Get the current settlement mode */
+  getMode(): BoltSettlementMode {
+    return this.mode;
   }
 
   /** Queue a payout for batched settlement */

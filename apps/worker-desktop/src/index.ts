@@ -52,6 +52,16 @@ async function main() {
 
         if (msg.type === "job_assign") {
           await handleJob(ws, msg as unknown as JobAssignMsg, keys);
+        } else if (msg.type === "payment_posted") {
+          const p = msg as Record<string, unknown>;
+          const token = (p.token as string) ?? "BOLT";
+          console.log(`[Desktop Worker] Payment received: ${p.amount} ${token} (tx: ${(p.tx_hash as string)?.slice(0, 16)}...)`);
+        } else if (msg.type === "payment_failed") {
+          console.warn(`[Desktop Worker] Payment failed: ${(msg as Record<string, unknown>).error}`);
+        } else if (msg.type === "feedback_posted") {
+          console.log(`[Desktop Worker] Reputation feedback posted (tx: ${(msg as Record<string, unknown>).tx_hash})`);
+        } else if (msg.type === "feedback_failed") {
+          console.warn(`[Desktop Worker] Reputation feedback failed: ${(msg as Record<string, unknown>).error}`);
         }
       });
 

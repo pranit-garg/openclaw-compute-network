@@ -87,8 +87,8 @@ if (boltMint) {
   stakeConfig = {
     async readStakeLevel(pubkey: string) {
       try {
-        // [DESIGNED] Read BOLT SPL token balance as stake proxy
-        // In production: read dedicated staking program accounts
+        // Read BOLT SPL token balance as stake proxy
+        // Future: read dedicated staking program accounts with lockup
         const { Connection, PublicKey } = await import(solanaWeb3Module);
         const { getAssociatedTokenAddress } = await import(splTokenModule);
         const connection = new Connection(

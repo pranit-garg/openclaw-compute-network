@@ -6,3 +6,4 @@ export { buildPaymentConfig } from "./x402.js";
 export { settleBolt, type BoltSettlementConfig } from "./bolt-settlement.js";
 export { anchorReceipt, type AnchorReceiptParams } from "./chain/receiptAnchorer.js";
 export { BoltDistributor, type BoltSettlementResult } from "./bolt/BoltDistributor.js";
+export { WrappedBoltDistributor, type WrappedBoltSettlementResult } from "./bolt/WrappedBoltDistributor.js";

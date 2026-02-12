@@ -5,8 +5,9 @@ import { BOLT } from "@dispatch/protocol";
 /**
  * Distribute BOLT tokens to a worker after job completion.
  *
- * [DESIGNED] — SPL token transfer from coordinator treasury to worker.
- * Called after USDC→BOLT swap completes.
+ * Note: Live distribution is handled by BoltDistributor (coordinator-core/bolt/BoltDistributor.ts)
+ * which batches payouts per worker. This standalone function calculates fee splits
+ * and can be used for one-off transfers outside the batching pipeline.
  *
  * Flow:
  * 1. Deduct protocol fee (5%)
@@ -25,15 +26,13 @@ export async function distributeBolt(
   const fee = (totalLamports * BigInt(BOLT.PROTOCOL_FEE_BPS)) / 10000n;
   const workerAmount = totalLamports - fee;
 
-  // [DESIGNED] In production:
-  // 1. createTransferInstruction from treasury → worker ATA (workerAmount)
-  // 2. createTransferInstruction from treasury → burn address (fee)
-  // 3. Sign with coordinator keypair and send transaction
+  // For batched distribution, use BoltDistributor instead.
+  // This function is for standalone/one-off transfers.
 
   console.log(
     `[BOLT] Distributing ${workerAmount} BOLT to ${workerPubkey} (fee: ${fee} BOLT)`
   );
 
-  // Placeholder — return empty sig until staking program is deployed
+  // Standalone distribution not yet implemented — use BoltDistributor for live payouts
   return "";
 }

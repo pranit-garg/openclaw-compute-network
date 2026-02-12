@@ -5,6 +5,7 @@ import type { CoordinatorConfig } from "./config.js";
 import { createDb } from "./db.js";
 import { WorkerHub, type ERC8004Config, type StakeConfig } from "./ws/workerHub.js";
 import type { BoltDistributor } from "./bolt/BoltDistributor.js";
+import type { WrappedBoltDistributor } from "./bolt/WrappedBoltDistributor.js";
 import { healthRouter } from "./routes/health.js";
 import { quoteRouter } from "./routes/quote.js";
 import { jobsRouter } from "./routes/jobs.js";
@@ -33,6 +34,7 @@ export function createServer(
     erc8004?: ERC8004Config;
     stakeConfig?: StakeConfig;
     boltDistributor?: BoltDistributor;
+    wrappedBoltDistributor?: WrappedBoltDistributor;
   }
 ): CoordinatorServer {
   const app = express();
@@ -40,7 +42,7 @@ export function createServer(
 
   const db = createDb(config.dbPath);
   const httpServer = http.createServer(app);
-  const hub = new WorkerHub(httpServer, db, options?.erc8004, options?.stakeConfig, options?.boltDistributor);
+  const hub = new WorkerHub(httpServer, db, options?.erc8004, options?.stakeConfig, options?.boltDistributor, options?.wrappedBoltDistributor);
 
   // Apply x402 payment middleware if provided
   if (options?.paymentMiddleware) {

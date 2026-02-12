@@ -137,7 +137,8 @@ export interface PaymentPostedMsg {
   job_ids: string[];
   tx_hash: string;
   amount: string;
-  network: "solana-devnet";
+  token?: "BOLT" | "wBOLT";
+  network: "solana-devnet" | "monad-testnet";
   explorer_url: string;
 }
 

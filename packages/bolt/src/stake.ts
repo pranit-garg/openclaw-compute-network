@@ -6,7 +6,7 @@ import type { BoltConfig } from "./types.js";
  * Read the BOLT stake level for a worker pubkey.
  * Checks the worker's BOLT token account balance and maps to a tier.
  *
- * [DESIGNED] — Currently reads SPL token balance as stake proxy.
+ * Currently reads SPL token balance as stake proxy.
  * Future: dedicated staking program with lockup + delegation.
  */
 export async function readStakeLevel(

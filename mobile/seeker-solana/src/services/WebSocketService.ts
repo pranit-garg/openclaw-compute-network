@@ -444,7 +444,7 @@ class WebSocketService {
       if (job) {
         job.paymentTxHash = msg.tx_hash;
         job.paymentExplorerUrl = msg.explorer_url;
-        job.paymentAmount = msg.amount + " BOLT";
+        job.paymentAmount = msg.amount + " " + (msg.token ?? "BOLT");
         this.emit("jobCompleted", job);
       }
     }

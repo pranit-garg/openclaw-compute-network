@@ -21,6 +21,7 @@ import {
   type ErrorMsg,
 } from "@dispatch/protocol";
 import type { BoltDistributor } from "../bolt/BoltDistributor.js";
+import type { WrappedBoltDistributor } from "../bolt/WrappedBoltDistributor.js";
 
 // ── ERC-8004 integration (optional) ─────────────
 
@@ -61,12 +62,14 @@ export class WorkerHub {
   private erc8004?: ERC8004Config;
   private stakeConfig?: StakeConfig;
   private boltDistributor?: BoltDistributor;
+  private wrappedBoltDistributor?: WrappedBoltDistributor;
 
-  constructor(server: Server, db: Database.Database, erc8004?: ERC8004Config, stakeConfig?: StakeConfig, boltDistributor?: BoltDistributor) {
+  constructor(server: Server, db: Database.Database, erc8004?: ERC8004Config, stakeConfig?: StakeConfig, boltDistributor?: BoltDistributor, wrappedBoltDistributor?: WrappedBoltDistributor) {
     this.db = db;
     this.erc8004 = erc8004;
     this.stakeConfig = stakeConfig;
     this.boltDistributor = boltDistributor;
+    this.wrappedBoltDistributor = wrappedBoltDistributor;
 
     // Upgrade HTTP → WebSocket on the same port
     this.wss = new WebSocketServer({ noServer: true });
@@ -207,6 +210,7 @@ export class WorkerHub {
       }
       // Queue BOLT payout for demo job
       this.boltDistributor?.queuePayout(worker.pubkey, msg.job_id, 0.001);
+      this.wrappedBoltDistributor?.queuePayout(worker.pubkey, msg.job_id, 0.001);
 
       console.log(`[WorkerHub] Demo job ${msg.job_id} completed by worker ${worker.id}`);
       return;
@@ -259,6 +263,7 @@ export class WorkerHub {
 
     // Queue BOLT payout
     this.boltDistributor?.queuePayout(worker.pubkey, msg.job_id, 0.001);
+    this.wrappedBoltDistributor?.queuePayout(worker.pubkey, msg.job_id, 0.001);
 
     worker.status = "idle";
     worker.activeJobId = null;

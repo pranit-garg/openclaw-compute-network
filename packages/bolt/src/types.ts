@@ -1,4 +1,5 @@
 import type { StakeTier } from "@dispatch/protocol";
+import type { Keypair } from "@solana/web3.js";
 
 export interface BoltConfig {
   /** BOLT SPL token mint address */
@@ -11,6 +12,8 @@ export interface BoltConfig {
   treasuryPubkey: string;
   /** Jupiter API base URL */
   jupiterApiUrl?: string;
+  /** Coordinator authority keypair for signing swap transactions */
+  authorityKeypair?: Keypair;
 }
 
 export interface StakeAccount {

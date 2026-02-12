@@ -121,12 +121,55 @@ if (boltMint) {
   console.log(`[Monad Coordinator] BOLT staking: DISABLED (no BOLT_MINT)`);
 }
 
+// ── Wrapped BOLT distribution (optional) ─────────
+import { WrappedBoltDistributor, type WrappedBoltSettlementResult } from "@dispatch/coordinator-core";
+
+let wrappedBoltDistributor: WrappedBoltDistributor | undefined;
+let monadServerRef: ReturnType<typeof createServer> | null = null;
+
+const wboltAddress = process.env.WBOLT_CONTRACT;
+const wboltKey = process.env.ERC8004_PRIVATE_KEY; // Reuse same key as contract owner
+if (wboltAddress && wboltKey) {
+  wrappedBoltDistributor = new WrappedBoltDistributor({
+    contractAddress: wboltAddress,
+    privateKey: wboltKey,
+    rpcUrl: "https://testnet-rpc.monad.xyz",
+    chainId: 10143,
+    amountPerJob: 0.001,
+    onSettled(result: WrappedBoltSettlementResult) {
+      monadServerRef?.hub.sendToWorker(result.workerPubkey, {
+        type: "payment_posted",
+        job_ids: result.jobIds,
+        tx_hash: result.txHash,
+        amount: String(result.amount),
+        token: "wBOLT",
+        network: "monad-testnet",
+        explorer_url: `https://testnet.monadexplorer.com/tx/${result.txHash}`,
+      });
+    },
+    onFailed(workerPubkey: string, jobIds: string[], error: string) {
+      monadServerRef?.hub.sendToWorker(workerPubkey, {
+        type: "payment_failed",
+        job_ids: jobIds,
+        error,
+        token: "wBOLT",
+      });
+    },
+  });
+
+  console.log(`[Monad Coordinator] Wrapped BOLT distribution: ENABLED (contract: ${wboltAddress})`);
+} else {
+  console.log(`[Monad Coordinator] Wrapped BOLT distribution: DISABLED (need WBOLT_CONTRACT + ERC8004_PRIVATE_KEY)`);
+}
+
 // ── Start server ────────────────────────────────
 const server = createServer(config, {
   ...(middleware && { paymentMiddleware: middleware }),
   ...(erc8004 && { erc8004 }),
   ...(stakeConfig && { stakeConfig }),
+  ...(wrappedBoltDistributor && { wrappedBoltDistributor }),
 });
+monadServerRef = server;
 startServer(config, server);
 
 console.log(`[Monad Coordinator] x402 payment gating: ${testnetMode ? "DISABLED (testnet mode)" : "ENABLED"}`);
