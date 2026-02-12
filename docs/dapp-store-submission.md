@@ -11,44 +11,56 @@ Dispatch mobile worker app (`mobile/seeker-solana/`) to the Solana dApp Store.
 - Publishing docs: `https://docs.solanamobile.com/dapp-publishing/intro`
 - Discord review channel: `#dev-answers` in Solana Mobile Community
 - Review contact email: `publishersupport@dappstore.solanamobile.com`
-- Positioning: "Earn USDC from idle compute" (service-first, not protocol-first)
+- Positioning: "Earn BOLT from idle compute" (service-first, not protocol-first)
 
 ## App Store Description Copy
 
 Use this copy for all app store listings (Solana dApp Store, future Google Play/Apple App Store):
 
-**Short description** (30 chars max): "Earn USDC from idle compute"
+**Short description** (30 chars max): "Earn BOLT from idle compute"
 
 **Long description:**
-Dispatch turns your phone into a compute worker for AI agents. Process lightweight AI tasks (summarization, classification, data extraction) while your device is idle and earn USDC for every completed job.
+Dispatch turns your phone into a compute worker for AI agents. Process lightweight AI tasks (summarization, classification, data extraction) while your device is idle and earn BOLT tokens for every completed job.
 
 How it works:
-1. Open the app and connect your wallet
-2. Tap "Go Online" to join the network
+1. Open the app and connect your Solana wallet
+2. Tap "Go Live" to join the network
 3. Your phone picks up AI jobs automatically over WebSocket
-4. Earn USDC for every completed task
+4. Earn BOLT for every completed task
 
 Features:
 - Passive income from idle hardware (no interaction needed)
 - No GPU required (runs on your phone's CPU)
-- Build onchain reputation via ERC-8004 on Monad
+- Build onchain reputation via ERC-8004 on Monad testnet
 - Ed25519 signed receipts for every job
 - Real-time earnings dashboard
 - One-tap on/off toggle
+- Works with any Solana wallet via Mobile Wallet Adapter
 
-Currently live on Monad and Solana testnet. BOLT token with staking tiers coming soon.
+Currently live on Solana devnet and Monad testnet. BOLT token with staking tiers coming soon.
 
-**Keywords:** DePIN, compute, AI, inference, passive income, Solana, Monad, idle hardware
+**Keywords:** DePIN, compute, AI, inference, passive income, Solana, Monad, idle hardware, BOLT
 
 **Category:** DeFi / Infrastructure
 
 ## Mainnet Submission (Submitted Feb 10, 2026)
 
-Mainnet NFTs minted and submission completed.
+Initial mainnet submission (v1.1.0).
 
 - App NFT (mainnet): `8S8ErMDFh9q18L9BVPQYsNM5vYczug3g6k4zfz5CfG3j`
-- Release NFT (mainnet): `Au9YeSiiVgt1gG261AwHxHp95pWhe7KpGcD661M5kbhn`
+- Release NFT (v1.1.0): `Au9YeSiiVgt1gG261AwHxHp95pWhe7KpGcD661M5kbhn`
 - Git commit that recorded mainnet addresses in config: `6a9942c`
+
+## Update Submission (Submitted Feb 12, 2026)
+
+v1.2.0 update with copy quality audit: wallet-generic language, accurate dual-chain
+terminology, fresh screenshots, updated About section.
+
+- Release NFT (v1.2.0): `7dN3wn6CEvXjNfDAZCjjcTTFMkWN75dui3w84mmKg69p`
+- [Explorer link](https://explorer.solana.com/address/7dN3wn6CEvXjNfDAZCjjcTTFMkWN75dui3w84mmKg69p?cluster=mainnet)
+- APK built via EAS cloud (preview profile)
+- Screenshots: 1080x2424 from emulator (dashboard earning, dashboard offline, onboarding, settings)
+- Review ETA: 1-2 business days
 
 ## Commands (Mainnet)
 
