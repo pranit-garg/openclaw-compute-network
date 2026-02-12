@@ -16,6 +16,7 @@ interface PendingPayout {
   workerPubkey: string;
   jobIds: string[];
   totalBolt: number;
+  retryCount: number;
 }
 
 export interface BoltSettlementResult {
@@ -38,6 +39,7 @@ export class BoltDistributor {
   private mode: BoltSettlementMode;
   private onSettled?: (result: BoltSettlementResult) => void;
   private onFailed?: (workerPubkey: string, jobIds: string[], error: string) => void;
+  private settling = false;
 
   // Settlement thresholds
   private readonly JOBS_THRESHOLD = 5;
@@ -93,16 +95,23 @@ export class BoltDistributor {
         workerPubkey,
         jobIds: [jobId],
         totalBolt: boltAmount,
+        retryCount: 0,
       });
     }
   }
 
   /** Settle all pending payouts */
   private async settleAll(): Promise<void> {
-    const workers = [...this.pendingPayouts.keys()];
-    console.log("[BOLT] Periodic settle check:", workers.length, "pending workers");
-    for (const workerPubkey of workers) {
-      await this.settleWorker(workerPubkey);
+    if (this.settling) return;
+    this.settling = true;
+    try {
+      const workers = [...this.pendingPayouts.keys()];
+      console.log("[BOLT] Periodic settle check:", workers.length, "pending workers");
+      for (const workerPubkey of workers) {
+        await this.settleWorker(workerPubkey);
+      }
+    } finally {
+      this.settling = false;
     }
   }
 
@@ -169,19 +178,27 @@ export class BoltDistributor {
         amount: payout.totalBolt,
       });
     } catch (err) {
+      const errMsg = err instanceof Error ? err.message : "Settlement failed";
       console.error(
         `[BOLT] Settlement FAILED for ${workerPubkey.slice(0, 8)}... (${payout.jobIds.length} jobs, ${payout.totalBolt} BOLT):`,
-        err instanceof Error ? err.message : err
+        errMsg
       );
-      // Re-queue the failed payout so it can be retried next cycle
-      const current = this.pendingPayouts.get(workerPubkey);
-      if (current) {
-        current.jobIds.unshift(...payout.jobIds);
-        current.totalBolt += payout.totalBolt;
+
+      payout.retryCount++;
+      if (payout.retryCount < 3) {
+        // Re-queue for silent retry; don't notify the app yet
+        const current = this.pendingPayouts.get(workerPubkey);
+        if (current) {
+          current.jobIds.unshift(...payout.jobIds);
+          current.totalBolt += payout.totalBolt;
+        } else {
+          this.pendingPayouts.set(workerPubkey, payout);
+        }
+        console.log(`[BOLT] Will retry (${payout.retryCount}/3) for ${workerPubkey.slice(0, 8)}...`);
       } else {
-        this.pendingPayouts.set(workerPubkey, payout);
+        // Max retries exhausted — notify app of failure
+        this.onFailed?.(workerPubkey, payout.jobIds, errMsg);
       }
-      this.onFailed?.(workerPubkey, payout.jobIds, err instanceof Error ? err.message : "Settlement failed");
     }
   }
 

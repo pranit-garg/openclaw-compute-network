@@ -5,6 +5,15 @@ import { ExactSvmScheme } from "@x402/svm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
 import { privateKeyToAccount } from "viem/accounts";
 
+// ── Monad tx queue (serialize writes to prevent nonce conflicts) ──
+let monadTxQueue: Promise<void> = Promise.resolve();
+
+function queueMonadTx<T>(fn: () => Promise<T>): Promise<T> {
+  const result = monadTxQueue.then(fn);
+  monadTxQueue = result.then(() => {}, () => {});
+  return result;
+}
+
 const config = configFromEnv({
   port: parseInt(process.env.PORT ?? "4020", 10),
   dbPath: process.env.DB_PATH ?? "./data/solana.db",
@@ -61,7 +70,7 @@ if (erc8004Key && erc8004AgentId) {
         jobType: "COMPUTE",
         endpoint: coordinatorEndpoint,
       });
-      const txHash = await giveFeedback(entry, account);
+      const txHash = await queueMonadTx(() => giveFeedback(entry, account));
       console.log(`[ERC-8004] Feedback tx: ${txHash} for job ${jobId}`);
       return txHash;
     },
