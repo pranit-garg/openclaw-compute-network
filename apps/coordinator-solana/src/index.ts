@@ -1,5 +1,5 @@
 import { createServer, startServer, configFromEnv, buildPaymentConfig, BoltDistributor, type BoltSettlementResult, type ERC8004Config, type StakeConfig } from "@dispatch/coordinator-core";
-import { getReputationSummary, giveFeedback, buildJobFeedback, getChainConfig, identityRegistryAbi, monadTestnet } from "@dispatch/erc8004";
+import { getReputationSummary, giveFeedback, buildJobFeedback, getChainConfig, identityRegistryAbi, reputationRegistryAbi, monadTestnet } from "@dispatch/erc8004";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
@@ -16,8 +16,9 @@ function queueMonadTx<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 // ── Auto-discover a valid ERC-8004 target agent ──
-// Scans the Identity Registry for an agent NOT owned by the coordinator
-// (self-feedback is disallowed on ERC-8004).
+// Scans the Identity Registry for an agent NOT owned by the coordinator,
+// then simulates a giveFeedback call to verify the candidate actually works
+// (some agents may be registered in Identity but rejected by Reputation).
 async function discoverTargetAgent(coordinatorAddress: string): Promise<bigint> {
   const cfg = getChainConfig();
   const client = createPublicClient({
@@ -25,6 +26,8 @@ async function discoverTargetAgent(coordinatorAddress: string): Promise<bigint> 
     transport: http(cfg.rpcUrl),
   });
 
+  // Phase 1: collect all non-coordinator agents
+  const candidates: bigint[] = [];
   for (let i = 0; i <= 30; i++) {
     try {
       const owner = await client.readContract({
@@ -33,17 +36,42 @@ async function discoverTargetAgent(coordinatorAddress: string): Promise<bigint> 
         functionName: "ownerOf",
         args: [BigInt(i)],
       });
-      if ((owner as string).toLowerCase() !== coordinatorAddress.toLowerCase()) {
-        console.log(`[ERC-8004] Discovered target agent ${i} (owner: ${(owner as string).slice(0, 10)}...)`);
-        return BigInt(i);
-      }
+      const isCoord = (owner as string).toLowerCase() === coordinatorAddress.toLowerCase();
+      console.log(`[ERC-8004] Agent ${i}: owner ${(owner as string).slice(0, 10)}...${isCoord ? " (coordinator)" : ""}`);
+      if (!isCoord) candidates.push(BigInt(i));
     } catch {
       break; // Sequential IDs — first gap means no more agents
     }
   }
 
+  // Phase 2: simulate feedback to find one that actually works
+  for (const agentId of candidates) {
+    try {
+      await client.simulateContract({
+        address: cfg.reputationRegistry,
+        abi: reputationRegistryAbi,
+        functionName: "giveFeedback",
+        args: [
+          agentId,
+          8000n,
+          2,
+          "dispatch-compute",
+          "COMPUTE",
+          "https://dispatch.computer",
+          "",
+          "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
+        ],
+        account: coordinatorAddress as `0x${string}`,
+      });
+      console.log(`[ERC-8004] Verified target agent ${agentId} (feedback simulation OK)`);
+      return agentId;
+    } catch {
+      console.warn(`[ERC-8004] Agent ${agentId} rejected feedback simulation, skipping`);
+    }
+  }
+
   throw new Error(
-    "No target agent found. Need at least one ERC-8004 agent not owned by the coordinator. " +
+    "No valid target agent found. All candidates rejected feedback simulation. " +
     "Run: npx tsx apps/coordinator-solana/find-agent.ts"
   );
 }
