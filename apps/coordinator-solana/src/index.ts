@@ -1,5 +1,5 @@
 import { createServer, startServer, configFromEnv, buildPaymentConfig, BoltDistributor, type BoltSettlementResult, type ERC8004Config, type StakeConfig } from "@dispatch/coordinator-core";
-import { getReputationSummary, giveFeedback, buildJobFeedback, getChainConfig, identityRegistryAbi, reputationRegistryAbi, monadTestnet } from "@dispatch/erc8004";
+import { getReputationSummary, giveFeedback, buildJobFeedback, getChainConfig, identityRegistryAbi, monadTestnet } from "@dispatch/erc8004";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
@@ -16,10 +16,12 @@ function queueMonadTx<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 // ── Auto-discover a valid ERC-8004 target agent ──
-// Scans the Identity Registry for an agent NOT owned by the coordinator,
-// then simulates a giveFeedback call to verify the candidate actually works
-// (some agents may be registered in Identity but rejected by Reputation).
-async function discoverTargetAgent(coordinatorAddress: string): Promise<bigint> {
+// Scans the Identity Registry for agents NOT owned by the coordinator,
+// then sends a real test feedback tx to verify (Monad eth_call is unreliable).
+async function discoverTargetAgent(
+  coordinatorAddress: string,
+  account: ReturnType<typeof privateKeyToAccount>,
+): Promise<bigint> {
   const cfg = getChainConfig();
   const client = createPublicClient({
     chain: monadTestnet,
@@ -44,34 +46,27 @@ async function discoverTargetAgent(coordinatorAddress: string): Promise<bigint> 
     }
   }
 
-  // Phase 2: simulate feedback to find one that actually works
+  console.log(`[ERC-8004] Found ${candidates.length} candidate agents, testing with real feedback tx...`);
+
+  // Phase 2: try a real feedback tx against each candidate (most reliable)
   for (const agentId of candidates) {
     try {
-      await client.simulateContract({
-        address: cfg.reputationRegistry,
-        abi: reputationRegistryAbi,
-        functionName: "giveFeedback",
-        args: [
-          agentId,
-          8000n,
-          2,
-          "dispatch-compute",
-          "COMPUTE",
-          "https://dispatch.computer",
-          "",
-          "0x0000000000000000000000000000000000000000000000000000000000000000" as `0x${string}`,
-        ],
-        account: coordinatorAddress as `0x${string}`,
+      const entry = buildJobFeedback({
+        agentId,
+        score: 50,
+        jobType: "STARTUP_TEST",
+        endpoint: "https://dispatch.computer",
       });
-      console.log(`[ERC-8004] Verified target agent ${agentId} (feedback simulation OK)`);
+      const txHash = await giveFeedback(entry, account);
+      console.log(`[ERC-8004] Verified target agent ${agentId} (test tx: ${txHash})`);
       return agentId;
-    } catch {
-      console.warn(`[ERC-8004] Agent ${agentId} rejected feedback simulation, skipping`);
+    } catch (err: any) {
+      console.warn(`[ERC-8004] Agent ${agentId} feedback failed: ${err.shortMessage ?? err.message?.slice(0, 80)}`);
     }
   }
 
   throw new Error(
-    "No valid target agent found. All candidates rejected feedback simulation. " +
+    "No valid target agent found. All candidates rejected real feedback tx. " +
     "Run: npx tsx apps/coordinator-solana/find-agent.ts"
   );
 }
@@ -107,7 +102,7 @@ let erc8004: ERC8004Config | undefined;
 const erc8004Key = process.env.ERC8004_PRIVATE_KEY;
 if (erc8004Key) {
   const account = privateKeyToAccount(erc8004Key as `0x${string}`);
-  const agentId = await discoverTargetAgent(account.address);
+  const agentId = await discoverTargetAgent(account.address, account);
   const coordinatorEndpoint = process.env.RAILWAY_PUBLIC_DOMAIN
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
     : `http://localhost:${config.port}`;
