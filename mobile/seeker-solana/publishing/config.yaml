@@ -8,7 +8,7 @@ publisher:
 app:
   name: Dispatch
   android_package: com.dispatch.seeker
-  address: C7XQ66exyet7kaGyTyQHMvXeLCgqeaebdDjBtHBLXLJV
+  address: 8S8ErMDFh9q18L9BVPQYsNM5vYczug3g6k4zfz5CfG3j
   urls:
     license_url: https://dispatch.computer/terms
     copyright_url: https://dispatch.computer/terms
@@ -19,7 +19,7 @@ app:
       uri: media/app_icon.png
 release:
   version: 1.4.0
-  address: HMXfgMdQRhQjRoUPMSy4XgTMNRXHkHNM956VWnwAuHGp
+  address: 8V9MoxtdfxZYTT65KJxYQZ6px2M46wsj3ckMKtxYZxh6
   media:
     - purpose: icon
       width: 512
@@ -79,7 +79,7 @@ release:
     cert_fingerprint: 41e018ef799059435c8e59c242263f5f15690ecf7a8d5f5e83f5bee0d4eb0f0d
     min_sdk: 24
     version: 1.4.0
-    version_code: 5
+    version_code: 8
     locales:
       - en-US
 solana_mobile_dapp_publisher_portal:
@@ -89,8 +89,8 @@ solana_mobile_dapp_publisher_portal:
     (BOLT tokens). Reputation posts to Monad Testnet. Both the
     protocol and cryptographic signing are production-grade.
 lastSubmittedVersionOnChain:
-  address: HMXfgMdQRhQjRoUPMSy4XgTMNRXHkHNM956VWnwAuHGp
-  version_code: 5
-  apk_hash: +eQVKY3C/YEsHWM2sG9h9kfAOrOAcoWcapUmb4oQC+o=
+  address: 8V9MoxtdfxZYTT65KJxYQZ6px2M46wsj3ckMKtxYZxh6
+  version_code: 8
+  apk_hash: l5/BEYX2TGx6mYyQ84nB+yB2V1nuFYSGzhgY9PsR7n0=
 lastUpdatedVersionOnStore:
-  address: HMXfgMdQRhQjRoUPMSy4XgTMNRXHkHNM956VWnwAuHGp
+  address: 8V9MoxtdfxZYTT65KJxYQZ6px2M46wsj3ckMKtxYZxh6

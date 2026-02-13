@@ -73,6 +73,29 @@ tx hashes in job detail modal, and stale job selection fix.
 - APK Arweave: `https://arweave.net/igj5mFVoRfQGaXsL0YrrmP7MK2vnZLmsRCu7itIrONQ`
 - Review ETA: 1-2 business days
 
+## Resubmission v1.4.0 (Feb 13, 2026)
+
+v1.4.0 was rejected because the release NFT was minted under the wrong app NFT
+(collection). During the v1.1.0 update (commit `f38782c`), `app.address` in
+config.yaml was accidentally changed from the correct mainnet app NFT to a
+different address. All subsequent releases (v1.2.0, v1.4.0) inherited this
+mistake.
+
+**Root cause:** `app.address` pointed to `C7XQ66exyet7kaGyTyQHMvXeLCgqeaebdDjBtHBLXLJV`
+instead of the correct `8S8ErMDFh9q18L9BVPQYsNM5vYczug3g6k4zfz5CfG3j`.
+
+**Fix:**
+1. Restored correct `app.address` in config.yaml
+2. Cleared `release.address` to force fresh mint under correct collection
+3. Removed stale `lastSubmittedVersionOnChain` / `lastUpdatedVersionOnStore` blocks
+4. Bumped `version_code` to 8 (config.yaml + app.json)
+5. Built new APK, minted new release NFT, resubmitted
+
+- Release NFT (v1.4.0 resubmit): `8V9MoxtdfxZYTT65KJxYQZ6px2M46wsj3ckMKtxYZxh6`
+- [Explorer link](https://explorer.solana.com/address/8V9MoxtdfxZYTT65KJxYQZ6px2M46wsj3ckMKtxYZxh6?cluster=mainnet)
+- APK Arweave: `https://arweave.net/ntkGQnjDUzrZyzt5Ht1V0F-LfstBnMyLSBjTIzMqWwA`
+- App NFT (correct collection): `8S8ErMDFh9q18L9BVPQYsNM5vYczug3g6k4zfz5CfG3j`
+
 ## Commands (Mainnet)
 
 Run from `mobile/seeker-solana/publishing/` (the CLI expects this).
