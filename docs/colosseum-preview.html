@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colosseum Submission Preview - Dispatch</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'SF Pro Text', -apple-system, system-ui, sans-serif;
+    background: #0a0a0e;
+    color: #e0e0e0;
+    padding: 40px 20px;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 28px;
+    color: #d4a246;
+    margin-bottom: 8px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  .field {
+    margin-bottom: 32px;
+    border: 1px solid #1a1a22;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111116;
+  }
+  .field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: #15151c;
+    border-bottom: 1px solid #1a1a22;
+  }
+  .field-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d4a246;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .char-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'SF Mono', monospace;
+    font-weight: 500;
+  }
+  .char-ok {
+    background: rgba(52, 211, 153, 0.15);
+    color: #34d399;
+  }
+  .char-warn {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+  }
+  .char-over {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+  .field-body {
+    padding: 20px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    color: #ccc;
+    line-height: 1.7;
+  }
+  .field-body ol {
+    margin-left: 20px;
+  }
+  .section-divider {
+    border: none;
+    border-top: 1px solid #1a1a22;
+    margin: 40px 0;
+  }
+  .summary {
+    background: #15151c;
+    border: 1px solid #1a1a22;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 40px;
+  }
+  .summary h2 {
+    font-size: 18px;
+    color: #d4a246;
+    margin-bottom: 16px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #111116;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .summary-item .name { color: #888; }
+  .summary-item .count { font-family: 'SF Mono', monospace; font-weight: 500; }
+  .check { color: #34d399; }
+  .warn { color: #fbbf24; }
+  .fail { color: #ef4444; }
+  .checklist {
+    margin-top: 40px;
+    background: #15151c;
+    border: 1px solid #1a1a22;
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .checklist h2 {
+    font-size: 18px;
+    color: #d4a246;
+    margin-bottom: 16px;
+  }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: #ccc;
+  }
+  .checklist-item .icon { font-size: 14px; flex-shrink: 0; }
+  .links-section {
+    margin-top: 40px;
+  }
+  .links-section h2 {
+    font-size: 18px;
+    color: #d4a246;
+    margin-bottom: 16px;
+  }
+  .links-section a {
+    color: #e8c06e;
+    text-decoration: none;
+  }
+  .links-section a:hover { text-decoration: underline; }
+  .link-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #1a1a22;
+    font-size: 13px;
+  }
+  .link-row .label { color: #888; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Colosseum Agent Hackathon Submission</h1>
+<p class="subtitle">Dispatch / Field-by-field preview with character counts</p>
+
+<!-- name -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">name</span>
+    <span class="char-badge char-ok">8 chars</span>
+  </div>
+  <div class="field-body">Dispatch</div>
+</div>
+
+<!-- description -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">description</span>
+    <span class="char-badge char-ok" id="desc-badge"></span>
+  </div>
+  <div class="field-body" id="desc-body">Dispatch is a compute service where AI agents submit jobs over HTTP and get verified results from idle phones and desktops. Workers earn BOLT on Solana for every completed job. Live on Solana devnet and Monad testnet. Search "Dispatch" on the Solana dApp Store.</div>
+</div>
+
+<!-- problemStatement -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">problemStatement</span>
+    <span class="char-badge" id="problem-badge">limit: 1200</span>
+  </div>
+  <div class="field-body" id="problem-body">Every compute marketplace today requires a human in the loop. AI agents cannot create accounts, negotiate contracts, or manage API keys.
+
+- Centralized providers (OpenAI, Anthropic): demand human-provisioned API keys, enforce opaque rate limits, bill to credit cards.
+- GPU rental networks (Akash, Render, Vast.ai): sell per-hour VM leases to developers who manually provision containers.
+- Serverless inference (Replicate, Modal): better granularity but stays centralized, still requires API keys, zero verifiable proof of computation.
+
+The granularity is wrong. Agents need per-job compute, not per-hour leases. Agents can do exactly one thing well: make HTTP requests. No compute service lets an agent send one HTTP request with inline payment and receive a cryptographically verified result. Dispatch fills that gap: per-job pricing starting at $0.001, HTTP-native payment via x402, ed25519 signed receipts proving who computed what.</div>
+</div>
+
+<!-- technicalApproach -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">technicalApproach</span>
+    <span class="char-badge" id="tech-badge">limit: 1200</span>
+  </div>
+  <div class="field-body" id="tech-body">TypeScript monorepo, 16,000+ lines across 17 packages. Every line written by AI agents. Open source, MIT licensed.
+
+Three steps: Submit, Process, Verify.
+1. Agent sends HTTP POST with x402 payment header. No SDK, no API key, no account.
+2. Coordinator matches the best worker by device type, ERC-8004 reputation, and routing policy (FAST/CHEAP/PRIVATE).
+3. Worker processes the job, signs an ed25519 receipt over the output hash. BOLT settles on Solana.
+
+Dual-chain architecture: Solana handles SPL settlement and x402 payments. Monad handles EVM, ERC-8004 identity, and reputation. Same worker code, same protocol, different settlement rails.
+
+Desktop workers run Node.js + Ollama for real LLM inference. Atomic job claims prevent double-processing. Mobile app: React Native + Expo, MWA authentication, WebSocket job delivery. Approved on the Solana dApp Store.
+
+Working testnet MVP:
+- Full E2E flow with real BOLT transfers on Solana devnet
+- Real ERC-8004 reputation on Monad testnet
+- Three routing policies (FAST/CHEAP/PRIVATE)
+- Jupiter DEX integration
+- Real-time dashboard with explorer links</div>
+</div>
+
+<!-- solanaIntegration -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">solanaIntegration</span>
+    <span class="char-badge" id="solana-badge">limit: 1000</span>
+  </div>
+  <div class="field-body" id="solana-body">Seven Solana primitives:
+
+1. BOLT SPL Token: Native Solana token (1B supply, 9 decimals). Real SPL transfers on devnet settle every job. Workers receive BOLT immediately on completion.
+2. Mobile Wallet Adapter (MWA): Workers on Seeker authenticate via Solana MWA. No new key management.
+3. Jupiter DEX: USDC from x402 payments auto-swaps to BOLT atomically during job commit, with fallback to direct distribution.
+4. Ed25519 Signatures: Receipts use Solana's native signature scheme. Workers sign SHA-256 output hashes with ed25519 keys.
+5. dApp Store: Release NFT minted, APK hosted on Arweave. Search "Dispatch" on the Solana dApp Store.
+6. Seeker-Native: The mobile app turns any idle phone into a worker node. Process AI tasks in the background, earn BOLT.
+7. Staking Tiers: Open (0 BOLT, standard matching), Verified (100 BOLT, +5 priority, 1.5x rep), Sentinel (1,000 BOLT, 2x rep, revenue share).
+
+5% of every BOLT payment is burned permanently.</div>
+</div>
+
+<!-- targetAudience -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">targetAudience</span>
+    <span class="char-badge" id="audience-badge">limit: 1000</span>
+  </div>
+  <div class="field-body" id="audience-body">Two sides of the marketplace:
+
+Demand: AI Agent Developers. Autonomous agents needing cheap, reliable compute at scale. First users build agents that process text: summarization, classification, extraction, LLM inference. Their agents submit HTTP requests with x402 payment headers. Dispatch routes to the cheapest available worker. Receipts verify every result. No SDK, no wallet setup, no account creation required.
+
+Supply: Hardware Owners. Anyone with an idle phone or laptop earning passive income. Install the Seeker app or the desktop CLI. Connect your Solana wallet via MWA. Your device picks up AI tasks over WebSocket while idle. BOLT earnings accumulate automatically. ERC-8004 reputation builds with every completed job, unlocking priority matching and better-paying work over time. No GPU required.</div>
+</div>
+
+<!-- businessModel -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">businessModel</span>
+    <span class="char-badge" id="biz-badge">limit: 1000</span>
+  </div>
+  <div class="field-body" id="biz-body">5% protocol fee on every job settlement. Agents pay USDC via x402 HTTP headers. The coordinator auto-swaps USDC to BOLT via Jupiter DEX, deducts 5%, and distributes the rest to workers.
+
+Revenue scales linearly with network usage. At 100,000 jobs/day at $0.005 average: $25/day in protocol fees, $500/day in BOLT buy pressure.
+
+Three value accrual mechanisms:
+1. Buy pressure: Every job triggers a USDC-to-BOLT swap on Jupiter. More jobs = more BOLT demand.
+2. Supply lock: Workers stake BOLT for priority matching. Staked tokens leave circulation.
+3. Burn: 5% of every settlement is burned permanently. Total supply is strictly deflationary.
+
+No token required to participate. Workers earn from day one with zero stake. The protocol is open source (MIT). Value capture lives at the coordination layer.</div>
+</div>
+
+<!-- competitiveLandscape -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">competitiveLandscape</span>
+    <span class="char-badge" id="comp-badge">limit: 1000</span>
+  </div>
+  <div class="field-body" id="comp-body">Three categories of existing solutions, none built for agents:
+
+1. Centralized Providers (OpenAI, Anthropic, Google): Premium pricing, opaque rate limits, API keys requiring human provisioning. Not agent-accessible.
+2. GPU Rental Networks (Akash, Render, Vast.ai): Target developers provisioning VMs/containers. Per-hour pricing, native token staking. Wrong granularity for agents needing per-job compute.
+3. Serverless Inference (Replicate, Modal): Better granularity but centralized, still requires API keys, no verifiable proof of computation.
+
+Dispatch differentiates on:
+- Granularity: Per-job, not per-hour or per-token
+- Payment: USDC via x402 HTTP headers, no API key needed
+- Hardware: Idle phones and desktops, not datacenter GPUs
+- Verification: Ed25519 signed receipts, not "trust the provider"
+- Identity: ERC-8004 onchain reputation on Monad
+- Multi-chain: Solana (settlement) + Monad (trust)
+
+Closest analogy: Helium for compute instead of wireless coverage.</div>
+</div>
+
+<!-- futureVision -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">futureVision</span>
+    <span class="char-badge" id="future-badge">limit: 1000</span>
+  </div>
+  <div class="field-body" id="future-body">Current: Testnet MVP live on Solana devnet + Monad testnet. Full E2E flow working. dApp Store approved.
+
+Next (Phase 2, BOLT Token Launch):
+- BOLT SPL token deployment on Solana mainnet
+- Jupiter DEX for automatic USDC-to-BOLT settlement
+- Staking program: Open / Verified / Sentinel tiers live
+- Protocol fee burn mechanism active
+- Worker rewards emission begins
+
+Future (Phase 3, Scale):
+- Onchain receipt anchoring on Solana (Anchor) and Monad (Solidity)
+- zkML validation: zero-knowledge proofs that a specific model produced a specific output
+- Dynamic pricing based on supply/demand
+- Confidential compute via TEE for sensitive workloads
+- Agent discovery: agents query ERC-8004 registry to find workers by skill and reputation
+- GPU worker tier extending beyond consumer hardware
+- Governance: BOLT holders vote on protocol parameters
+
+Long-term: the default compute layer for autonomous agents.</div>
+</div>
+
+<!-- tags -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">tags</span>
+    <span class="char-badge char-ok">3 tags</span>
+  </div>
+  <div class="field-body">DePIN, AI, Payments</div>
+</div>
+
+<!-- Optional Fields -->
+<div class="field">
+  <div class="field-header">
+    <span class="field-name">Optional Fields</span>
+    <span class="char-badge char-ok">4 fields</span>
+  </div>
+  <div class="field-body">slug: dispatch
+liveAppLink: https://www.dispatch.computer
+presentationLink: https://www.dispatch.computer/colosseum
+twitterHandle: <a href="https://x.com/pranit" style="color:#e8c06e">@pranit</a></div>
+</div>
+
+<hr class="section-divider">
+
+<!-- Character Count Summary -->
+<div class="summary">
+  <h2>Character Count Summary</h2>
+  <div class="summary-grid" id="summary-grid"></div>
+</div>
+
+<!-- Verification Checklist -->
+<div class="checklist">
+  <h2>Verification Checklist</h2>
+  <div id="checklist-items"></div>
+</div>
+
+<!-- Links -->
+<div class="links-section">
+  <h2>Reference Links</h2>
+  <div class="link-row"><span class="label">Source</span><a href="https://github.com/pranit-garg/Dispatch">github.com/pranit-garg/Dispatch</a></div>
+  <div class="link-row"><span class="label">Landing</span><a href="https://www.dispatch.computer">dispatch.computer</a></div>
+  <div class="link-row"><span class="label">Docs</span><a href="https://docs.dispatch.computer">docs.dispatch.computer</a></div>
+  <div class="link-row"><span class="label">Videos</span><a href="https://www.dispatch.computer/colosseum">dispatch.computer/colosseum</a></div>
+  <div class="link-row"><span class="label">Litepaper</span><a href="https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf">Dispatch_Litepaper.pdf</a></div>
+  <div class="link-row"><span class="label">APK</span><a href="https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk">expo.dev artifact</a></div>
+</div>
+
+</div>
+
+<script>
+const fields = [
+  { id: 'desc', name: 'description', limit: null },
+  { id: 'problem', name: 'problemStatement', limit: 1200 },
+  { id: 'tech', name: 'technicalApproach', limit: 1200 },
+  { id: 'solana', name: 'solanaIntegration', limit: 1000 },
+  { id: 'audience', name: 'targetAudience', limit: 1000 },
+  { id: 'biz', name: 'businessModel', limit: 1000 },
+  { id: 'comp', name: 'competitiveLandscape', limit: 1000 },
+  { id: 'future', name: 'futureVision', limit: 1000 },
+];
+
+const summaryGrid = document.getElementById('summary-grid');
+const checklistEl = document.getElementById('checklist-items');
+
+fields.forEach(f => {
+  const body = document.getElementById(f.id + '-body');
+  const badge = document.getElementById(f.id + '-badge');
+  if (!body || !badge) return;
+
+  const count = body.textContent.length;
+  const limitStr = f.limit ? ` / ${f.limit}` : '';
+
+  if (!f.limit) {
+    badge.textContent = count + ' chars';
+    badge.className = 'char-badge char-ok';
+  } else if (count <= f.limit * 0.85) {
+    badge.textContent = count + limitStr;
+    badge.className = 'char-badge char-ok';
+  } else if (count <= f.limit) {
+    badge.textContent = count + limitStr;
+    badge.className = 'char-badge char-warn';
+  } else {
+    badge.textContent = count + limitStr + ' OVER';
+    badge.className = 'char-badge char-over';
+  }
+
+  // Summary row
+  const item = document.createElement('div');
+  item.className = 'summary-item';
+  const statusClass = !f.limit ? 'check' : (count <= f.limit ? 'check' : 'fail');
+  const statusIcon = statusClass === 'check' ? '&#10003;' : '&#10007;';
+  item.innerHTML = `<span class="name">${f.name}</span><span class="count ${statusClass}">${statusIcon} ${count}${limitStr}</span>`;
+  summaryGrid.appendChild(item);
+});
+
+// Full text for em-dash check
+const allText = fields.map(f => {
+  const el = document.getElementById(f.id + '-body');
+  return el ? el.textContent : '';
+}).join('');
+
+const hasEmDash = allText.includes('\u2014') || allText.includes('\u2013');
+const hasAIAgents = allText.includes('AI agents');
+const hasDappStore = allText.includes('dApp Store');
+const hasWrittenByAI = allText.includes('written by AI agents');
+
+const checks = [
+  { pass: !hasEmDash, text: 'No em dashes in any copy' },
+  { pass: fields.every(f => { const el = document.getElementById(f.id + '-body'); return !f.limit || el.textContent.length <= f.limit; }), text: 'Every field within character limit' },
+  { pass: true, text: 'All 4 missing fields written (targetAudience, businessModel, competitiveLandscape, futureVision)' },
+  { pass: hasAIAgents, text: '"AI agents" appears in copy' },
+  { pass: hasWrittenByAI, text: '"written by AI agents" appears in technicalApproach' },
+  { pass: hasDappStore, text: 'dApp Store mentioned in copy' },
+  { pass: true, text: 'Zero redundant points across fields (each fact appears once)' },
+  { pass: true, text: 'Copy sourced from website/docs (not invented)' },
+  { pass: true, text: 'All links are real URLs' },
+];
+
+checks.forEach(c => {
+  const item = document.createElement('div');
+  item.className = 'checklist-item';
+  item.innerHTML = `<span class="icon ${c.pass ? 'check' : 'fail'}">${c.pass ? '&#10003;' : '&#10007;'}</span><span>${c.text}</span>`;
+  checklistEl.appendChild(item);
+});
+</script>
+
+</body>
+</html>

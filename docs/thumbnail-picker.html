@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dispatch — Thumbnail Picker</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0e; color: #e4e4ef; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 48px 32px; }
+h1 { font-size: 32px; text-align: center; margin-bottom: 8px; }
+.subtitle { text-align: center; color: #8888a0; margin-bottom: 48px; font-size: 16px; }
+h2 { font-size: 22px; margin-bottom: 24px; color: #d4a246; letter-spacing: 1px; text-transform: uppercase; font-size: 14px; }
+.section { max-width: 1200px; margin: 0 auto 56px; }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.card { position: relative; border: 2px solid #1e1e28; border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.2s; }
+.card:hover { border-color: #d4a246; transform: scale(1.02); }
+.card.current { border-color: #34d399; }
+.card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+.label { position: absolute; top: 12px; left: 12px; background: rgba(10,10,14,0.85); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+.label.current-label { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+.desc { padding: 16px; font-size: 14px; color: #8888a0; }
+.filename { font-family: monospace; font-size: 12px; color: #555568; margin-top: 4px; }
+.divider { border: none; border-top: 1px solid #1e1e28; margin: 0 auto 48px; max-width: 1200px; }
+.note { text-align: center; color: #555568; font-size: 13px; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<h1>Thumbnail Picker</h1>
+<p class="subtitle">Pick one for each video. Tell me the option letter.</p>
+
+<div class="section">
+<h2>Video 1 — Pitch Video</h2>
+<div class="grid">
+
+<div class="card current">
+<span class="label current-label">CURRENT</span>
+<img src="../apps/landing/public/images/video-thumbnail.jpg" alt="Current pitch thumbnail">
+<div class="desc">
+Network nodes — organic gold constellation on black
+<div class="filename">video-thumbnail.jpg</div>
+</div>
+</div>
+
+<div class="card">
+<span class="label">A — Stage Spotlight</span>
+<img src="../apps/landing/public/images/thumb-pitch-a.jpg" alt="Pitch option A">
+<div class="desc">
+Gold spotlight on dark stage. TED talk before the speaker walks on.
+<div class="filename">thumb-pitch-a.jpg</div>
+</div>
+</div>
+
+<div class="card">
+<span class="label">B — Constellation</span>
+<img src="../apps/landing/public/images/thumb-pitch-b.jpg" alt="Pitch option B">
+<div class="desc">
+Radial gold orbs converging on central node. Marketplace visualization.
+<div class="filename">thumb-pitch-b.jpg</div>
+</div>
+</div>
+
+<div class="card">
+<span class="label">C — Gold Token</span>
+<img src="../apps/landing/public/images/thumb-pitch-c.jpg" alt="Pitch option C">
+<div class="desc">
+Cinematic floating coin with geometric patterns. Luxury fintech.
+<div class="filename">thumb-pitch-c.jpg</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<hr class="divider">
+
+<div class="section">
+<h2>Video 2 — Technical Demo</h2>
+<div class="grid">
+
+<div class="card current">
+<span class="label current-label">CURRENT</span>
+<img src="../apps/landing/public/images/tech-demo-thumbnail.jpg" alt="Current tech thumbnail">
+<div class="desc">
+Circuit hexagons — horizontal gold circuit pattern, architectural.
+<div class="filename">tech-demo-thumbnail.jpg</div>
+</div>
+</div>
+
+<div class="card">
+<span class="label">A — Wireframe Blocks</span>
+<img src="../apps/landing/public/images/thumb-tech-a.jpg" alt="Tech option A">
+<div class="desc">
+Isometric wireframe cubes connected by gold traces. System architecture.
+<div class="filename">thumb-tech-a.jpg</div>
+</div>
+</div>
+
+<div class="card">
+<span class="label">B — Dual Chain</span>
+<img src="../apps/landing/public/images/thumb-tech-b.jpg" alt="Tech option B">
+<div class="desc">
+Two light rails (purple + gold) converging. Represents dual-chain.
+<div class="filename">thumb-tech-b.jpg</div>
+</div>
+</div>
+
+<div class="card">
+<span class="label">C — Grid Blueprint</span>
+<img src="../apps/landing/public/images/thumb-tech-c.jpg" alt="Tech option C">
+<div class="desc">
+Sparse gold grid with glowing intersections. Technical blueprint feel.
+<div class="filename">thumb-tech-c.jpg</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<p class="note">Tell me which combo you want (e.g. "Pitch B + Tech A") and I'll swap them in and deploy.</p>
+
+</body>
+</html>

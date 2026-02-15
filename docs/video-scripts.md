@@ -1,164 +1,149 @@
 # Dispatch Video Scripts
 
-## 1. Pitch Video (2-3 min, talking head + screen recordings)
+## 1. Pitch Video (2:40 target, max 3:00, talking head + screen recordings)
 
 > This video also embeds in the landing page FounderVideo section.
 > Record as: talking head (webcam) with screen recording cut-ins at [SHOW] cues.
-> Tone: calm, confident, direct. Not salesy. You're explaining something real.
+> Tone: calm, confident, direct. Not salesy. You're explaining something real to a smart friend.
 
 ---
 
 ### SCRIPT
 
-**[0:00 - 0:15] HOOK**
+**[0:00 - 0:20] HOOK**
+
+[SHOW: Talking head, clean dark background]
 
 Hey, I'm Pranit. I built Dispatch: a compute network where AI agents pay for inference and idle devices earn for processing it.
 
-One HTTP request in, one verified result out, payment settled inline.
+And here's the thing. I can't write a single line of code. This entire project was built by AI agents. Which feels right, for a network built to serve them.
 
-**[0:15 - 0:45] PROBLEM**
+**[0:20 - 0:50] BACKGROUND**
 
-[SHOW: screen recording of an AI agent making API calls, hitting rate limits or pricing pages]
+[SHOW: Deck slide with timeline]
 
-Right now, if an AI agent needs compute, it has two options: expensive API calls to centralized providers, or trying to negotiate GPU leases. Neither works at scale.
+Quick background. I ran a marketing agency called Optimotive, which was acquired in 2022. After that I was CMO at Irys, a programmable data chain, and then at Fermah, a ZK proof marketplace. Both early-stage crypto companies. I went through the a16z CSX accelerator in New York, Fall 2024.
 
-Agents need cheap inference. They need it on-demand. And they can't sign contracts or manage cloud accounts. They just make HTTP requests.
+The Fermah experience is actually what led to Dispatch. Fermah matches supply and demand for ZK proofs. Dispatch does the same thing, but for AI compute. Same marketplace structure, different resource.
 
-**[0:45 - 1:30] SOLUTION**
+**[0:50 - 1:15] PROBLEM**
+
+[SHOW: Deck slide with problem cards]
+
+So here's the core problem. AI agents are becoming autonomous economic actors, but they can't buy compute on their own.
+
+Look at the options today. Centralized APIs are expensive and require API keys. GPU leases are manual, billed by the hour, and need human setup. Serverless platforms are still centralized and locked behind accounts.
+
+None of these work for agents. Agents don't manage accounts or sign contracts. They just make HTTP requests.
+
+This is built for autonomous AI agents that need cheap compute, and for device owners who want passive income from idle hardware.
+
+**[1:15 - 1:55] SOLUTION**
 
 [SHOW: dispatch.computer landing page, scroll through]
 
-Dispatch is the layer between agents and compute. An agent sends a standard HTTP POST with an x402 payment header. The coordinator matches it to an idle worker based on reputation and routing policy. The worker processes the job, signs a cryptographic receipt, and gets paid. That's it.
+Dispatch sits between agents and compute. The payment layer uses x402, an open protocol created by Coinbase for HTTP-native micropayments. An agent sends a standard HTTP POST with a payment header. One HTTP request in, one verified result out.
 
-[SHOW: CLI demo on the landing page, click "Run Command"]
+We run a dual-chain architecture. Solana is the economic layer: BOLT token payments, Solana Mobile Wallet Adapter for the Seeker phone, and all transaction settlement. Monad is the trust layer: ERC-8004 for onchain worker identity and reputation scoring. Each chain does what it's best at.
 
-Here's what that looks like in practice. One CLI command, one result, with a signed receipt proving who computed what.
+[SHOW: Seeker phone, open the app, tap once, jobs start flowing]
 
-[SHOW: Seeker phone - open app, tap "Get Started", jobs start flowing within seconds]
+On mobile, it's zero friction. Open the app, tap once, your phone starts picking up jobs and earning BOLT per task. No wallet setup, no configuration.
 
-On mobile, it's even simpler. Open the app, tap once, and your phone connects to the coordinator over WebSocket and starts picking up compute tasks. Every result is signed with the device's own cryptographic key.
+**[1:55 - 2:30] TRACTION + VISION**
 
-**[1:30 - 2:00] WHY NOW**
+[SHOW: GitHub repo, docs site, quick flash]
 
-Three things make this possible today that didn't exist a year ago.
+This is a working MVP, not a spec. 64,000+ lines of TypeScript, all built by AI agents. We're dApp Store approved, with real Seeker users running jobs on their phones. The coordinator is live, the mobile app is running on a real Seeker phone, and it's approved on the Solana dApp Store.
 
-First, x402: an open protocol for HTTP-native micropayments. Agents can pay per request without accounts or API keys.
+[SHOW: Back to talking head]
 
-Second, ERC-8004: onchain agent identity and reputation. Workers register, build track records, and agents discover trusted compute through the registry. We're on Monad for this because per-job reputation updates need fast, cheap finality.
+For go-to-market, we start with the Seeker fleet. Thousands of phones that can start earning compute income with a single tap. Then we expand to desktops and dedicated hardware.
 
-Every completed job now earns BOLT tokens, transferred on Solana devnet with a verifiable transaction. Both chains are doing real work, not just architecture claims.
+The bigger picture: Render and io.net were the previous generation. They built GPU marketplaces for humans. Dispatch reimagines this for AI agents, where the buyers and sellers are both machines, and every transaction is programmatic.
 
-Third, Solana Mobile Wallet Adapter and the Seeker. A whole fleet of phones that start earning with a single tap. No wallet setup, no configuration. Open, tap, earn.
+I won't go into the technical details here. That's a separate video.
 
-[SHOW: Seeker phone mockup from the landing page]
+**[2:30 - 2:40] CLOSE**
 
-**[2:00 - 2:30] TRACTION**
-
-[SHOW: docs.dispatch.computer, GitHub repo]
-
-This is a working MVP. Dual-chain: Solana for payments and mobile, Monad for identity and reputation. 16,000+ lines of TypeScript. Full end-to-end flow running on testnet.
-
-Desktop workers running Ollama for real LLM inference. Mobile workers handling lightweight task jobs: summarize, classify, extract. Both signing ed25519 receipts on every result.
-
-Zero-friction mobile: one tap to start earning. The phone connects to our production coordinator on Railway, picks up jobs over WebSocket, processes them locally, and signs a cryptographic receipt for each one.
-
-And the entire codebase was written by AI agents, which seems fitting for a compute network built for AI agents.
-
-**[2:30 - 2:50] CLOSE**
-
-[SHOW: dispatch.computer with CTA buttons visible]
+[SHOW: Closing deck slide with dispatch.computer]
 
 Dispatch. Cheap compute for agents. Passive income for workers. Every result verified.
 
-Check it out at dispatch.computer, or read the docs, or fork the whole thing. It's MIT licensed.
+One HTTP request in, one verified result out. Check it out at dispatch.computer. Thanks.
 
 ---
 
-## 2. Technical Demo (2-3 min, screen recording + voiceover)
+## 2. Technical Demo (2:10 target, max 3:00, deck slides + voiceover)
 
-> Record as: screen recording with voiceover narration.
-> Tone: technical but accessible. Walk through code and live flows.
-> No webcam needed, just your screen and voice.
+> Record as: technical deck slides with voiceover narration.
+> The deck (`docs/tech-deck.html`) is the ONLY visual. Advance slides at each `[SLIDE X]` cue.
+> Tone: technical but accessible. Walk through each slide's content clearly.
+> No webcam, no screen recording. Just the deck and your voice.
 
 ---
 
 ### SCRIPT
 
-**[0:00 - 0:20] INTRO**
+**[0:00-0:15] TITLE**
 
-This is a technical walkthrough of Dispatch. I'll show the architecture, run a live end-to-end job, and walk through the Solana and Monad integrations.
+[SLIDE 0: Title]
 
-**[0:20 - 0:50] ARCHITECTURE**
+This is a technical walkthrough of Dispatch, a compute protocol where AI agents buy inference from idle hardware. Agents can't create accounts or manage API keys. They make HTTP requests. So we built a compute marketplace where one HTTP request with payment is all it takes. 64,000 lines of TypeScript, every line written by AI agents.
 
-[SHOW: VS Code with the monorepo open, file tree visible]
+**[0:15-0:30] SYSTEM OVERVIEW**
 
-Dispatch is a TypeScript monorepo. Fifteen packages and apps:
+[SLIDE 1: System Overview]
 
-- `coordinator-core`, plus Monad and Solana variants: the routing layer, Express + WebSocket
-- `worker-desktop`: desktop workers running Node.js with Ollama
-- `cli`: the agent-facing CLI for submitting jobs
-- `erc8004`: viem wrappers for Monad's Identity and Reputation registries
-- `bolt`: token distribution and staking logic
-- `compute-router`: client SDK with decentralized and hosted adapters
-- Mobile app in `mobile/seeker-solana/`: React Native + Expo
+Here's the full flow. An agent sends a standard HTTP POST with an x402 payment header. The coordinator validates the payment and routes the job to the best available worker. The worker executes the task, signs an ed25519 receipt over the result, and the coordinator anchors settlement onchain. One request in, one verified result out.
 
-[SHOW: briefly scroll through the packages/ directory]
+**[0:30-0:50] DUAL-CHAIN**
 
-**[0:50 - 1:30] LIVE E2E FLOW**
+[SLIDE 2: Dual-Chain]
 
-[SHOW: terminal with CLI ready]
+We chose two chains, each for a specific reason. Solana for the economic layer: sub-second finality for per-job micropayments, native mobile wallet support on Seeker, and the SPL token standard for BOLT. Monad for the trust layer: fast, cheap finality makes per-job reputation updates practical, and EVM compatibility means the ERC-8004 identity standard deploys natively. Each chain does what it's best at.
 
-Let me show you the two paths. First, the CLI. An agent submits a job with one command.
+**[0:50-1:10] SOLANA DEEP DIVE**
 
-[SHOW: run `dispatch agent run --type summarize --prompt "Summarize the latest Solana validator update" --policy fast`]
+[SLIDE 3: Solana Components]
 
-That hits our production coordinator on Railway via HTTP POST. The coordinator finds an idle worker, routes the job over WebSocket, the worker processes it, signs an ed25519 receipt over the output hash, and returns the result. The receipt is cryptographic proof: you can verify it independently using the worker's public key.
+Six Solana components. BOLT is an SPL token, one billion supply, nine decimals. The coordinator runs Express and WebSocket for real-time task routing and settlement. Workers register onchain with stake tracking. Staking tiers control job access and priority matching. Every execution result gets an Ed25519 signed receipt. And we're approved on the Solana dApp Store, with a release NFT stored on Arweave.
 
-[SHOW: highlight the receipt in the response: hash, worker ID, signature]
+**[1:10-1:25] WORKERS**
 
-[SHOW: split-screen - left: Seeker phone with jobs flowing, right: CLI submitting]
+[SLIDE 4: Worker Architecture]
 
-Now here's the Seeker phone. It's connected to the same coordinator over WebSocket. When I submit jobs from the CLI, the phone picks them up, processes them locally, signs a receipt, and sends the result back. You can see the job history updating and earnings ticking up in real-time.
+Two worker types. Mobile workers run React Native on Seeker phones: lightweight task processing, background execution, battery-aware scheduling. Desktop workers run Node.js with Ollama for real LLM inference, heavier compute, persistent connections.
 
-**[1:30 - 2:00] LIVE TRANSACTIONS**
+**[1:25-1:40] PAYMENT FLOW**
 
-[SHOW: Phone with jobs flowing, then tap a completed job]
+[SLIDE 5: x402 Payment Flow]
 
-Let me show you what's actually happening onchain. Every completed job triggers two real transactions.
+Six steps, one HTTP request. The agent sends a request with an x402 payment header. The coordinator validates the payment and extracts the task. The task is routed to the optimal worker based on policy. The worker executes and generates a signed receipt. The coordinator verifies the receipt and anchors it onchain. The result is returned to the agent with cryptographic proof. No API key, no account, no SDK. The agent just makes a standard HTTP POST.
 
-First, BOLT tokens. The coordinator batches completed jobs and sends BOLT via SPL token transfer on Solana devnet. You can see the transaction hash right here, and tap to open the Solana explorer.
+**[1:40-1:55] VERIFICATION**
 
-[SHOW: Tap the Solana tx hash, explorer opens showing the SPL transfer]
+[SLIDE 6: Trust Without Intermediaries]
 
-Second, reputation. The coordinator posts ERC-8004 feedback to Monad testnet. Every job builds onchain reputation for the worker.
+Three layers of trust without intermediaries. Ed25519 signatures on every result, so agents can verify independently without trusting the coordinator. ERC-8004 onchain identity and reputation on Monad, where workers build verifiable track records. And receipt anchoring to Solana or Monad for permanent, auditable, immutable proof.
 
-[SHOW: Tap the Monad tx hash, explorer opens showing giveFeedback call]
+**[1:55-2:00] ROUTING**
 
-Two chains, two purposes. Solana for payments. Monad for identity and reputation. Both real, both verifiable.
+[SLIDE 7: Smart Task Routing]
 
-**[2:00 - 2:30] MONAD INTEGRATION**
+Three routing policies. FAST minimizes latency, routing to the nearest available worker for real-time agent decisions. CHEAP routes to the lowest-cost worker, batching when possible for background processing. PRIVATE routes to TEE-enabled workers with encrypted execution for sensitive data.
 
-[SHOW: packages/erc8004/ code, the contract addresses]
+**[2:00-2:15] TOKENOMICS**
 
-On Monad, we use ERC-8004 for two things: identity and reputation.
+[SLIDE 8: BOLT Token]
 
-Workers register as ERC-8004 agents and get an onchain identity NFT. After every completed job, the coordinator posts feedback to the Reputation Registry: a score, a skill tag, and a feedback hash.
+BOLT token: one billion supply, across two chains, three staking tiers. The revenue model is a five percent protocol fee on every job. That five percent is burned permanently, making BOLT strictly deflationary. Every job also triggers a USDC-to-BOLT swap on Jupiter, creating constant buy pressure. Workers stake BOLT for priority matching and reputation multipliers. Open tier is free, CHEAP jobs only. Verified at 100 BOLT unlocks all job tiers with a 1.5x reputation boost. Sentinel at 1,000 BOLT gets maximum priority, 2x reputation, and revenue share.
 
-[SHOW: the `claimWorker` function in coordinator that reads reputation scores]
+**[2:15-2:25] CLOSE**
 
-The coordinator reads reputation scores when routing jobs. Higher reputation workers get priority. This creates a flywheel: do good work, build reputation, get better jobs.
+[SLIDE 9: Close]
 
-And now you can see the Monad transaction right here in the app. Tap any completed job, and there's the transaction hash with a link to the block explorer. That's real onchain proof that this job was completed and scored.
-
-The contracts are live on Monad testnet. Identity Registry at `0x8004A8...`, Reputation Registry at `0x8004B6...`.
-
-**[2:30 - 2:50] CLOSE**
-
-[SHOW: GitHub repo README]
-
-That's Dispatch. A working dual-chain compute network with x402 payments, ERC-8004 reputation, and Solana mobile support.
-
-16,000+ lines of TypeScript, MIT licensed, built entirely by AI agents. The coordinator is live on Railway, the mobile app is running on a real Seeker phone, and the whole thing is on GitHub. The code is at docs.dispatch.computer and it's running on testnet right now.
+That's Dispatch. 64,000 lines of TypeScript, built entirely by AI agents. Working MVP on Solana devnet and Monad testnet. Approved on the Solana dApp Store. One HTTP request in, one verified result out. dispatch.computer.
 
 ---
 
@@ -176,16 +161,11 @@ That's Dispatch. A working dual-chain compute network with x402 payments, ERC-80
 - **Delivery**: conversational, not rehearsed-sounding. Like explaining to a smart friend.
 
 ### Technical Demo
-- **Length target**: 2:30 - 2:50
-- **Format**: screen recording only, voiceover narration
-- **Screen recordings needed**:
-  - VS Code with monorepo open (show file tree: packages/, apps/, mobile/)
-  - CLI submitting a job: `dispatch agent run --type summarize --prompt "..." --policy fast`
-  - Split-screen: CLI on left, Seeker phone on right (jobs flowing, earnings ticking)
-  - Seeker phone cold start: open app, tap Get Started, watch it auto-connect and receive first job
-  - Code highlights: receipt signing (ReceiptSigner.ts), coordinator matching (workerHub.ts), ERC-8004 reputation read
-  - Job detail modal showing both Solana payment tx + Monad reputation tx with explorer links
-- **Delivery**: clear, paced, like a conference talk. Pause when showing code.
+- **Length target**: 2:25 - 2:35
+- **Format**: deck slides (`docs/tech-deck.html`) with voiceover narration
+- **Visual**: the deck is the ONLY visual. No screen recordings, no VS Code, no phone demos.
+- **Slides to advance**: 0 (Title) through 9 (Close), one advance per `[SLIDE X]` cue in the script
+- **Delivery**: clear, paced, like a conference talk. Let each slide breathe before narrating.
 
 ### Key Messages to Hit
 1. "One HTTP request in, one verified result out"

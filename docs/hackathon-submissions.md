@@ -4,70 +4,132 @@
 
 ## 1. Colosseum Agent Hackathon (Due: Feb 12, 2026)
 
-### Project Name
+> Each field below maps 1:1 to the Colosseum submission form.
+> Character counts are noted per field. No redundancy between fields.
+
+### name
 Dispatch
 
-### Tagline
-Dispatch idle compute to AI agents.
+### description
+Dispatch is a compute service where AI agents submit jobs over HTTP and get verified results from idle phones and desktops. Workers earn BOLT on Solana for every completed job. Live on Solana devnet and Monad testnet. Search "Dispatch" on the Solana dApp Store.
 
-### Short Description (1-2 sentences)
-Dispatch is the compute layer AI agents pay into. Agents submit HTTP requests with x402 payment headers, idle phones and desktops process the work. Workers earn BOLT tokens via Jupiter DEX settlement. Built on Solana with MWA for Seeker integration.
+### repoLink
+https://github.com/pranit-garg/Dispatch
 
-### What It Does
-Dispatch routes AI inference jobs from autonomous agents to a distributed network of idle hardware (phones and desktops). The protocol is agent-native: any agent that can make an HTTP request can buy compute. Workers authenticate via Solana Mobile Wallet Adapter, process jobs (summarization, classification, LLM inference), sign ed25519 receipts over results, and earn BOLT tokens. Agents pay USDC via x402, and every dollar auto-converts to BOLT and flows to workers.
+### problemStatement (~950 chars)
+Every compute marketplace today requires a human in the loop. AI agents cannot create accounts, negotiate contracts, or manage API keys.
 
-### How It Works
-1. **Agent submits a job.** HTTP POST to the coordinator with an x402 payment header. No SDK required.
-2. **Coordinator matches a worker.** Routes to the best available worker based on device type, reputation, and pricing policy (FAST prefers desktops, CHEAP prefers mobile).
-3. **Worker processes the job.** Summarization, classification, extraction, or LLM inference via Ollama.
-4. **Worker signs a receipt.** ed25519 signature over the output hash. Cryptographic proof of who computed what.
-5. **Settlement.** x402 USDC payment received, auto-swapped to BOLT via Jupiter (or direct distribution). Worker earns BOLT per job.
+- Centralized providers (OpenAI, Anthropic): demand human-provisioned API keys, enforce opaque rate limits, bill to credit cards.
+- GPU rental networks (Akash, Render, Vast.ai): sell per-hour VM leases to developers who manually provision containers.
+- Serverless inference (Replicate, Modal): better granularity but stays centralized, still requires API keys, zero verifiable proof of computation.
 
-### Why Agents?
-AI agents are the natural customers for decentralized compute. They need cheap inference at scale, they operate autonomously, and they can't negotiate GPU leases. Dispatch gives them a simple interface: HTTP request in, verified result out, payment handled inline.
+The granularity is wrong. Agents need per-job compute, not per-hour leases. Agents can do exactly one thing well: make HTTP requests. No compute service lets an agent send one HTTP request with inline payment and receive a cryptographically verified result. Dispatch fills that gap: per-job pricing starting at $0.001, HTTP-native payment via x402, ed25519 signed receipts proving who computed what.
 
-### Tech Stack
-- **Protocol**: TypeScript monorepo, 12K+ lines
-- **Coordinators**: Dual-chain, Solana (SPL/x402) + Monad (EVM/x402)
-- **Workers**: Desktop (Node.js + Ollama) + Mobile (React Native)
-- **Mobile**: Solana MWA authentication, WebSocket job delivery
-- **Payments**: x402 stablecoin micropayments (open protocol)
-- **Verification**: ed25519 signed receipts, onchain anchoring ready
-- **Reputation**: ERC-8004 agent identity + reputation on Monad
+### technicalApproach (~1100 chars)
+TypeScript monorepo, 16,000+ lines across 17 packages. Every line written by AI agents. Open source, MIT licensed.
 
-### What's Working (Testnet MVP)
-- Full E2E flow: agent → coordinator → worker → receipt → BOLT settlement
-- Mobile Android app (APK) picking up jobs via WebSocket
-- Desktop workers with Ollama LLM inference
-- Ed25519 receipt signing and verification
-- Dual-chain coordinators (Monad + Solana)
-- BOLT distribution on Solana devnet, wBOLT distribution on Monad testnet
-- Real-time dashboard showing completed jobs and earnings
-- Three routing policies: FAST, CHEAP, PRIVATE
-- Trust pairing for private job routing
+Three steps: Submit, Process, Verify.
+1. Agent sends HTTP POST with x402 payment header. No SDK, no API key, no account.
+2. Coordinator matches the best worker by device type, ERC-8004 reputation, and routing policy (FAST/CHEAP/PRIVATE).
+3. Worker processes the job, signs an ed25519 receipt over the output hash. BOLT settles on Solana.
 
-### Solana-Specific
-- Mobile Wallet Adapter for worker authentication
-- BOLT SPL token settlement via BoltDistributor (batched payouts)
-- Jupiter DEX integration for USDC→BOLT auto-swap (with fallback)
-- Compatible with Solana Seeker devices
-- Ed25519 receipts use Solana's native signature scheme
+Dual-chain architecture: Solana handles SPL settlement and x402 payments. Monad handles EVM, ERC-8004 identity, and reputation. Same worker code, same protocol, different settlement rails.
 
-### BOLT on Solana
-- **BOLT** is a native SPL token on Solana, the settlement token for every Dispatch job
-- **Jupiter DEX integration.** USDC from x402 payments auto-swaps to BOLT atomically during job commit
-- **Staking tiers.** Workers optionally stake BOLT for priority matching:
-  - Open (0 BOLT): CHEAP tier jobs, standard matching
-  - Verified (100 BOLT): All tiers, +5 priority, 1.5x rep multiplier
-  - Sentinel (1,000 BOLT): Priority matching, +10 bonus, 2x rep, revenue share
-- **5% burn.** Protocol fee permanently burned per job, creating deflationary pressure
+Desktop workers run Node.js + Ollama for real LLM inference. Atomic job claims prevent double-processing. Mobile app: React Native + Expo, MWA authentication, WebSocket job delivery. Approved on the Solana dApp Store.
+
+Working testnet MVP:
+- Full E2E flow with real BOLT transfers on Solana devnet
+- Real ERC-8004 reputation on Monad testnet
+- Three routing policies (FAST/CHEAP/PRIVATE)
+- Jupiter DEX integration
+- Real-time dashboard with explorer links
+
+### solanaIntegration (~880 chars)
+Seven Solana primitives:
+
+1. BOLT SPL Token: Native Solana token (1B supply, 9 decimals). Real SPL transfers on devnet settle every job. Workers receive BOLT immediately on completion.
+2. Mobile Wallet Adapter (MWA): Workers on Seeker authenticate via Solana MWA. No new key management.
+3. Jupiter DEX: USDC from x402 payments auto-swaps to BOLT atomically during job commit, with fallback to direct distribution.
+4. Ed25519 Signatures: Receipts use Solana's native signature scheme. Workers sign SHA-256 output hashes with ed25519 keys.
+5. dApp Store: Release NFT minted, APK hosted on Arweave. Search "Dispatch" on the Solana dApp Store.
+6. Seeker-Native: The mobile app turns any idle phone into a worker node. Process AI tasks in the background, earn BOLT.
+7. Staking Tiers: Open (0 BOLT, standard matching), Verified (100 BOLT, +5 priority, 1.5x rep), Sentinel (1,000 BOLT, 2x rep, revenue share).
+
+5% of every BOLT payment is burned permanently.
+
+### targetAudience (~830 chars)
+Two sides of the marketplace:
+
+Demand: AI Agent Developers. Autonomous agents needing cheap, reliable compute at scale. First users build agents that process text: summarization, classification, extraction, LLM inference. Their agents submit HTTP requests with x402 payment headers. Dispatch routes to the cheapest available worker. Receipts verify every result. No SDK, no wallet setup, no account creation required.
+
+Supply: Hardware Owners. Anyone with an idle phone or laptop earning passive income. Install the Seeker app or the desktop CLI. Connect your Solana wallet via MWA. Your device picks up AI tasks over WebSocket while idle. BOLT earnings accumulate automatically. ERC-8004 reputation builds with every completed job, unlocking priority matching and better-paying work over time. No GPU required.
+
+### businessModel (~810 chars)
+5% protocol fee on every job settlement. Agents pay USDC via x402 HTTP headers. The coordinator auto-swaps USDC to BOLT via Jupiter DEX, deducts 5%, and distributes the rest to workers.
+
+Revenue scales linearly with network usage. At 100,000 jobs/day at $0.005 average: $25/day in protocol fees, $500/day in BOLT buy pressure.
+
+Three value accrual mechanisms:
+1. Buy pressure: Every job triggers a USDC-to-BOLT swap on Jupiter. More jobs = more BOLT demand.
+2. Supply lock: Workers stake BOLT for priority matching. Staked tokens leave circulation.
+3. Burn: 5% of every settlement is burned permanently. Total supply is strictly deflationary.
+
+No token required to participate. Workers earn from day one with zero stake. The protocol is open source (MIT). Value capture lives at the coordination layer.
+
+### competitiveLandscape (~940 chars)
+Three categories of existing solutions, none built for agents:
+
+1. Centralized Providers (OpenAI, Anthropic, Google): Premium pricing, opaque rate limits, API keys requiring human provisioning. Not agent-accessible.
+2. GPU Rental Networks (Akash, Render, Vast.ai): Target developers provisioning VMs/containers. Per-hour pricing, native token staking. Wrong granularity for agents needing per-job compute.
+3. Serverless Inference (Replicate, Modal): Better granularity but centralized, still requires API keys, no verifiable proof of computation.
+
+Dispatch differentiates on:
+- Granularity: Per-job, not per-hour or per-token
+- Payment: USDC via x402 HTTP headers, no API key needed
+- Hardware: Idle phones and desktops, not datacenter GPUs
+- Verification: Ed25519 signed receipts, not "trust the provider"
+- Identity: ERC-8004 onchain reputation on Monad
+- Multi-chain: Solana (settlement) + Monad (trust)
+
+Closest analogy: Helium for compute instead of wireless coverage.
+
+### futureVision (~870 chars)
+Current: Testnet MVP live on Solana devnet + Monad testnet. Full E2E flow working. dApp Store approved.
+
+Next (Phase 2, BOLT Token Launch):
+- BOLT SPL token deployment on Solana mainnet
+- Jupiter DEX for automatic USDC-to-BOLT settlement
+- Staking program: Open / Verified / Sentinel tiers live
+- Protocol fee burn mechanism active
+- Worker rewards emission begins
+
+Future (Phase 3, Scale):
+- Onchain receipt anchoring on Solana (Anchor) and Monad (Solidity)
+- zkML validation: zero-knowledge proofs that a specific model produced a specific output
+- Dynamic pricing based on supply/demand
+- Confidential compute via TEE for sensitive workloads
+- Agent discovery: agents query ERC-8004 registry to find workers by skill and reputation
+- GPU worker tier extending beyond consumer hardware
+- Governance: BOLT holders vote on protocol parameters
+
+Long-term: the default compute layer for autonomous agents.
+
+### tags
+DePIN, AI, Payments
+
+### Optional Fields
+- slug: dispatch
+- liveAppLink: https://www.dispatch.computer
+- presentationLink: https://www.dispatch.computer/colosseum
+- twitterHandle: @pranit
 
 ### Links
 - Source: https://github.com/pranit-garg/Dispatch
 - Landing: https://www.dispatch.computer
 - Docs: https://docs.dispatch.computer
+- Videos (Pitch + Technical Demo): https://www.dispatch.computer/colosseum
 - Litepaper (PDF): https://github.com/pranit-garg/Dispatch/raw/main/docs/Dispatch_Litepaper.pdf
-- Demo video: [TBD]
+- Mobile APK: https://expo.dev/artifacts/eas/pRku9ZWEqdSGS2poEU9VjN.apk
 
 ---
 
